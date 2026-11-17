@@ -13,11 +13,10 @@
 - [x] Playwright e2e on 390×844 and 430×932, dark + light screenshots viewed
 - [x] PWA manifest, service worker, temporary icon, self-hosted fonts
 - [x] Secret scan of `dist/` (`npm run check:secrets`), GitHub Actions CI workflow
-- [x] Local git repo with first commit
+- [x] Pushed to GitHub (`stanvandenbulcke/ijzer`, private), CI green
 
 ## Waiting for Stan
 
-- [ ] GitHub account + empty private repo `ijzer`, connected to Claude → then push
 - [ ] Hosting account (Cloudflare or Vercel) → first deploy + preview URLs
 - [ ] Supabase account with projects `ijzer-dev` and `ijzer-prod` (needed at the start of phase 1)
 - [ ] Answer: optional keep-alive against Supabase pausing? (SPEC §11.5)
