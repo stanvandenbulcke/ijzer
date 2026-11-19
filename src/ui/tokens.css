@@ -2,11 +2,13 @@
  * Design tokens — "Krijt & IJzer" (SPEC §6.2). Single source of truth for colour,
  * type and shape. Tailwind's default palette is switched off on purpose:
  * only these tokens exist as utilities (bg-surface, text-muted, …).
+ * Contrast of every pair is verified by scripts/check-contrast.mjs.
  */
 @import 'tailwindcss';
 @import '@fontsource-variable/archivo/wght';
 @import '@fontsource/big-shoulders-display/latin-700';
 @import '@fontsource/big-shoulders-display/latin-900';
+@import './motion.css';
 
 @theme {
   --color-*: initial;
@@ -14,14 +16,41 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
+  --color-focus: var(--focus);
+
+  /* Plate colours as FILLS (identical in both themes, like the real plates). */
   --color-plate-yellow: var(--plate-yellow);
   --color-plate-red: var(--plate-red);
   --color-plate-blue: var(--plate-blue);
   --color-plate-green: var(--plate-green);
+  --color-plate-white: var(--plate-white);
   --color-on-accent: var(--on-accent);
+  --color-on-plate: var(--on-plate);
+  --color-accent-edge: var(--accent-edge);
+
+  /* Plate colours as TEXT (tuned per theme to pass WCAG AA). */
   --color-accent-text: var(--accent-text);
+  --color-red-text: var(--red-text);
+  --color-blue-text: var(--blue-text);
+  --color-green-text: var(--green-text);
+
+  /* Weekly volume zones per muscle (SPEC §5.3 R1). */
+  --color-zone-none: var(--surface-2);
+  --color-zone-low: var(--zone-low);
+  --color-zone-moderate: var(--plate-blue);
+  --color-zone-target: var(--plate-green);
+  --color-zone-high: var(--plate-yellow);
+  --color-zone-very-high: var(--plate-red);
+
+  /* Muscle regions (chips, dots). */
+  --color-region-push: var(--plate-red);
+  --color-region-pull: var(--plate-blue);
+  --color-region-legs: var(--plate-green);
+  --color-region-core: var(--plate-yellow);
+  --color-region-neck: var(--plate-white);
 
   --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
   --font-sans: 'Archivo Variable', system-ui, sans-serif;
@@ -41,15 +70,26 @@
   --surface: #1a1a18;
   --surface-2: #23231f;
   --line: #2e2e29;
+  --line-strong: #7a766a;
   --text: #f2efe6;
   --text-muted: #a8a496;
+  --focus: #f2c14e;
+
   --plate-yellow: #f2c14e;
   --plate-red: #d7263d;
   --plate-blue: #2f6fde;
   --plate-green: #2ba84a;
+  --plate-white: #e8e4d8;
   --on-accent: #151513;
-  /* Accent used AS text. Yellow on paper fails WCAG AA, so light mode uses a dark amber. */
+  --on-plate: #ffffff;
+  --accent-edge: #f2c14e;
+
   --accent-text: #f2c14e;
+  --red-text: #f05a6b;
+  --blue-text: #6e9bf2;
+  --green-text: #3dbe5e;
+
+  --zone-low: #1f3a6b;
 }
 
 :root[data-theme='light'] {
@@ -58,14 +98,20 @@
   --surface: #ebe7db;
   --surface-2: #e0dccf;
   --line: #cfcabb;
+  --line-strong: #77736a;
   --text: #151513;
   --text-muted: #5c594f;
-  --plate-yellow: #f2c14e;
-  --plate-red: #b81d32;
-  --plate-blue: #2459b8;
-  --plate-green: #1c7a35;
-  --on-accent: #151513;
+  --focus: #7a5600;
+
+  --plate-white: #ffffff;
+  --accent-edge: #b88a1e;
+
   --accent-text: #7a5600;
+  --red-text: #b81d32;
+  --blue-text: #2459b8;
+  --green-text: #18692e;
+
+  --zone-low: #a9c1ec;
 }
 
 html {
@@ -82,10 +128,35 @@ body {
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
+  /* App feel: tapping must not select text or open the iOS callout menu. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Text people may want to copy (instructions, notes) opts back in. */
+input,
+textarea,
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS zooms into inputs below 16 px; never let that happen. */
+input,
+textarea,
+select {
+  font-size: max(16px, 1em);
+}
+
+button,
+a,
+[role='button'] {
+  touch-action: manipulation;
 }
 
 :focus-visible {
-  outline: 2px solid var(--plate-yellow);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 
@@ -95,13 +166,4 @@ body {
     repeating-linear-gradient(45deg, var(--text) 0 1px, transparent 1px 6px),
     repeating-linear-gradient(-45deg, var(--text) 0 1px, transparent 1px 6px);
   opacity: 0.035;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
 }

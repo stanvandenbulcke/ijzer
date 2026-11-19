@@ -4,7 +4,7 @@ Doel: na deze fase kan je een account maken, inloggen, de onboarding doorlopen e
 tabs navigeren. De tabs zelf zijn nog leeg (met een nette "komt in Fase X"-staat); de echte
 inhoud (routines, workouts, voeding…) komt vanaf Fase 2.
 
-Status: **wacht op goedkeuring van Stan.**
+Status: goedgekeurd op 2026-11-19. Blok A klaar, wacht op stijlgoedkeuring.
 
 ## Blok A — Design system (geen Supabase nodig)
 

@@ -9,5 +9,11 @@ import { RouteError } from './RouteError'
  */
 export const router = createBrowserRouter([
   { path: '/', element: <LandingPage />, errorElement: <RouteError /> },
+  {
+    // Style page. Online until Stan approves the style, then dev-only (SPEC §6.2).
+    path: '/design',
+    errorElement: <RouteError />,
+    lazy: async () => ({ Component: (await import('./design/DesignPage')).DesignPage }),
+  },
   { path: '*', element: <NotFoundPage /> },
 ])

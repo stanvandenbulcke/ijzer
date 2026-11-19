@@ -1,0 +1,69 @@
+/*
+ * Motion: 150–250 ms, ease-out, functional (SPEC §6.2).
+ * Everything here is switched off by prefers-reduced-motion at the bottom.
+ */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes toast-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+}
+
+.anim-sheet[data-state='open'] {
+  animation: sheet-in 240ms var(--ease-out);
+}
+.anim-sheet[data-state='closed'] {
+  animation: sheet-out 180ms ease-in;
+}
+.anim-backdrop[data-state='open'] {
+  animation: fade-in 200ms var(--ease-out);
+}
+.anim-backdrop[data-state='closed'] {
+  animation: fade-out 180ms ease-in;
+}
+.anim-toast {
+  animation: toast-in 200ms var(--ease-out);
+}
+
+/* The "click" of a key or checked set: a short press-in. */
+.press {
+  transition:
+    transform 120ms var(--ease-out),
+    background-color 120ms var(--ease-out);
+}
+.press:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

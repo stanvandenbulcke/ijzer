@@ -1,7 +1,7 @@
 # Progress / handoff
 
-**Current phase:** 0 → 1. Phase 0 done except Supabase accounts. Phase 1 plan in `docs/PLAN.md`,
-waiting for Stan's approval.
+**Current phase:** 1 — block A (design system) built; **waiting for Stan to approve the style on
+/design**. Plan: `docs/PLAN.md` (approved 2026-11-19).
 
 ## Done
 
@@ -23,7 +23,15 @@ waiting for Stan's approval.
 ## Waiting for Stan
 
 - [ ] Supabase account with projects `ijzer-dev` and `ijzer-prod` (needed at the start of phase 1)
-- [ ] Approve the phase 1 plan
+- [ ] Approve the style on https://ijzer.stanvandenbulck.workers.dev/design
+
+## Phase 1 — block A done
+
+- [x] Tokens with fill/text split, contrast script (all pairs AA, both themes)
+- [x] Components in `src/ui/` (see DESIGN.md), keypad logic unit-tested
+- [x] Tab bar (`src/app/TabBar.tsx`), muscle taxonomy (`src/domain/muscles`)
+- [x] /design page, e2e incl. axe accessibility scan in both themes
+- [ ] After approval: gate /design to dev only (ADR-009)
 
 ## Decisions from Stan
 
