@@ -12,6 +12,8 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Registered in src/app/pwa.ts so we control update checks.
+      injectRegister: false,
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'IJZER',
@@ -31,8 +33,20 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // App shell + exercise catalog are precached: the app works fully offline.
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}', 'data/*.json'],
         navigateFallback: '/index.html',
+        // Exercise photos (±20 MB) are cached the first time they are shown.
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/exercises/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'exercise-images',
+              expiration: { maxEntries: 1600 },
+            },
+          },
+        ],
       },
     }),
   ],

@@ -3,6 +3,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
+import featureBoundaries from './eslint-rules/feature-boundaries.js'
 
 export default tseslint.config(
   { ignores: ['dist', 'coverage', 'playwright-report', 'test-results'] },
@@ -17,22 +18,10 @@ export default tseslint.config(
     },
   },
   {
-    // SPEC §3.2: a feature never imports from another feature.
+    // SPEC §3.2: a feature never imports from another feature (also via ../../ paths).
     files: ['src/features/**/*.{ts,tsx}'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['**/features/*'],
-              message:
-                'Features must not import each other. Move shared code to domain/, data/ or ui/.',
-            },
-          ],
-        },
-      ],
-    },
+    plugins: { ijzer: { rules: { 'feature-boundaries': featureBoundaries } } },
+    rules: { 'ijzer/feature-boundaries': 'error' },
   },
   {
     // SPEC §3.2: domain/ is pure TypeScript.
@@ -52,7 +41,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['scripts/**/*.mjs'],
+    files: ['scripts/**/*.mjs', 'eslint-rules/**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
   },
