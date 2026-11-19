@@ -8,6 +8,8 @@ import { t } from '../../i18n'
 import { formatNumber } from '../../i18n/format'
 import { Button } from '../../ui/Button'
 import { cx } from '../../ui/cx'
+import { CountUp } from '../../ui/motion/CountUp'
+import { ProgressRing } from '../../ui/ProgressRing'
 
 const d = t.today
 
@@ -31,36 +33,60 @@ export function Card({
   )
 }
 
-/** "3/4 trainingen" with a dot per weekday. Rest days are never shown as a failure. */
+/** "3/4 trainingen" as a ring that fills up, with a dot per weekday. Rest days never count against you. */
 export function WeekCard({ status, today }: { status: WeekStatus; today: string }) {
   const monday = weekStart(today)
   return (
     <Card title={d.week}>
-      <p className="font-display text-4xl font-black">{d.weekCount(status.count, status.goal)}</p>
-      <div className="mt-3 grid grid-cols-7 gap-1.5" aria-hidden>
-        {d.weekdays.map((label, i) => {
-          const day = addDays(monday, i)
-          const trained = status.trainedDays.includes(day)
-          return (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <span
-                className={cx(
-                  'h-2 w-full rounded-full',
-                  trained ? 'bg-plate-green' : day === today ? 'bg-line-strong' : 'bg-line',
-                )}
-              />
-              <span
-                className={cx('text-xs', day === today ? 'font-semibold text-text' : 'text-muted')}
-              >
-                {label}
-              </span>
-            </div>
-          )
-        })}
+      <div className="flex items-center gap-4">
+        <ProgressRing
+          value={status.count}
+          max={status.goal}
+          size={104}
+          thickness={9}
+          tone={status.count >= status.goal ? 'green' : 'yellow'}
+          animateIn
+          label={d.weekCount(status.count, status.goal)}
+        >
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-4xl font-black">
+              <CountUp value={status.count} />
+              <span className="text-2xl text-muted">/{status.goal}</span>
+            </span>
+            <span className="mt-0.5 text-xs text-muted">{d.weekGoal}</span>
+          </span>
+        </ProgressRing>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <p className="font-semibold">{d.weekLeft(status.goal - status.count)}</p>
+          <div className="grid grid-cols-7 gap-1" aria-hidden>
+            {d.weekdays.map((label, i) => {
+              const day = addDays(monday, i)
+              const trained = status.trainedDays.includes(day)
+              return (
+                <div key={label} className="flex flex-col items-center gap-1">
+                  <span
+                    className={cx(
+                      'h-2 w-full rounded-full',
+                      trained ? 'bg-plate-green' : day === today ? 'bg-line-strong' : 'bg-line',
+                    )}
+                  />
+                  <span
+                    className={cx(
+                      'text-xs',
+                      day === today ? 'font-semibold text-text' : 'text-muted',
+                    )}
+                  >
+                    {label}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+          <p className="text-sm text-muted">
+            {status.streakWeeks > 0 ? d.streak(status.streakWeeks) : d.streakNone}
+          </p>
+        </div>
       </div>
-      <p className="mt-2 text-sm text-muted">
-        {status.streakWeeks > 0 ? d.streak(status.streakWeeks) : d.streakNone}
-      </p>
     </Card>
   )
 }
@@ -94,7 +120,7 @@ export function WeightCard({
       {last ? (
         <>
           <p className="font-display text-4xl font-black">
-            {formatNumber(last.trend, 1)}{' '}
+            <CountUp value={last.trend} decimals={1} />{' '}
             <span className="font-sans text-base font-semibold text-muted">{t.common.kg}</span>
           </p>
           <p className="text-sm text-muted">

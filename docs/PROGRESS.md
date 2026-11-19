@@ -47,6 +47,18 @@ yet). Live: https://ijzer.stanvandenbulck.workers.dev — auto-deploys on push t
       target band, contributors, balance), body (weight + EMA trend), analysis (R1–R10)
 - [x] Ik: settings (theme, rest, wake lock, sound), JSON export, wipe, credits
 
+## Round 2 (Stan's feedback, 2026-11-20)
+
+- [x] Accounts + cloud sync built and tested against **ijzer-dev** (RLS tests green, e2e: two
+      phones sync, local data kept on sign-up). **Live app still without accounts** until Stan
+      approves setting up ijzer-prod (same migrations + `scripts/auth-config.mjs prod`, then fill
+      `prod` in `src/data/supabase/config.ts` and add its host to the CSP).
+- [x] Birth date dd/mm/jjjj, no plates step, no example routines, own exercise everywhere,
+      visible Skip/Later/Replace, "Vorige keer", coach tip on Vandaag.
+- [x] Motion: page transitions, tab indicator, count-ups, 3D body heat map, PR celebration,
+      set stamp, animated duotone exercise icons, career stats + record wall.
+- [ ] Name: Stan chooses (APP_NAME in `src/app/config.ts`).
+
 ## Next (in order)
 
 1. Supabase (needs project URL from Stan): auth, migrations, RLS tests, sync of the outbox.

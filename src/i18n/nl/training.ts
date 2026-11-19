@@ -259,6 +259,7 @@ export const training = {
     restMinus: '−15 s',
     restSkip: 'Rust overslaan',
     pr: 'PR',
+    newRecord: 'Nieuw record!',
     prKinds: {
       weight: 'Zwaarste gewicht',
       e1rm: 'Beste geschatte 1RM',

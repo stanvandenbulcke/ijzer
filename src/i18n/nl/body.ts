@@ -5,6 +5,8 @@ export const body = {
   muscleMap: {
     front: 'Voorkant',
     back: 'Achterkant',
+    turn: 'Draai om',
+    dragHint: 'Sleep opzij om te draaien',
     direct: 'direct',
     indirect: 'indirect',
   },

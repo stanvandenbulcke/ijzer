@@ -2,6 +2,21 @@
 export const today = {
   title: 'Vandaag',
   greeting: (name: string) => (name ? `Hoi ${name}` : 'Hoi'),
+  dayPart: (hour: number) =>
+    hour < 6
+      ? 'Nachtsessie?'
+      : hour < 12
+        ? 'Goedemorgen'
+        : hour < 18
+          ? 'Goedemiddag'
+          : 'Goedenavond',
+  weekGoal: 'trainingen',
+  weekLeft: (n: number) =>
+    n <= 0
+      ? 'Weekdoel gehaald. Sterk.'
+      : n === 1
+        ? 'Nog 1 training voor je weekdoel'
+        : `Nog ${n} trainingen voor je weekdoel`,
   nextTitle: 'Training van vandaag',
   nextHint: 'Volgende in je rotatie',
   noRoutine: 'Nog geen routine',

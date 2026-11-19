@@ -12,10 +12,11 @@ import { planExercise } from '../../../domain/training/exercisePlan'
 import type { Exercise, WorkoutExercise } from '../../../domain/training/types'
 import * as ops from '../../../domain/training/workoutOps'
 import { t } from '../../../i18n'
-import { formatDuration } from '../../../i18n/format'
+import { formatDuration, formatNumber } from '../../../i18n/format'
 import { Button } from '../../../ui/Button'
 import { EmptyState } from '../../../ui/EmptyState'
 import { LoadingState } from '../../../ui/LoadingState'
+import { PrCelebration, type PrMoment } from '../../../ui/celebration/PrCelebration'
 import { useToast } from '../../../ui/toast/toastContext'
 import { useNow } from '../../../ui/useNow'
 import { ExercisePickerSheet } from '../library/ExercisePickerSheet'
@@ -46,6 +47,7 @@ export function ActiveWorkoutPage() {
   const [substituteFor, setSubstituteFor] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
   const [finishing, setFinishing] = useState(false)
+  const [prMoment, setPrMoment] = useState<PrMoment | null>(null)
 
   useWakeLock(profile?.settings.wakeLock ?? false)
 
@@ -189,7 +191,18 @@ export function ActiveWorkoutPage() {
         cutting: profile.goal === 'cut',
       })
       const kinds = plan.prKinds[index] ?? []
-      if (kinds.length > 0) toast({ message: w.prToast(w.prKinds[kinds[0]!]), tone: 'pr' })
+      if (kinds.length > 0) {
+        const done = updated.sets[index]!
+        setPrMoment({
+          id: done.id,
+          exercise: ex?.name ?? item.exerciseId,
+          kind: w.prKinds[kinds[0]!],
+          value:
+            ex?.type === 'time'
+              ? `${done.seconds ?? 0} s`
+              : `${formatNumber(done.weightKg ?? 0, 2)} kg × ${done.reps ?? 0}`,
+        })
+      }
       // Last set of this exercise done: bring the next open exercise into view.
       if (updated.sets.every((s) => s.completed)) {
         const nextId = ops.currentExerciseId(next)
@@ -389,6 +402,7 @@ export function ActiveWorkoutPage() {
           }
         />
       )}
+      <PrCelebration moment={prMoment} onDone={() => setPrMoment(null)} />
       <FinishSheet
         open={finishing}
         onOpenChange={setFinishing}

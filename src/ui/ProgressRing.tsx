@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 
 type Tone = 'yellow' | 'green' | 'red' | 'blue'
@@ -17,6 +18,8 @@ export interface ProgressRingProps {
   size?: number
   thickness?: number
   tone?: Tone
+  /** Fill up from empty when it appears (dashboards). */
+  animateIn?: boolean
   children?: ReactNode
 }
 
@@ -28,6 +31,7 @@ export function ProgressRing({
   size = 160,
   thickness = 10,
   tone = 'yellow',
+  animateIn = false,
   children,
 }: ProgressRingProps) {
   const radius = (size - thickness) / 2
@@ -51,7 +55,7 @@ export function ProgressRing({
           stroke="var(--line)"
           strokeWidth={thickness}
         />
-        <circle
+        <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -59,8 +63,9 @@ export function ProgressRing({
           stroke={strokes[tone]}
           strokeWidth={thickness}
           strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - fraction)}
-          style={{ transition: 'stroke-dashoffset 250ms var(--ease-out)' }}
+          initial={animateIn ? { strokeDashoffset: circumference } : false}
+          animate={{ strokeDashoffset: circumference * (1 - fraction) }}
+          transition={{ duration: animateIn ? 0.9 : 0.25, ease: [0.2, 0.8, 0.2, 1] }}
         />
       </svg>
       <div aria-hidden className="absolute inset-0 grid place-items-center text-center">

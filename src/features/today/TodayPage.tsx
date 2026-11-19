@@ -20,6 +20,7 @@ import { formatDayLong, formatDayShort, formatNumber } from '../../i18n/format'
 import { Badge } from '../../ui/Badge'
 import { Button } from '../../ui/Button'
 import { LoadingState } from '../../ui/LoadingState'
+import { Stagger } from '../../ui/motion/Stagger'
 import { Page, PageHeader } from '../../ui/PageHeader'
 import { ValueEntrySheet } from '../../ui/ValueEntrySheet'
 import { CoachCard } from './CoachCard'
@@ -82,8 +83,11 @@ export function TodayPage() {
 
   return (
     <Page>
-      <PageHeader eyebrow={formatDayLong(today)} title={d.greeting(profile.name)} />
-      <div className="flex flex-col gap-3">
+      <PageHeader
+        eyebrow={`${d.dayPart(new Date().getHours())} · ${formatDayLong(today)}`}
+        title={d.greeting(profile.name)}
+      />
+      <Stagger className="flex flex-col gap-3">
         {accountsEnabled && session === null && (
           <section className="rounded-md border border-focus bg-surface p-4">
             <p className="font-display text-2xl leading-tight font-bold uppercase">
@@ -165,7 +169,7 @@ export function TodayPage() {
         <Card title={d.nutrition}>
           <p className="text-sm text-muted">{d.nutritionSoon}</p>
         </Card>
-      </div>
+      </Stagger>
       <ValueEntrySheet
         open={weighing}
         onOpenChange={setWeighing}

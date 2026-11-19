@@ -6,6 +6,7 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react'
+import { motion } from 'motion/react'
 import { NavLink } from 'react-router'
 import { t } from '../i18n'
 import { cx } from '../ui/cx'
@@ -29,7 +30,14 @@ function TabContent({ tab, active }: { tab: Tab; active: boolean }) {
   const Icon = tab.icon
   return (
     <>
-      {active && <span aria-hidden className="absolute inset-x-3 top-0 h-[3px] bg-focus" />}
+      {active && (
+        <motion.span
+          layoutId="tab-indicator"
+          aria-hidden
+          className="absolute inset-x-3 top-0 h-[3px] bg-focus"
+          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+        />
+      )}
       <Icon aria-hidden size={24} strokeWidth={active ? 2.25 : 1.75} />
       <span className="text-xs font-semibold tracking-wide">{tab.label}</span>
     </>

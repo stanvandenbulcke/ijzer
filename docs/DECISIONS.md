@@ -146,3 +146,18 @@ rows with `server_updated_at` (server clock) after the last cursor. A trigger re
 overwrite a newer row with an older one. Local data is tied to one account (`meta.ownerId`);
 data made without an account is only moved into an account after an explicit choice, data of
 another account is removed from the device, and signing out clears the device.
+
+## ADR-019 — Motion for animation (supersedes the "no Motion yet" part of ADR-008)
+
+**Context:** Stan found the app boring: no animations, nothing that feels alive.
+**Decision:** `motion` (Motion for React) for page transitions, the sliding tab indicator,
+count-up numbers, staggered cards, the draggable 3D body (`MuscleMap3D`) and the full-screen PR
+celebration. Small loops (set stamp, exercise icon flip, loading bar) stay plain CSS.
+`MotionConfig reducedMotion="user"` follows the iPhone's "Beperk beweging".
+**Consequences:** ±35 kB gzipped extra; every animation is short and never blocks input.
+
+## ADR-020 — Exercise photos in a house style
+
+**Context:** The dataset photos (red gym walls, early-2000s look) felt odd to Stan.
+**Decision:** Photos are shown monochrome with a light plate-yellow tint, and list icons
+alternate start/end photo as a tiny loop. No external videos/GIFs (SPEC §4.2 media rules).

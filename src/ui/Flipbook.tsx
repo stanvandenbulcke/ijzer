@@ -32,10 +32,11 @@ export function Flipbook({ exerciseId, name }: { exerciseId: string; name: strin
             key={i}
             src={exerciseImage(exerciseId, i)}
             alt={i === 0 ? t.flipbook.start(name) : t.flipbook.end(name)}
-            className="absolute inset-0 size-full object-contain transition-opacity duration-300"
+            className="duotone absolute inset-0 size-full object-contain transition-opacity duration-300"
             style={{ opacity: frame === i ? 1 : 0 }}
           />
         ))}
+        <span aria-hidden className="duotone-tint pointer-events-none absolute inset-0" />
       </div>
       <IconButton
         icon={playing ? Pause : Play}

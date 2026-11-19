@@ -16,16 +16,19 @@ export interface MuscleMapProps {
 
 const widths = { sm: 'w-24', md: 'w-40', lg: 'w-56' }
 
-function Figure({
+/** One view (front or back) of the body. */
+export function Figure({
   shapes,
   fills,
   onToggle,
   title,
+  caption = true,
 }: {
   shapes: Shape[]
   fills: MuscleFill
   onToggle?: (m: MuscleId) => void
   title: string
+  caption?: boolean
 }) {
   const render = (shape: Shape, i: number, mirrored: boolean) => {
     const fill = shape.muscle ? fills[shape.muscle] : undefined
@@ -53,7 +56,11 @@ function Figure({
         {shapes.map((s, i) => render(s, i, false))}
         {shapes.map((s, i) => render(s, i, true))}
       </svg>
-      <figcaption className="text-xs text-muted">{title}</figcaption>
+      {caption ? (
+        <figcaption className="text-xs text-muted">{title}</figcaption>
+      ) : (
+        <figcaption className="sr-only">{title}</figcaption>
+      )}
     </figure>
   )
 }

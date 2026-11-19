@@ -15,7 +15,10 @@ import { Badge } from '../../../ui/Badge'
 import { Button } from '../../../ui/Button'
 import { Chip } from '../../../ui/Chip'
 import { LoadingState } from '../../../ui/LoadingState'
-import { MuscleMap, type MuscleFill } from '../../../ui/muscle-map/MuscleMap'
+import { heatFills } from '../../../ui/muscle-map/heat'
+import { MuscleMap3D } from '../../../ui/muscle-map/MuscleMap3D'
+import { CountUp } from '../../../ui/motion/CountUp'
+import { Stagger } from '../../../ui/motion/Stagger'
 import { Page } from '../../../ui/PageHeader'
 import { useToast } from '../../../ui/toast/toastContext'
 import { renderShareCard, shareImage } from './shareCard'
@@ -23,11 +26,24 @@ import { renderShareCard, shareImage } from './shareCard'
 const s = t.training.summary
 const w = t.training.workout
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  suffix,
+  decimals = 0,
+}: {
+  label: string
+  value: number
+  suffix?: string
+  decimals?: number
+}) {
   return (
     <div className="flex flex-col border-t border-line pt-2">
       <span className="text-xs font-semibold tracking-widest text-muted uppercase">{label}</span>
-      <span className="font-display text-4xl font-black">{value}</span>
+      <span className="font-display text-4xl font-black">
+        <CountUp value={value} decimals={decimals} />
+        {suffix && <span className="ml-1 text-2xl text-muted">{suffix}</span>}
+      </span>
     </div>
   )
 }
@@ -52,18 +68,18 @@ export function WorkoutSummaryPage() {
   const name = (exerciseId: string) => data.library.byId(exerciseId)?.name ?? exerciseId
   const updatedRoutine =
     routine && !routineHandled ? routineFromWorkout(routine, workout, newId) : null
-  const max = Math.max(1, ...Object.values(summary.muscles).map((v) => v ?? 0))
-  const fills: MuscleFill = {}
-  for (const [m, v] of Object.entries(summary.muscles))
-    fills[m as keyof MuscleFill] = {
-      color: 'var(--plate-yellow)',
-      opacity: 0.35 + 0.65 * ((v ?? 0) / max),
-    }
+  // Text versions for the share image, numbers for the animated stats.
   const stats = [
     { label: s.duration, value: formatMinutes(summary.minutes) },
     { label: s.sets, value: String(summary.sets) },
     { label: s.volume, value: `${formatNumber(summary.volumeKg, 0)} kg` },
     { label: s.prs, value: String(summary.prs.length) },
+  ]
+  const numbers = [
+    { label: s.duration, value: Math.round(summary.minutes), suffix: 'min' },
+    { label: s.sets, value: summary.sets },
+    { label: s.volume, value: summary.volumeKg, suffix: 'kg' },
+    { label: s.prs, value: summary.prs.length },
   ]
 
   const share = async () => {
@@ -92,11 +108,11 @@ export function WorkoutSummaryPage() {
         </p>
       </header>
 
-      <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3">
-        {stats.map((stat) => (
+      <Stagger className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3">
+        {numbers.map((stat) => (
           <Stat key={stat.label} {...stat} />
         ))}
-      </div>
+      </Stagger>
 
       {summary.prs.length > 0 && (
         <ul className="mt-6 flex flex-col gap-2">
@@ -116,15 +132,12 @@ export function WorkoutSummaryPage() {
         <h2 className="mb-3 border-b border-line pb-1.5 font-display text-2xl font-bold uppercase">
           {s.musclesHit}
         </h2>
-        <div className="flex justify-center">
-          <MuscleMap
-            size="md"
-            fills={fills}
-            label={Object.keys(summary.muscles)
-              .map((m) => t.muscles[m as keyof typeof t.muscles])
-              .join(', ')}
-          />
-        </div>
+        <MuscleMap3D
+          fills={heatFills(summary.muscles)}
+          label={Object.keys(summary.muscles)
+            .map((m) => t.muscles[m as keyof typeof t.muscles])
+            .join(', ')}
+        />
         <p className="mt-3 text-sm text-muted">
           {summary.volumeChange === null
             ? s.vsLastNone

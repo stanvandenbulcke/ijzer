@@ -113,7 +113,7 @@ export function SetRow({
         className={cx(
           'press flex h-12 w-14 items-center justify-center rounded-sm border',
           set.completed
-            ? 'border-plate-green bg-plate-green text-on-accent'
+            ? 'set-stamp border-plate-green bg-plate-green text-on-accent'
             : 'border-line-strong text-muted',
         )}
       >

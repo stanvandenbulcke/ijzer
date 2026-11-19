@@ -1,3 +1,4 @@
+import { MotionConfig } from 'motion/react'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
@@ -13,9 +14,12 @@ setupServiceWorker()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ToastProvider>
-      <SyncAgent />
-      <RouterProvider router={router} />
-    </ToastProvider>
+    {/* Animations follow the iPhone setting "Beperk beweging". */}
+    <MotionConfig reducedMotion="user">
+      <ToastProvider>
+        <SyncAgent />
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </MotionConfig>
   </StrictMode>,
 )

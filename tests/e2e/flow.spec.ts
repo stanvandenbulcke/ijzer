@@ -107,7 +107,11 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await expect(page.getByText(/Doel vandaag/).first()).toBeVisible()
   await page.getByRole('button', { name: 'Set 1 afvinken' }).first().click()
   await expect(page.getByRole('button', { name: 'Reps 1' }).first()).toHaveText('9')
-  await expect(page.getByRole('status', { name: 'Meldingen' })).toContainText('Nieuw record')
+  await expect(page.getByRole('alert')).toContainText('Nieuw record!')
+  await page.waitForTimeout(1000) // let the celebration finish its animation
+  await shot(page, 'pr-celebration', project)
+  await page.getByRole('alert').click()
+  await expect(page.getByRole('alert')).toBeHidden()
   await shot(page, 'workout-pr', project)
 
   // Data survives a reload mid-workout (IndexedDB, SPEC §4.4 "Robuustheid").
@@ -127,11 +131,17 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
     .getByRole('link', { name: 'Progressie' })
     .click()
   await expect(page.getByText('Trainingen, laatste 12 weken')).toBeVisible()
+  await page.waitForTimeout(1400) // count-up animations
   await shot(page, 'progress', project)
+  await page.getByText('Hoe hard je elke spier raakte').evaluate((el) => el.scrollIntoView())
+  await page.waitForTimeout(600)
+  await shot(page, 'progress-map', project)
   await page.getByRole('tab', { name: 'Oefeningen' }).click()
-  await expect(page.getByRole('button', { name: /Barbell Bench Press/ })).toBeVisible()
+  await expect(page).toHaveURL(/\/progressie\/oefeningen/)
+  const benchRow = page.getByRole('button', { name: /^Barbell Bench Press.*sessies/ })
+  await expect(benchRow).toBeVisible()
   await expect(page.getByRole('button', { name: /Side Lateral Raise/ })).toHaveCount(0)
-  await page.getByRole('button', { name: /Barbell Bench Press/ }).click()
+  await benchRow.click()
   await expect(page.getByText('Rep-records')).toBeVisible()
   await shot(page, 'exercise-progress', project)
 })

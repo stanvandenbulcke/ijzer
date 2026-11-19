@@ -10,9 +10,12 @@ import { t } from '../../../i18n'
 import { formatDayShort, formatNumber } from '../../../i18n/format'
 import { Badge } from '../../../ui/Badge'
 import { cx } from '../../../ui/cx'
-import { MuscleMap, type MuscleFill } from '../../../ui/muscle-map/MuscleMap'
+import { heatFills } from '../../../ui/muscle-map/heat'
+import { MuscleMap3D } from '../../../ui/muscle-map/MuscleMap3D'
 import { BarRow, Section } from '../Section'
-import { ZONE_BG, ZONE_COLOR } from '../zones'
+import { ZONE_BG } from '../zones'
+import { CareerCard } from './CareerCard'
+import { RecordWall } from './RecordWall'
 
 const p = t.progress
 const WEEKS = 12
@@ -32,8 +35,6 @@ export function OverviewTab({
   const weeks = Array.from({ length: WEEKS }, (_, i) => addDays(firstMonday, i * 7))
 
   const week = fractionalSets(lastDays(data.perfs, today, 7), data.library.byId)
-  const fills: MuscleFill = {}
-  for (const m of MUSCLE_IDS) if (week[m]) fills[m] = { color: ZONE_COLOR[volumeZone(week[m])] }
   const ranked = MUSCLE_IDS.filter((m) => week[m]).sort((a, b) => week[b]! - week[a]!)
 
   const typeOf = (id: string) => data.library.byId(id)?.type
@@ -56,13 +57,14 @@ export function OverviewTab({
 
   return (
     <>
+      <CareerCard data={data} />
       <Section title={p.calendar}>
         <div
           role="img"
           aria-label={p.calendarLabel(
             data.workouts.filter((w) => localDay(w.startedAt) >= firstMonday).length,
           )}
-          className="grid grid-flow-col grid-rows-7 gap-1"
+          className="grid w-fit grid-flow-col grid-rows-7 gap-[3px] [grid-auto-columns:18px]"
         >
           {weeks.flatMap((monday) =>
             Array.from({ length: 7 }, (_, d) => {
@@ -71,7 +73,7 @@ export function OverviewTab({
                 <span
                   key={day}
                   className={cx(
-                    'aspect-square rounded-[3px]',
+                    'size-[18px] rounded-[3px]',
                     day > today
                       ? 'bg-transparent'
                       : trainedDays.has(day)
@@ -83,7 +85,10 @@ export function OverviewTab({
             }),
           )}
         </div>
-        <div className="mt-3 flex items-end gap-1" aria-hidden>
+        <div
+          className="mt-3 grid w-fit grid-flow-col items-end gap-[3px] [grid-auto-columns:18px]"
+          aria-hidden
+        >
           {weeks.map((w) => {
             const n = [...trainedDays].filter((d) => weekStart(d) === w).length
             return (
@@ -101,16 +106,16 @@ export function OverviewTab({
         <p className="mt-1 text-xs text-muted">{p.perWeek}</p>
       </Section>
 
-      <Section title={p.muscleWeek} note={p.muscleWeekNote}>
-        <div className="flex items-start gap-4">
-          <MuscleMap
-            size="md"
-            fills={fills}
-            label={
-              ranked.map((m) => `${t.muscles[m]} ${formatNumber(week[m]!, 1)}`).join(', ') ||
-              p.empty.title
-            }
-          />
+      <Section title={p.heatTitle} note={p.muscleWeekNote}>
+        <MuscleMap3D
+          fills={heatFills(week)}
+          label={
+            ranked.map((m) => `${t.muscles[m]} ${formatNumber(week[m]!, 1)}`).join(', ') ||
+            p.empty.title
+          }
+        />
+        <p className="mt-1 text-center text-xs text-muted">{t.muscleMap.dragHint}</p>
+        <div className="mt-4 flex items-start gap-4">
           <div className="flex flex-1 flex-col">
             {ranked.slice(0, 10).map((m) => (
               <button
@@ -137,6 +142,10 @@ export function OverviewTab({
             </li>
           ))}
         </ul>
+      </Section>
+
+      <Section title={p.recordWall} note={p.recordWallNote}>
+        <RecordWall data={data} />
       </Section>
 
       <Section title={p.weeklyVolume}>

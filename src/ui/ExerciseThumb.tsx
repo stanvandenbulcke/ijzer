@@ -12,8 +12,9 @@ const regionBar = {
 } as const
 
 /**
- * Small square picture of an exercise: its start photo, or for own exercises without a
- * photo the initials with the colour of the main muscle region. Never an empty grey box.
+ * Exercise icon: start and end photo alternate like a tiny looping clip, in the app's
+ * monochrome house style. Own exercises without photos show initials with the colour of the
+ * main muscle region. Never an empty grey box.
  */
 export function ExerciseThumb({
   exercise,
@@ -26,13 +27,29 @@ export function ExerciseThumb({
   const main = exercise.muscles.find((m) => m.weight === 1)?.muscle
   if (exercise.hasImages) {
     return (
-      <img
-        src={exerciseImage(exercise.id, 0)}
-        alt=""
-        loading="lazy"
-        decoding="async"
-        className={cx(box, 'shrink-0 rounded-sm bg-plate-white object-cover')}
-      />
+      <span
+        aria-hidden
+        className={cx(box, 'relative shrink-0 overflow-hidden rounded-sm bg-plate-white')}
+      >
+        <img
+          src={exerciseImage(exercise.id, 0)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="duotone absolute inset-0 size-full object-cover"
+        />
+        <img
+          src={exerciseImage(exercise.id, 1)}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="duotone thumb-flip absolute inset-0 size-full object-cover"
+        />
+        <span className="duotone-tint absolute inset-0" />
+        {main && (
+          <span className={cx('absolute inset-x-0 bottom-0 h-1', regionBar[MUSCLE_REGION[main]])} />
+        )}
+      </span>
     )
   }
   return (
@@ -44,7 +61,7 @@ export function ExerciseThumb({
       )}
     >
       {main && (
-        <span className={cx('absolute inset-y-0 left-0 w-1', regionBar[MUSCLE_REGION[main]])} />
+        <span className={cx('absolute inset-x-0 bottom-0 h-1', regionBar[MUSCLE_REGION[main]])} />
       )}
       {initials(exercise.name)}
     </span>

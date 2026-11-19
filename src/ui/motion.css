@@ -121,3 +121,47 @@
 .pr-pop {
   animation: pr-pop 320ms var(--ease-out);
 }
+
+/* Ticking a set: the box stamps down like a plate hitting the floor. */
+@keyframes set-stamp {
+  0% {
+    transform: scale(1.18);
+  }
+  55% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.set-stamp {
+  animation: set-stamp 260ms var(--ease-out);
+}
+
+/* Exercise icons: start and end photo alternate, like a tiny looping clip. */
+@keyframes thumb-flip {
+  0%,
+  42% {
+    opacity: 0;
+  }
+  50%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.thumb-flip {
+  animation: thumb-flip 2.4s ease-in-out infinite;
+}
+
+/* House style for the dataset photos: chalk-and-iron monochrome with a warm plate tint. */
+.duotone {
+  filter: grayscale(1) contrast(1.15) brightness(1.02);
+}
+.duotone-tint {
+  background: var(--plate-yellow);
+  mix-blend-mode: multiply;
+  opacity: 0.28;
+}
