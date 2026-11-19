@@ -1,13 +1,19 @@
 import type { ReactNode } from 'react'
 import { Navigate, Outlet } from 'react-router'
+import { useSession } from '../data/auth'
 import { useProfile } from '../data/profileRepo'
+import { accountsEnabled } from '../data/supabase/config'
 import { LoadingState } from '../ui/LoadingState'
 
 /** App screens need a finished onboarding; otherwise go to /welkom first. */
 export function RequireProfile({ children }: { children?: ReactNode }) {
   const profile = useProfile()
-  if (profile === undefined) return <LoadingState />
-  if (!profile.onboardedAt) return <Navigate to="/welkom" replace />
+  const session = useSession()
+  if (profile === undefined || session === undefined) return <LoadingState />
+  if (!profile.onboardedAt) {
+    // New visitors choose between an account and trying without one on the landing page.
+    return <Navigate to={accountsEnabled && !session ? '/' : '/welkom'} replace />
+  }
   return children ?? <Outlet />
 }
 

@@ -17,6 +17,7 @@ const nutrition = () => import('../features/nutrition')
 const progress = () => import('../features/progress')
 const me = () => import('../features/me')
 const science = () => import('../features/science')
+const auth = () => import('../features/auth')
 
 /**
  * All routes. The tab routes mirror the tab bar (SPEC §3.1) and each lives in its own
@@ -39,6 +40,24 @@ export const router = createBrowserRouter([
       () => import('../features/onboarding'),
       (m) => m.OnboardingPage,
     ),
+  },
+  // Accounts (SPEC §4.1).
+  { path: '/registreren', errorElement: <RouteError />, lazy: page(auth, (m) => m.RegisterPage) },
+  { path: '/login', errorElement: <RouteError />, lazy: page(auth, (m) => m.LoginPage) },
+  {
+    path: '/wachtwoord-vergeten',
+    errorElement: <RouteError />,
+    lazy: page(auth, (m) => m.ForgotPasswordPage),
+  },
+  {
+    path: '/nieuw-wachtwoord',
+    errorElement: <RouteError />,
+    lazy: page(auth, (m) => m.NewPasswordPage),
+  },
+  {
+    path: '/account/koppelen',
+    errorElement: <RouteError />,
+    lazy: page(auth, (m) => m.ClaimDataPage),
   },
   {
     path: '/design',

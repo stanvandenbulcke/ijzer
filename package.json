@@ -18,12 +18,15 @@
     "icons": "node scripts/make-icons.mjs",
     "check": "npm run typecheck && npm run lint && npm run check:contrast && npm run test && npm run build && npm run check:secrets",
     "check:contrast": "node scripts/check-contrast.mjs",
-    "import:exercises": "node scripts/import-exercises.mjs"
+    "import:exercises": "node scripts/import-exercises.mjs",
+    "build:e2e": "vite build --mode e2e",
+    "test:rls": "node scripts/run-sql.mjs supabase/tests/rls.sql dev"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource/big-shoulders-display": "^5.3.0",
     "@radix-ui/react-dialog": "^1.3.1",
+    "@supabase/supabase-js": "2.118",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
     "lucide-react": "^1.75.0",

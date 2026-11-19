@@ -1,3 +1,4 @@
+import { auth } from './auth'
 import { body } from './body'
 import { common } from './common'
 import { design } from './design'
@@ -18,6 +19,7 @@ export const nl = {
   ...common,
   ...body,
   landing,
+  auth,
   onboarding,
   training,
   today,

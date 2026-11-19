@@ -126,3 +126,23 @@ and returns to /ik. One form to maintain instead of two.
 **Decision:** `registerType: 'autoUpdate'`, registered in `src/app/pwa.ts`, which also checks
 for updates when the app comes back into view and every hour. All data is in IndexedDB, so the
 automatic reload is safe, also mid-workout.
+
+## ADR-017 — Accounts: instant sign-up, password reset by link
+
+**Context:** SPEC §4.1 asks for a 6-digit e-mail code for password reset. On the free plan the
+built-in Supabase mailer cannot use custom templates (so no `{{ .Token }}` code) and only sends
+to members of the Supabase organisation.
+**Decision:** Sign-up needs no confirmation mail (`mailer_autoconfirm`), so anyone can create an
+account. Password reset uses the default link with the `implicit` auth flow: the link opens in
+Safari, the new password is set on `/nieuw-wachtwoord`, then you log in with it in the
+home-screen app. Logging in itself is always e-mail + password in the app (no magic links).
+**Consequences:** Reset mails only reach organisation members (Stan) until a free SMTP service
+(e.g. Brevo or Resend free tier) is connected; then the 6-digit code can be switched on.
+
+## ADR-018 — Sync: outbox push, server-clock pull, last write wins
+
+**Decision:** Every local change is in the outbox; a sync round upserts those rows, then pulls
+rows with `server_updated_at` (server clock) after the last cursor. A trigger refuses to
+overwrite a newer row with an older one. Local data is tied to one account (`meta.ownerId`);
+data made without an account is only moved into an account after an explicit choice, data of
+another account is removed from the device, and signing out clears the device.

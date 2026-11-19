@@ -14,7 +14,8 @@ export default defineConfig({
     { name: 'iphone-430', use: { ...iphone, viewport: { width: 430, height: 932 } } },
   ],
   webServer: {
-    command: 'npm run preview -- --port 4173 --strictPort',
+    // The e2e build talks to the ijzer-dev Supabase project (src/data/supabase/config.ts).
+    command: 'npm run build:e2e && npm run preview -- --port 4173 --strictPort',
     url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
   },

@@ -7,6 +7,8 @@ import { useRoutines } from '../../data/routinesRepo'
 import { useTrainingData } from '../../data/useTrainingData'
 import { startWorkout } from '../../data/workoutActions'
 import { useActiveWorkout } from '../../data/workoutsRepo'
+import { useSession } from '../../data/auth'
+import { accountsEnabled } from '../../data/supabase/config'
 import { weightTrend } from '../../domain/energy/trend'
 import { totalWorkingSets } from '../../domain/training/routineEdit'
 import { weekStatus } from '../../domain/training/streak'
@@ -31,6 +33,7 @@ export function TodayPage() {
   const data = useTrainingData()
   const active = useActiveWorkout()
   const weights = useBodyWeights()
+  const session = useSession()
   const [weighing, setWeighing] = useState(false)
   const today = localDay(new Date())
 
@@ -66,6 +69,17 @@ export function TodayPage() {
     <Page>
       <PageHeader eyebrow={formatDayLong(today)} title={d.greeting(profile.name)} />
       <div className="flex flex-col gap-3">
+        {accountsEnabled && session === null && (
+          <section className="rounded-md border border-focus bg-surface p-4">
+            <p className="font-display text-2xl leading-tight font-bold uppercase">
+              {t.auth.banner.title}
+            </p>
+            <p className="mt-1 text-sm text-muted">{t.auth.banner.body}</p>
+            <Button className="mt-3" onClick={() => navigate('/registreren')}>
+              {t.auth.banner.action}
+            </Button>
+          </section>
+        )}
         {active ? (
           <Card title={t.training.workoutRunningTitle}>
             <p className="font-display text-3xl font-black uppercase">{active.name}</p>

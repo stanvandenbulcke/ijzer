@@ -18,6 +18,7 @@ import { TextField } from '../../ui/TextField'
 import { downloadBlob } from '../../ui/download'
 import { applyTheme, getStoredTheme, type Theme } from '../../ui/theme'
 import { useToast } from '../../ui/toast/toastContext'
+import { AccountSection } from './AccountSection'
 
 const m = t.me
 
@@ -132,7 +133,7 @@ export function MePage() {
       </Group>
 
       <Group title={m.account}>
-        <p className="text-muted">{m.accountLocal}</p>
+        <AccountSection />
       </Group>
 
       <Group title={m.data}>

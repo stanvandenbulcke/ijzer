@@ -1,6 +1,7 @@
 import { ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { APP_NAME, APP_VERSION } from '../../app/config'
+import { accountsEnabled } from '../../data/supabase/config'
 import { t } from '../../i18n'
 import { Button } from '../../ui/Button'
 import { isStandalone } from '../../ui/standalone'
@@ -33,10 +34,30 @@ export function LandingPage() {
       </header>
 
       <section className="relative mt-8 flex flex-col gap-3">
-        <Button size="lg" block icon={ArrowRight} onClick={() => navigate('/welkom')}>
-          {t.landing.start}
-        </Button>
-        <p className="text-sm text-muted">{t.landing.localNote}</p>
+        {accountsEnabled ? (
+          <>
+            <Button size="lg" block icon={ArrowRight} onClick={() => navigate('/registreren')}>
+              {t.auth.register.title}
+            </Button>
+            <Button variant="secondary" block onClick={() => navigate('/login')}>
+              {t.auth.login.title}
+            </Button>
+            <Link
+              to="/welkom"
+              className="mt-1 min-h-11 py-3 text-center font-semibold text-accent-text"
+            >
+              {t.auth.localTry}
+            </Link>
+            <p className="text-center text-sm text-muted">{t.auth.localTryNote}</p>
+          </>
+        ) : (
+          <>
+            <Button size="lg" block icon={ArrowRight} onClick={() => navigate('/welkom')}>
+              {t.landing.start}
+            </Button>
+            <p className="text-sm text-muted">{t.landing.localNote}</p>
+          </>
+        )}
       </section>
 
       <section className="relative mt-12">

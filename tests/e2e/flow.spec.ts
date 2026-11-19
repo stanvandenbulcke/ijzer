@@ -10,7 +10,7 @@ const shot = (page: Page, name: string, project: string) =>
 
 async function onboard(page: Page) {
   await page.goto('/')
-  await page.getByRole('button', { name: 'Aan de slag' }).click()
+  await page.getByRole('link', { name: 'Eerst proberen zonder account' }).click()
   await expect(page).toHaveURL(/\/welkom/)
   await page.getByLabel('Naam of bijnaam').fill('Stan')
   await page.getByLabel('Huidig gewicht').fill('78,4')

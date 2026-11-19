@@ -33,6 +33,12 @@ export interface OutboxEntry {
 
 export type SyncedTable = 'profile' | 'customExercises' | 'routines' | 'workouts' | 'bodyWeights'
 
+/** Small key-value store for sync bookkeeping: owner of the local data, pull cursors. */
+export interface MetaRow {
+  key: string
+  value: unknown
+}
+
 /**
  * Local database (IndexedDB via Dexie). Every change is written here first, so nothing is
  * lost without network or when the app is closed mid-workout (SPEC §4.4 "Robuustheid").
@@ -44,6 +50,7 @@ export class IjzerDb extends Dexie {
   workouts!: Table<WorkoutRow, string>
   bodyWeights!: Table<BodyWeightRow, string>
   outbox!: Table<OutboxEntry, number>
+  meta!: Table<MetaRow, string>
 
   constructor(name = 'ijzer') {
     super(name)
@@ -55,6 +62,8 @@ export class IjzerDb extends Dexie {
       bodyWeights: 'id, &day, updatedAt',
       outbox: '++seq, table, rowId',
     })
+    // v2: accounts. `meta` holds which user owns the local data and the pull cursors.
+    this.version(2).stores({ meta: 'key' })
   }
 }
 
