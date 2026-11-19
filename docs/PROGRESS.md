@@ -14,17 +14,19 @@
 - [x] PWA manifest, service worker, temporary icon, self-hosted fonts
 - [x] Secret scan of `dist/` (`npm run check:secrets`), GitHub Actions CI workflow
 - [x] Pushed to GitHub (`stanvandenbulcke/ijzer`, private), CI green
+- [x] Hosting: Cloudflare Workers (static assets), auto-deploy on push to `main`
+      → https://ijzer.stanvandenbulck.workers.dev — verified: pages, deep links (SPA fallback),
+      manifest, service worker, fonts, security headers from `public/_headers`
 
 ## Waiting for Stan
 
-- [ ] Hosting account (Cloudflare or Vercel) → first deploy + preview URLs
 - [ ] Supabase account with projects `ijzer-dev` and `ijzer-prod` (needed at the start of phase 1)
 - [ ] Answer: optional keep-alive against Supabase pausing? (SPEC §11.5)
 - [ ] Test on iPhone: open the deployed URL in Safari, add to home screen
 
 ## Not done yet in phase 0
 
-- Deploy and preview URLs (blocked on the accounts above)
+- Preview URLs per branch/PR: Cloudflare offers them, check once we use a branch
 - Supabase CLI link (blocked on the projects)
 - Lighthouse PWA check against the deployed URL
 

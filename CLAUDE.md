@@ -38,17 +38,17 @@ truth; re-read it at the start of every phase. Never edit SPEC.md.
 
 ## Commands
 
-| Command                       | What it does                                                                    |
-| ----------------------------- | ------------------------------------------------------------------------------- |
-| `npm run dev`                 | Dev server (http://localhost:5173)                                              |
-| `npm run check`               | typecheck + lint + unit tests + build + secret scan — run before every commit   |
-| `npm run test` / `test:watch` | Vitest unit tests                                                               |
-| `npm run test:e2e`            | Playwright on iPhone viewports against the production build; writes screenshots |
-| `npm run lint` / `format`     | ESLint / Prettier                                                               |
-| `npm run build` / `preview`   | Production build / serve it locally                                             |
-| `npm run icons`               | Regenerate PNG icons from `public/icon.svg`                                     |
-| Deploy                        | Automatic on push to GitHub (hosting not connected yet — see PROGRESS.md)       |
-| Migrations                    | `supabase db push` after `supabase link` (from phase 1)                         |
+| Command                       | What it does                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------- |
+| `npm run dev`                 | Dev server (http://localhost:5173)                                                          |
+| `npm run check`               | typecheck + lint + unit tests + build + secret scan — run before every commit               |
+| `npm run test` / `test:watch` | Vitest unit tests                                                                           |
+| `npm run test:e2e`            | Playwright on iPhone viewports against the production build; writes screenshots             |
+| `npm run lint` / `format`     | ESLint / Prettier                                                                           |
+| `npm run build` / `preview`   | Production build / serve it locally                                                         |
+| `npm run icons`               | Regenerate PNG icons from `public/icon.svg`                                                 |
+| Deploy                        | Cloudflare Workers, automatic on push to `main` → https://ijzer.stanvandenbulck.workers.dev |
+| Migrations                    | `supabase db push` after `supabase link` (from phase 1)                                     |
 
 ## Where is what
 
