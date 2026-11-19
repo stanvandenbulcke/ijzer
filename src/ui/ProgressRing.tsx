@@ -12,7 +12,7 @@ const strokes: Record<Tone, string> = {
 export interface ProgressRingProps {
   value: number
   max: number
-  /** Spoken description, e.g. "1.640 van 2.400 kcal". */
+  /** Spoken description, e.g. "1.640 van 2.400 kcal". Empty = decorative. */
   label: string
   size?: number
   thickness?: number
@@ -36,8 +36,9 @@ export function ProgressRing({
 
   return (
     <div
-      role="img"
-      aria-label={label}
+      role={label ? 'img' : undefined}
+      aria-label={label || undefined}
+      aria-hidden={label ? undefined : true}
       className="relative inline-grid place-items-center"
       style={{ width: size, height: size }}
     >

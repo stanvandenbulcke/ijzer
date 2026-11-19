@@ -1,0 +1,30 @@
+import { APP_VERSION } from '../app/config'
+import { db } from './db'
+
+/** All local data as one JSON file (SPEC §4.11 "data-export"). */
+export async function exportAll(): Promise<Blob> {
+  const [profile, customExercises, routines, workouts, bodyWeights] = await Promise.all([
+    db.profile.toArray(),
+    db.customExercises.toArray(),
+    db.routines.toArray(),
+    db.workouts.toArray(),
+    db.bodyWeights.toArray(),
+  ])
+  const payload = {
+    app: 'IJZER',
+    version: APP_VERSION,
+    exportedAt: new Date().toISOString(),
+    profile,
+    customExercises,
+    routines,
+    workouts,
+    bodyWeights,
+  }
+  return new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+}
+
+/** Deletes the whole local database. */
+export async function wipeAll(): Promise<void> {
+  db.close()
+  await db.delete()
+}

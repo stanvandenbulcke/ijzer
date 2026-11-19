@@ -1,5 +1,5 @@
 /** Texts of the /design style page (dev tool for approving the look, SPEC §6.2). */
-export const nlDesign = {
+export const design = {
   title: 'Ontwerp',
   intro:
     'Alle kleuren, letters en onderdelen van de app op één pagina. Keur je deze stijl goed, dan bouw ik de rest hiermee.',

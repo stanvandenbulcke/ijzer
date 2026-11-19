@@ -1,0 +1,63 @@
+/** Strings shared by the whole app: buttons, keypad, tab names, error pages. */
+export const common = {
+  common: {
+    back: 'Terug',
+    loading: 'Laden…',
+    save: 'Opslaan',
+    cancel: 'Annuleren',
+    delete: 'Verwijderen',
+    edit: 'Bewerken',
+    add: 'Toevoegen',
+    search: 'Zoeken',
+    more: 'Meer opties',
+    why: 'Waarom?',
+    retry: 'Opnieuw proberen',
+    next: 'Volgende',
+    skip: 'Overslaan',
+    start: 'Start',
+    backToStart: 'Terug naar start',
+    close: 'Sluiten',
+    undo: 'Ongedaan maken',
+    notifications: 'Meldingen',
+    done: 'Klaar',
+    kg: 'kg',
+    reps: 'reps',
+  },
+  app: {
+    workoutRunning: 'Training bezig',
+    continue: 'Verder',
+  },
+  flipbook: {
+    start: (name: string) => `${name}: startpositie`,
+    end: (name: string) => `${name}: eindpositie`,
+    play: 'Afspelen',
+    pause: 'Pauzeren',
+  },
+  numberPad: {
+    backspace: 'Wis laatste cijfer',
+    comma: 'Komma',
+    decrease: (step: string) => `Min ${step}`,
+    increase: (step: string) => `Plus ${step}`,
+  },
+  stepper: {
+    decrease: (step: string) => `Verlaag met ${step}`,
+    increase: (step: string) => `Verhoog met ${step}`,
+  },
+  tabs: {
+    label: 'Hoofdnavigatie',
+    today: 'Vandaag',
+    train: 'Train',
+    nutrition: 'Voeding',
+    progress: 'Progressie',
+    me: 'Ik',
+  },
+  notFound: {
+    title: 'Deze pagina bestaat niet',
+    body: 'De link klopt niet of de pagina is verhuisd.',
+  },
+  error: {
+    title: 'Er ging iets mis',
+    body: 'Herlaad de pagina. Je gegevens zijn niet verloren.',
+    reload: 'Herladen',
+  },
+}

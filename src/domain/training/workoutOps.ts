@@ -274,3 +274,30 @@ export function currentExerciseId(workout: Workout): string | null {
   )
   return open?.id ?? null
 }
+
+/** Inserts warm-up sets (from the warm-up calculator) before the working sets. */
+export function insertWarmups(
+  workout: Workout,
+  exerciseId: string,
+  warmups: Array<{ weightKg: number; reps: number }>,
+  newId: IdFn,
+): Workout {
+  return mapExercise(workout, exerciseId, (e) => ({
+    ...e,
+    sets: [
+      ...warmups.map((w) => ({
+        ...blankSet(newId(), 'warmup'),
+        weightKg: w.weightKg,
+        reps: w.reps,
+      })),
+      ...e.sets.filter((s) => s.type !== 'warmup' || s.completed),
+    ],
+  }))
+}
+
+/** Removes an exercise that was added by mistake. Only allowed without completed sets. */
+export function removeExercise(workout: Workout, exerciseId: string): Workout {
+  const target = workout.exercises.find((e) => e.id === exerciseId)
+  if (!target || target.sets.some((s) => s.completed)) return workout
+  return { ...workout, exercises: workout.exercises.filter((e) => e.id !== exerciseId) }
+}

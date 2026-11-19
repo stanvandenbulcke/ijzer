@@ -49,3 +49,10 @@ export async function deleteWorkout(id: string): Promise<void> {
     await enqueue('workouts', id)
   })
 }
+
+export async function restoreWorkout(id: string): Promise<void> {
+  await db.transaction('rw', db.workouts, db.outbox, async () => {
+    await db.workouts.update(id, { deletedAt: null, updatedAt: now() })
+    await enqueue('workouts', id)
+  })
+}

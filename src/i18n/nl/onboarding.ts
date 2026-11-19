@@ -1,0 +1,62 @@
+/** /welkom: step-by-step onboarding (SPEC §4.1). Every step can be skipped and changed later. */
+export const onboarding = {
+  progress: (step: number, total: number) => `Stap ${step} van ${total}`,
+  skip: 'Overslaan',
+  next: 'Volgende',
+  back: 'Vorige',
+  finish: 'Klaar, naar de app',
+  laterNote: 'Alles kan je later aanpassen onder Ik.',
+  about: {
+    title: 'Wie ben je?',
+    body: 'Voor je begroeting en om je verbruik te schatten.',
+    name: 'Naam of bijnaam',
+    birthYear: 'Geboortejaar',
+    sex: 'Geslacht (voor de BMR-formule)',
+    male: 'Man',
+    female: 'Vrouw',
+    none: 'Zeg ik liever niet',
+    height: 'Lengte',
+    weight: 'Huidig gewicht',
+  },
+  goal: {
+    title: 'Wat is je doel?',
+    body: 'Dit stuurt je calorie-advies en hoe streng de progressie-tips zijn.',
+    cut: 'Afvallen',
+    maintain: 'Onderhouden',
+    bulk: 'Aankomen',
+    pace: 'Tempo per week',
+    pacePct: (pct: string) => `${pct} % van je gewicht`,
+    safety:
+      'Afvallen gaat nooit sneller dan 1 % per week: zo behoud je zoveel mogelijk spier. Geen medisch advies; bij twijfel: arts of diëtist.',
+  },
+  activity: {
+    title: 'Hoe actief ben je buiten de gym?',
+    levels: {
+      sedentary: ['Zittend', 'Vooral zitten, weinig wandelen'],
+      light: ['Licht actief', 'Wat wandelen, fietsen naar de les'],
+      moderate: ['Gemiddeld', 'Veel te voet of op de fiets'],
+      active: ['Actief', 'Staand werk of veel beweging'],
+      very_active: ['Erg actief', 'Zwaar fysiek werk'],
+    },
+    steps: 'Stappendoel per dag',
+  },
+  gym: {
+    title: 'Je gym',
+    body: 'Zodat de app weet met welke stappen je zwaarder kan gaan.',
+    bar: 'Halterstang',
+    plates: 'Schijven die er zijn',
+    dumbbellStep: 'Stappen tussen dumbbells',
+    machineStep: 'Stappen op toestellen',
+    cableStep: 'Stappen op kabels',
+  },
+  schedule: {
+    title: 'Hoe vaak train je?',
+    body: 'Alleen een richtlijn voor je weekreeks. Rustdagen worden nooit bestraft.',
+    perWeek: 'Trainingen per week',
+  },
+  install: {
+    title: 'Op je beginscherm',
+    body: 'Dan opent IJZER schermvullend als een echte app, ook zonder internet.',
+    done: 'Top: je gebruikt de app al vanaf je beginscherm.',
+  },
+}

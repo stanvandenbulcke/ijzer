@@ -71,8 +71,3 @@ export function useExerciseLibrary(): ExerciseLibrary | null | undefined {
     return { exercises, byId: (id: string) => map.get(id) }
   }, [catalog, custom])
 }
-
-/** URL of one of the two photos (start / end position) of a catalog exercise. */
-export function exerciseImage(id: string, index: 0 | 1): string {
-  return `/exercises/${encodeURIComponent(id)}/${index}.webp`
-}

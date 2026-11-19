@@ -1,0 +1,56 @@
+import type { MuscleId, MuscleRegion } from '../../domain/muscles/taxonomy'
+
+/** Muscles, body regions and volume zones. */
+export const body = {
+  muscleMap: {
+    front: 'Voorkant',
+    back: 'Achterkant',
+    direct: 'direct',
+    indirect: 'indirect',
+  },
+  muscles: {
+    chest: 'Borst',
+    front_delts: 'Voorste schouder',
+    side_delts: 'Zijkant schouder',
+    rear_delts: 'Achterste schouder',
+    triceps: 'Triceps',
+    biceps: 'Biceps',
+    forearms: 'Onderarmen',
+    lats: 'Lats',
+    upper_back: 'Bovenrug',
+    traps: 'Trapezius',
+    lower_back: 'Onderrug',
+    abs: 'Buikspieren',
+    obliques: 'Schuine buikspieren',
+    quads: 'Quadriceps',
+    hamstrings: 'Hamstrings',
+    glutes: 'Bilspieren',
+    adductors: 'Adductoren',
+    abductors: 'Abductoren',
+    calves: 'Kuiten',
+    neck: 'Nek',
+  } satisfies Record<MuscleId, string>,
+  regions: {
+    push: 'Duwen',
+    pull: 'Trekken',
+    legs: 'Benen',
+    core: 'Romp',
+    neck: 'Nek',
+  } satisfies Record<MuscleRegion, string>,
+  volumeZoneRanges: {
+    none: '0',
+    low: '< 6',
+    moderate: '6–9',
+    target: '10–20',
+    high: '21–25',
+    veryHigh: '> 25',
+  },
+  volumeZones: {
+    none: 'Niet getraind',
+    low: 'Te weinig',
+    moderate: 'Matig',
+    target: 'Doelzone',
+    high: 'Hoog',
+    veryHigh: 'Erg hoog',
+  },
+}

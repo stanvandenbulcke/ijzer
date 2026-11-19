@@ -26,3 +26,24 @@ describe('formatDuration', () => {
     expect(formatDuration(-4)).toBe('0:00')
   })
 })
+
+describe('dates and times', () => {
+  it('formats days in Dutch', async () => {
+    const { formatDayShort, formatDayLong, formatClock, formatMinutes } = await import('./format')
+    expect(formatDayShort('2026-11-16')).toMatch(/^16 nov/)
+    expect(formatDayLong('2026-11-16')).toBe('maandag 16 november')
+    expect(formatClock('2026-11-16T16:42:00Z')).toBe('17:42')
+    expect(formatMinutes(48)).toBe('48 min')
+    expect(formatMinutes(65)).toBe('1 u 05')
+  })
+})
+
+describe('parseDecimal', () => {
+  it('accepts a comma or a dot and rejects garbage', async () => {
+    const { parseDecimal } = await import('./format')
+    expect(parseDecimal('78,4')).toBe(78.4)
+    expect(parseDecimal(' 78.4 ')).toBe(78.4)
+    expect(parseDecimal('')).toBeNull()
+    expect(parseDecimal('abc')).toBeNull()
+  })
+})

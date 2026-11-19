@@ -27,3 +27,10 @@ export async function deleteBodyWeight(id: string): Promise<void> {
     await enqueue('bodyWeights', id)
   })
 }
+
+export async function restoreBodyWeight(id: string): Promise<void> {
+  await db.transaction('rw', db.bodyWeights, db.outbox, async () => {
+    await db.bodyWeights.update(id, { deletedAt: null, updatedAt: now() })
+    await enqueue('bodyWeights', id)
+  })
+}

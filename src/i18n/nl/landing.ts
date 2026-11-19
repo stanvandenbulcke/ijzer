@@ -1,0 +1,30 @@
+/** The public landing page (SPEC §4.1). */
+export const landing = {
+  tagline: 'Elke rep telt.',
+  promise: 'Log je training in seconden, zie precies of je sterker wordt, en begrijp waarom.',
+  start: 'Aan de slag',
+  localNote: 'Gratis en offline. Je gegevens blijven op dit toestel tot accounts actief zijn.',
+  createAccount: 'Account maken',
+  logIn: 'Inloggen',
+  demoTitle: 'Zo ziet het eruit',
+  demo: {
+    logTitle: 'Een set loggen',
+    logBody: 'Zelfde als vorige keer? Eén tik op het vinkje.',
+    prTitle: 'Zie of je sterker wordt',
+    prBody: 'Je geschatte 1RM per training, met records.',
+    prChart: 'Geschatte 1RM bankdrukken stijgt van 92 naar 101 kg over acht weken',
+    mapTitle: 'Volume per spier',
+    mapBody: 'Welke spieren deze week genoeg sets kregen.',
+    mapLabel: 'Borst en rug in de doelzone, schouders matig, benen te weinig',
+    exercise: 'Bench press',
+    previous: 'vorige',
+  },
+  installTitle: 'Zet op je beginscherm',
+  installSteps: [
+    'Open deze pagina in Safari.',
+    'Tik onderaan op de Deel-knop.',
+    'Kies "Zet op beginscherm".',
+  ],
+  installedNote: 'Je gebruikt de app vanaf je beginscherm.',
+  version: 'Versie',
+}

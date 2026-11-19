@@ -67,3 +67,57 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@keyframes loading-slide {
+  from {
+    transform: translateX(-2rem);
+  }
+  to {
+    transform: translateX(6rem);
+  }
+}
+.loading-bar {
+  animation: loading-slide 1s var(--ease-out) infinite alternate;
+}
+
+@keyframes plate-slide {
+  from {
+    transform: translateX(260px);
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+}
+.plate-slide {
+  animation: plate-slide 520ms var(--ease-out) both;
+}
+
+@keyframes rest-flash {
+  0%,
+  50% {
+    filter: brightness(1.25);
+  }
+  25%,
+  75% {
+    filter: brightness(1);
+  }
+}
+.rest-flash {
+  animation: rest-flash 900ms ease-out;
+}
+
+/* PR: the badge clicks in like a plate onto a sleeve. */
+@keyframes pr-pop {
+  0% {
+    transform: translateX(-10px) scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(2px) scale(1.12);
+    opacity: 1;
+  }
+}
+.pr-pop {
+  animation: pr-pop 320ms var(--ease-out);
+}

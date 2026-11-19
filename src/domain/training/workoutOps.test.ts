@@ -173,3 +173,35 @@ describe('finishing', () => {
     expect(finishWorkout(sub, T0).exercises[0]!.status).toBe('substituted')
   })
 })
+
+describe('warm-ups and removing', () => {
+  it('inserts warm-ups before the working sets, replacing unticked ones', async () => {
+    const { insertWarmups } = await import('./workoutOps')
+    const w0 = start()
+    const ex = w0.exercises[0]!
+    const w = insertWarmups(
+      w0,
+      ex.id,
+      [
+        { weightKg: 20, reps: 10 },
+        { weightKg: 40, reps: 5 },
+      ],
+      newId,
+    )
+    expect(w.exercises[0]!.sets.map((s) => [s.type, s.weightKg, s.reps])).toEqual([
+      ['warmup', 20, 10],
+      ['warmup', 40, 5],
+      ['working', null, null],
+      ['working', null, null],
+    ])
+  })
+
+  it('removes only exercises without completed sets', async () => {
+    const { removeExercise } = await import('./workoutOps')
+    const w0 = start()
+    const [a, b] = w0.exercises
+    const done = completeSet(w0, a!.id, a!.sets[1]!.id, { weightKg: 80, reps: 8 }, T0)
+    expect(removeExercise(done, a!.id).exercises).toHaveLength(2)
+    expect(removeExercise(done, b!.id).exercises.map((e) => e.exerciseId)).toEqual(['bench'])
+  })
+})

@@ -1,5 +1,7 @@
 import { t } from '../../i18n'
 import { Badge } from '../../ui/Badge'
+import { involvementFills } from '../../ui/muscle-map/fills'
+import { MuscleMap } from '../../ui/muscle-map/MuscleMap'
 import { ProgressRing } from '../../ui/ProgressRing'
 import { Caption, Section } from './Section'
 import { SetRowDemo } from './SetRowDemo'
@@ -35,6 +37,20 @@ export function DataSection({ index }: { index: number }) {
             <span className="text-sm text-muted">{d.rings.rest}</span>
           </span>
         </ProgressRing>
+      </div>
+      <div>
+        <Caption>Spierkaart · bench press (direct fel, indirect half)</Caption>
+        <div className="flex justify-center">
+          <MuscleMap
+            size="lg"
+            label="Borst direct; voorste schouder en triceps indirect"
+            fills={involvementFills([
+              { muscle: 'chest', weight: 1 },
+              { muscle: 'front_delts', weight: 0.5 },
+              { muscle: 'triceps', weight: 0.5 },
+            ])}
+          />
+        </div>
       </div>
       <div>
         <Caption>Labels</Caption>

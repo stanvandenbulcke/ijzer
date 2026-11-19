@@ -1,0 +1,10 @@
+/** Public pages of the Train tab (used by src/app/router.tsx). */
+export { ActiveWorkoutPage } from './active-workout/ActiveWorkoutPage'
+export { HistoryPage } from './history/HistoryPage'
+export { WorkoutDetailPage } from './history/WorkoutDetailPage'
+export { CustomExercisePage } from './library/CustomExercisePage'
+export { ExerciseDetailPage } from './library/ExerciseDetailPage'
+export { LibraryPage } from './library/LibraryPage'
+export { RoutineEditorPage } from './routines/RoutineEditorPage'
+export { WorkoutSummaryPage } from './summary/WorkoutSummaryPage'
+export { TrainPage } from './TrainPage'
