@@ -25,5 +25,17 @@
 - **Static hosting:** the build in `dist/` is plain files; the service worker precaches the shell
   so the app opens without network.
 
-Status: phase 0 — only the static shell exists. `data/` and Supabase arrive in phases 1–3; this
-document grows with them.
+## Flow of one tap during a workout
+
+1. `ActiveWorkoutPage` calls a pure operation from `src/domain/training/workoutOps.ts`
+   (e.g. `completeSet`).
+2. `useWorkoutState` applies it to the latest local state and queues `saveWorkout` (Dexie +
+   outbox) — saves run one after another, so quick taps never build on stale data.
+3. Live queries (`dexie-react-hooks`) update other screens; `useTrainingData` recomputes
+   performances, which all statistics read through `performances()` (the honesty rules).
+
+## Status
+
+Local-first is complete; Supabase (auth, RLS, sync of the outbox) is the next step (ADR-010).
+The exercise catalog is a static JSON in `public/data/` (precached), photos are cached on
+first view.

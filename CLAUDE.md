@@ -55,14 +55,20 @@ truth; re-read it at the start of every phase. Never edit SPEC.md.
 ```
 docs/            SPEC, PLAN, PROGRESS, DECISIONS, ARCHITECTURE, DATA_MODEL, DESIGN, SCIENCE, GIDS_VOOR_STAN
 src/app/         router, providers, shell, error pages, config.ts (APP_NAME)
-src/features/    one folder per tab/feature, each with a README (landing, auth, onboarding, today,
-                 training/*, nutrition/*, progress/*, me, science, buddies)
-src/domain/      PURE TypeScript logic, no React, 100% tested, JSDoc with formula + source
-src/data/        Dexie schema, Supabase client, sync engine, repositories
+src/features/    one folder per tab/feature, each with a README and an index.ts (its public pages):
+                 landing, onboarding, today, training/{library,routines,active-workout,summary,
+                 history}, nutrition, progress/{overview,exercises,muscles,body,steps,analysis}, me
+src/domain/      PURE TypeScript logic, no React, tested: strength/ (e1RM, plates, warm-ups,
+                 progression), training/ (types, workout ops, performances, PRs, proposals,
+                 summary, streak), volume/, analysis/ (rules R1–R10, thresholds), energy/ (trend),
+                 exercises/ (search), muscles/ (taxonomy), profile/, time.ts
+src/data/        Dexie db (+ outbox), repositories (*Repo.ts), catalog loader, useTrainingData
 src/ui/          design system: tokens.css + shared components
 src/i18n/        nl.ts (typed messages)
 supabase/        migrations, functions, seed, tests (RLS)
-scripts/         icons, secret scan, later: dataset imports
+scripts/         icons, secret scan, contrast check, exercise import (+ curated mapping)
+public/data/     generated exercise catalog;  public/exercises/<id>/0|1.webp: photos
+eslint-rules/    own lint rule: features never import each other
 tests/e2e/       Playwright
 ```
 
@@ -73,6 +79,8 @@ tests/e2e/       Playwright
 - Files < ~300 lines. TypeScript strict + `noUncheckedIndexedAccess`.
 - Internally always kg; dates with date-fns `nl-BE`, timezone Europe/Brussels.
 - Dependencies are added in the phase that first uses them, not earlier.
+- Every honesty rule for statistics lives in `src/domain/training/performances.ts`; use it.
+- UI texts: `src/i18n/nl/<area>.ts`, one file per tab.
 - TypeScript is pinned to 6.x until typescript-eslint supports 7 (see DECISIONS.md).
 
 ## Definition of Done (per task and phase)

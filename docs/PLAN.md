@@ -4,7 +4,9 @@ Doel: na deze fase kan je een account maken, inloggen, de onboarding doorlopen e
 tabs navigeren. De tabs zelf zijn nog leeg (met een nette "komt in Fase X"-staat); de echte
 inhoud (routines, workouts, voeding…) komt vanaf Fase 2.
 
-Status: goedgekeurd op 2026-11-19. Blok A klaar, wacht op stijlgoedkeuring.
+Status: goedgekeurd op 2026-11-19. Blok A, B en D klaar. Op Stans vraag ("maak de volledige app")
+is ook Fase 2, 3 en de kern van 4 en 6 gebouwd in lokale modus. Blok C (Supabase) wacht op de
+Project URL. Zie PROGRESS.md.
 
 ## Blok A — Design system (geen Supabase nodig)
 

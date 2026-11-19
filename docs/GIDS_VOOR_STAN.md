@@ -18,6 +18,20 @@ Korte uitleg in gewone taal. Je hoeft dit niet vanbuiten te kennen; kom terug al
 
 Zie je na een update nog de oude versie? Sluit de app volledig af en open hem opnieuw.
 
+## De app gebruiken (kort)
+
+1. **Train → +** maakt een routine: kies oefeningen, sets, reps en rust. Of kopieer een
+   voorbeeldroutine (Push, Pull, Legs) en pas ze aan.
+2. **Start** een routine. Tik op een gewicht of aantal reps om het eigen cijferklavier te
+   openen. Het vinkje logt een set; deed je hetzelfde als vorige keer, dan is één tik genoeg.
+3. Toestel bezet? Via **…** bij een oefening: _Later doen_, _Vervangen_ of _Overslaan_.
+   Overgeslagen oefeningen tellen nergens mee, ook niet als nul.
+4. **Afronden** toont je samenvatting met records en een deelbare afbeelding.
+5. **Progressie** toont je grafieken, records per oefening, volume per spier en tips.
+
+Je gegevens staan voorlopig alleen op je iPhone (er zijn nog geen accounts). Onder **Ik →
+Exporteer alles** kan je een back-up downloaden.
+
 ## Moet ik iets installeren op mijn laptop?
 
 Niet verplicht. Claude bouwt in de cloud en jij test via de link. Wil je de code zelf bekijken

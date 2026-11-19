@@ -1,7 +1,10 @@
 # Data model
 
-Outline from SPEC §7.1. Exact columns, relations and RLS policies are written here as each
-migration lands (first one: `profiles`, phase 1).
+Outline from SPEC §7.1. Locally (Dexie, `src/data/db.ts`) the tables are: `profile` (one row
+`me`), `customExercises`, `routines` and `workouts` (documents with nested exercises and sets,
+ADR-012), `bodyWeights` (one per day) and `outbox` (changed rows waiting for sync). Types live
+in `src/domain/**/types.ts`. Exact Postgres columns and RLS policies are written here when the
+first migration lands.
 
 **Every table:** `id uuid` (client-generated), `created_at`, `updated_at`, `deleted_at`
 (soft delete for sync), `user_id` where applicable. **RLS on every table.**

@@ -72,3 +72,57 @@ iPhone, which only reaches the deployed site.
 **Decision:** `/design` is lazy-loaded and online until Stan approves; then it is limited to
 `import.meta.env.DEV`. Its technical captions (font and token names) are inline, not in i18n.
 **Consequences:** Remember to gate the route after approval (tracked in PROGRESS.md).
+
+## ADR-010 — Local-first without accounts until Supabase is linked
+
+**Context:** Stan asked to build the full app while the Supabase project URL was not yet known.
+Accounts need a working backend to test end to end.
+**Decision:** The app runs in "lokale modus": onboarding creates a local profile, all data lives
+in IndexedDB, every change is also recorded in an `outbox` table. Auth screens, migrations, RLS
+tests and sync are built once the project URL is available.
+**Consequences:** Nothing is lost later: the outbox already lists every changed row to upload on
+first login. Until then data exists on one device only (export is available under Ik).
+
+## ADR-011 — Muscle mapping: curated list and automatic rules
+
+**Context:** free-exercise-db only knows "shoulders"; SPEC asks for ±150 curated exercises.
+**Decision:** `scripts/exercises/curated.mjs` maps 212 common exercises by hand (B2 table plus
+the same logic). Other exercises map automatically; shoulders are split by name (rear/reverse/
+face pull → rear delts; lateral/side/upright → side delts; otherwise front delts).
+Doubtful cases: upright rows count side delts direct and traps indirect; dips count chest or
+triceps as direct depending on the dataset variant; rows count upper back direct with lats,
+rear delts and biceps indirect (as B2); Smith/machine variants follow their free-weight twin.
+**Consequences:** Auto-mapped exercises show "Spieren automatisch ingedeeld" on their page.
+
+## ADR-012 — Routines and workouts stored as documents
+
+**Context:** SPEC §7.1 lists normalised tables (routine_exercises, workout_sets…).
+**Decision:** Locally a routine and a workout are each one document with nested exercises and
+sets. One row per routine/workout keeps offline edits atomic and last-write-wins sync simple.
+**Consequences:** In Postgres they become `jsonb` columns with owner-only RLS. Statistics are
+computed in `src/domain` from the documents (a few hundred workouts per year is trivial).
+Revisit if buddy sharing needs per-set queries.
+
+## ADR-013 — Intl instead of date-fns, own SVG charts instead of Recharts
+
+**Decision:** Dates and numbers use the built-in `Intl` API with `nl-BE` and Europe/Brussels;
+charts are a small own SVG component (`src/ui/charts/LineChart.tsx`).
+**Consequences:** No extra dependencies, full control over the look; revisit if charts grow.
+
+## ADR-014 — Reorder with up/down buttons
+
+**Context:** SPEC asks for touch-friendly drag to reorder.
+**Decision:** Up/down buttons first: reliable with sweaty thumbs and accessible. Drag can be
+added later.
+
+## ADR-015 — Profile editing reuses onboarding
+
+**Decision:** "Profiel, doel en uitrusting" under Ik reopens `/welkom` with the current values
+and returns to /ik. One form to maintain instead of two.
+
+## ADR-016 — Service worker auto-update
+
+**Context:** Stan's home-screen app kept showing an old cached version (404 on /design).
+**Decision:** `registerType: 'autoUpdate'`, registered in `src/app/pwa.ts`, which also checks
+for updates when the app comes back into view and every hour. All data is in IndexedDB, so the
+automatic reload is safe, also mid-workout.
