@@ -1,7 +1,7 @@
 /** Tab Ik: profile, settings, data and credits (SPEC §4.11). */
 export const me = {
   title: 'Ik',
-  editProfile: 'Profiel, doel en uitrusting',
+  editProfile: 'Profiel en doel',
   editProfileHint: 'Loop de welkomststappen opnieuw door',
   goals: { cut: 'Afvallen', maintain: 'Onderhouden', bulk: 'Aankomen' },
   settings: 'Instellingen',

@@ -9,6 +9,7 @@ import { startWorkout } from '../../data/workoutActions'
 import { useActiveWorkout } from '../../data/workoutsRepo'
 import { useSession } from '../../data/auth'
 import { accountsEnabled } from '../../data/supabase/config'
+import { analyse } from '../../domain/analysis/rules'
 import { weightTrend } from '../../domain/energy/trend'
 import { totalWorkingSets } from '../../domain/training/routineEdit'
 import { weekStatus } from '../../domain/training/streak'
@@ -21,6 +22,7 @@ import { Button } from '../../ui/Button'
 import { LoadingState } from '../../ui/LoadingState'
 import { Page, PageHeader } from '../../ui/PageHeader'
 import { ValueEntrySheet } from '../../ui/ValueEntrySheet'
+import { CoachCard } from './CoachCard'
 import { Card, WeekCard, WeightCard } from './TodayCards'
 
 const d = t.today
@@ -52,6 +54,19 @@ export function TodayPage() {
     }
     return null
   }, [data])
+
+  const insight = useMemo(
+    () =>
+      data && profile
+        ? (analyse({
+            perfs: data.perfs,
+            byId: data.library.byId,
+            today,
+            cutting: profile.goal === 'cut',
+          })[0] ?? null)
+        : null,
+    [data, profile, today],
+  )
 
   if (!profile || !routines || data === undefined || !weights) return <LoadingState />
   const status = weekStatus(
@@ -137,6 +152,13 @@ export function TodayPage() {
             <p className="text-sm text-muted">{d.noPr}</p>
           )}
         </Card>
+
+        <CoachCard
+          insight={insight}
+          name={(id) => data?.library.byId(id)?.name ?? id}
+          cutting={profile.goal === 'cut'}
+          dayOfYear={Math.floor(Date.parse(`${today}T00:00:00Z`) / 86_400_000)}
+        />
 
         <WeightCard points={points} today={today} onLog={() => setWeighing(true)} />
 

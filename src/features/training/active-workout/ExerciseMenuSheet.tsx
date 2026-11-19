@@ -31,7 +31,7 @@ export interface MenuActions {
   setPain: (where: string) => void
 }
 
-type View = 'main' | 'skip' | 'note' | 'pain'
+export type View = 'main' | 'skip' | 'note' | 'pain'
 
 /** The "…" menu of an exercise during a workout (SPEC §4.4 "Overslaan & flexibiliteit"). */
 export function ExerciseMenuSheet({
@@ -39,13 +39,15 @@ export function ExerciseMenuSheet({
   onOpenChange,
   title,
   actions,
+  initialView = 'main',
 }: {
   open: boolean
   onOpenChange: (o: boolean) => void
   title: string
   actions: MenuActions
+  initialView?: View
 }) {
-  const [view, setView] = useState<View>('main')
+  const [view, setView] = useState<View>(initialView)
   const [note, setNote] = useState(actions.note)
   const [pain, setPain] = useState(actions.pain)
   const close = () => {

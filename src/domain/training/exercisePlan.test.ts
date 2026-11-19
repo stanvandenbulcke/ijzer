@@ -38,6 +38,7 @@ describe('planExercise', () => {
       { weightKg: 82.5, reps: 8 },
     ])
     expect(plan.previousBySet.map((s) => s?.reps)).toEqual([12, 12])
+    expect(plan.previousDay).toBe('2026-11-12')
   })
 
   it('marks a PR once, not again for an equal set later today', () => {

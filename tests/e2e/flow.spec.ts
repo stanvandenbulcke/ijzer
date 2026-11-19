@@ -14,7 +14,7 @@ async function onboard(page: Page) {
   await expect(page).toHaveURL(/\/welkom/)
   await page.getByLabel('Naam of bijnaam').fill('Stan')
   await page.getByLabel('Huidig gewicht').fill('78,4')
-  for (let i = 0; i < 5; i++) await page.getByRole('button', { name: 'Volgende' }).click()
+  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Volgende' }).click()
   await page.getByRole('button', { name: 'Klaar, naar de app' }).click()
   await expect(page.getByRole('heading', { name: 'Hoi Stan' })).toBeVisible()
 }
@@ -54,6 +54,18 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await page.getByLabel('Naam', { exact: true }).fill('Push A')
   await pickExercise(page, 'bench', 'Barbell Bench Press - Medium Grip')
   await pickExercise(page, 'lateral raise', 'Side Lateral Raise')
+
+  // Your own exercise, made without leaving the routine builder.
+  await page.getByRole('button', { name: 'Oefening toevoegen' }).click()
+  await page.getByRole('dialog').getByRole('searchbox').fill('cable y raise')
+  await page.getByRole('dialog').getByRole('button', { name: 'Eigen oefening maken' }).click()
+  await expect(page.getByRole('dialog').getByLabel('Naam')).toHaveValue('cable y raise')
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: /^Zijkant schouder/ })
+    .click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Oefening opslaan' }).click()
+  await expect(page.getByRole('heading', { name: 'cable y raise' })).toBeVisible()
   await expect(page.getByText('Volume per spier in deze routine')).toBeVisible()
   await shot(page, 'editor', project)
   await page.getByRole('button', { name: 'Routine opslaan' }).click()
@@ -74,8 +86,10 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await expect(page.getByRole('timer')).toBeVisible()
   await shot(page, 'workout', project)
 
-  await page.getByRole('button', { name: /Meer opties: Side Lateral Raise/ }).click()
-  await page.getByRole('button', { name: 'Overslaan' }).click()
+  const raises = page.locator('article', {
+    has: page.getByRole('heading', { name: 'Side Lateral Raise' }),
+  })
+  await raises.getByRole('button', { name: 'Overslaan' }).click()
   await page.getByRole('button', { name: 'Toestel bezet' }).click()
   await expect(page.getByText('Overgeslagen · Toestel bezet')).toBeVisible()
 

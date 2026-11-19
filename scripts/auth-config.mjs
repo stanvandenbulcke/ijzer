@@ -18,16 +18,22 @@ const config = {
 
 const target = process.argv[2] ?? 'dev'
 const headers = { 'Content-Type': 'application/json' }
-if (process.env.SUPABASE_ACCESS_TOKEN) headers.Authorization = `Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`
-const res = await fetch(`https://api.supabase.com/v1/projects/${PROJECTS[target].ref}/config/auth`, {
-  method: 'PATCH',
-  headers,
-  body: JSON.stringify(config),
-})
+if (process.env.SUPABASE_ACCESS_TOKEN)
+  headers.Authorization = `Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`
+const res = await fetch(
+  `https://api.supabase.com/v1/projects/${PROJECTS[target].ref}/config/auth`,
+  {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(config),
+  },
+)
 const body = await res.json().catch(() => ({}))
 console.log(`${target} HTTP ${res.status}`)
 for (const key of Object.keys(config)) {
   const ok = JSON.stringify(body[key]) === JSON.stringify(config[key])
-  console.log(`${ok ? ' ok ' : 'DIFF'} ${key}${ok ? '' : ` = ${String(body[key] ?? body.message).slice(0, 80)}`}`)
+  console.log(
+    `${ok ? ' ok ' : 'DIFF'} ${key}${ok ? '' : ` = ${String(body[key] ?? body.message).slice(0, 80)}`}`,
+  )
 }
 if (!res.ok) process.exit(1)

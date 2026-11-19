@@ -1,11 +1,19 @@
-import { HelpCircle, MoreHorizontal, Plus, TriangleExclamationPoint } from 'lucide-react'
+import {
+  Clock,
+  HelpCircle,
+  MoreHorizontal,
+  Plus,
+  Repeat2,
+  SkipForward,
+  TriangleExclamationPoint,
+} from 'lucide-react'
 import { useState } from 'react'
 import type { ExercisePlan } from '../../../domain/training/exercisePlan'
 import { describeSet } from '../../../domain/training/proposals'
 import type { Exercise, WorkoutExercise, WorkoutSet } from '../../../domain/training/types'
 import type { Suggestion } from '../../../domain/strength/progression'
 import { t } from '../../../i18n'
-import { formatNumber } from '../../../i18n/format'
+import { formatDayLong, formatNumber } from '../../../i18n/format'
 import { Button, IconButton } from '../../../ui/Button'
 import { MuscleChip } from '../../../ui/Chip'
 import { cx } from '../../../ui/cx'
@@ -47,6 +55,9 @@ export interface CardActions {
   addSet: () => void
   openMenu: () => void
   unskip: () => void
+  skip: () => void
+  later: () => void
+  substitute: () => void
 }
 
 /** One exercise during the workout: header, today's target, sets, add set. */
@@ -55,12 +66,15 @@ export function ExerciseCard({
   exercise,
   plan,
   substituteName,
+  showHint,
   actions,
 }: {
   item: WorkoutExercise
   exercise: Exercise | undefined
   plan: ExercisePlan
   substituteName: string | null
+  /** Explain the dimmed proposals (first workouts only). */
+  showHint: boolean
   actions: CardActions
 }) {
   const [why, setWhy] = useState(false)
@@ -123,6 +137,27 @@ export function ExerciseCard({
         />
       </header>
 
+      {/* Always visible: what you need when a machine is taken or something hurts. */}
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {(
+          [
+            [SkipForward, w.skip, actions.skip],
+            [Clock, w.later, actions.later],
+            [Repeat2, w.substitute, actions.substitute],
+          ] as const
+        ).map(([Icon, label, onClick]) => (
+          <button
+            key={label}
+            type="button"
+            onClick={onClick}
+            className="press flex min-h-11 items-center justify-center gap-1.5 rounded-md border border-line-strong text-sm font-semibold"
+          >
+            <Icon aria-hidden size={16} />
+            {label}
+          </button>
+        ))}
+      </div>
+
       {target && (
         <div className="mt-3 rounded-sm border-l-4 border-focus bg-surface-2 px-3 py-2">
           <div className="flex items-center gap-2">
@@ -150,7 +185,13 @@ export function ExerciseCard({
         </p>
       )}
 
-      <div className="mt-3">
+      <p className="mt-3 text-sm text-muted">
+        {plan.previousDay ? w.lastTimeOn(formatDayLong(plan.previousDay)) : w.firstTime}
+      </p>
+      {showHint && plan.previousDay && item.sets.some((s) => !s.completed) && (
+        <p className="mt-1 text-sm text-muted">{w.hint}</p>
+      )}
+      <div className="mt-2">
         <div
           className={cx(
             single ? SINGLE_GRID : SET_GRID,

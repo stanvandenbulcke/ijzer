@@ -9,6 +9,8 @@ import type { ExerciseType, Performance, Workout, WorkoutExercise, WorkoutSet } 
 export interface ExercisePlan {
   /** Completed sets of the last real session, for the "vorige" column. */
   previousSets: WorkoutSet[]
+  /** Day ("YYYY-MM-DD") of the last real session, null the first time. */
+  previousDay: string | null
   suggestion: Suggestion | null
   /** Per set of this exercise (same order): what a one-tap tick logs. */
   proposals: Proposal[]
@@ -77,5 +79,6 @@ export function planExercise(params: {
       lastDoneToday = set
     }
   }
-  return { previousSets, suggestion, proposals, prKinds, previousBySet }
+  const previousDay = previous ? localDay(previous.workout.startedAt) : null
+  return { previousSets, previousDay, suggestion, proposals, prKinds, previousBySet }
 }

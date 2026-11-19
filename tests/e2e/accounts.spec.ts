@@ -22,7 +22,7 @@ async function newPhone(browser: Browser): Promise<Page> {
 async function finishOnboarding(page: Page, name: string) {
   await expect(page).toHaveURL(/\/welkom/)
   await page.getByLabel('Naam of bijnaam').fill(name)
-  for (let i = 0; i < 5; i++) await page.getByRole('button', { name: 'Volgende' }).click()
+  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Volgende' }).click()
   await page.getByRole('button', { name: 'Klaar, naar de app' }).click()
   await expect(page.getByRole('heading', { name: `Hoi ${name}` })).toBeVisible()
 }

@@ -23,4 +23,8 @@ export const today = {
   nutrition: 'Voeding',
   nutritionSoon: 'Calorieën, macro’s en barcodescan komen in een volgende update.',
   freshness: 'Frisheid (schatting)',
+  coach: 'Tip van de coach',
+  coachFact: 'Wist je dat?',
+  readMore: 'Lees waarom',
+  allTips: 'Alle tips',
 }

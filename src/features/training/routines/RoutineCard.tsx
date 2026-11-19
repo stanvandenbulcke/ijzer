@@ -1,4 +1,4 @@
-import { Play, Plus } from 'lucide-react'
+import { Play } from 'lucide-react'
 import type { Routine } from '../../../domain/training/types'
 import { totalWorkingSets } from '../../../domain/training/routineEdit'
 import { t } from '../../../i18n'
@@ -13,15 +13,12 @@ export function RoutineCard({
   onOpen,
   onStart,
   startLabel = t.training.startRoutine,
-  example = false,
 }: {
   routine: Routine
   lastDone: string | null
   onOpen: () => void
   onStart: () => void
   startLabel?: string
-  /** Example routines are copied, not started. */
-  example?: boolean
 }) {
   return (
     <div className="flex items-stretch overflow-hidden rounded-md border border-line bg-surface">
@@ -43,12 +40,7 @@ export function RoutineCard({
         </span>
       </button>
       <div className="flex items-center pr-3">
-        <Button
-          icon={example ? Plus : Play}
-          variant={example ? 'secondary' : 'primary'}
-          onClick={onStart}
-          className="px-4"
-        >
+        <Button icon={Play} variant="primary" onClick={onStart} className="px-4">
           {startLabel}
         </Button>
       </div>

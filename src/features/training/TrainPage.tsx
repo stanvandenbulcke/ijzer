@@ -2,8 +2,7 @@ import type { ReactNode } from 'react'
 import { BookOpen, History, Plus } from 'lucide-react'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
-import { EXAMPLE_ROUTINES } from '../../data/exampleRoutines'
-import { copyRoutine, saveRoutine, useRoutines } from '../../data/routinesRepo'
+import { useRoutines } from '../../data/routinesRepo'
 import { useActiveWorkout, useFinishedWorkouts } from '../../data/workoutsRepo'
 import { localDay } from '../../domain/time'
 import { t } from '../../i18n'
@@ -13,7 +12,6 @@ import { EmptyState } from '../../ui/EmptyState'
 import { ListRow } from '../../ui/ListRow'
 import { LoadingState } from '../../ui/LoadingState'
 import { Page, PageHeader } from '../../ui/PageHeader'
-import { useToast } from '../../ui/toast/toastContext'
 import { RoutineCard } from './routines/RoutineCard'
 import { useStartWorkout } from './useStartWorkout'
 
@@ -31,7 +29,6 @@ function SectionTitle({ children, action }: { children: string; action?: ReactNo
 /** /train — your routines, a free workout, the library and history. */
 export function TrainPage() {
   const navigate = useNavigate()
-  const toast = useToast()
   const start = useStartWorkout()
   const routines = useRoutines()
   const workouts = useFinishedWorkouts()
@@ -46,12 +43,6 @@ export function TrainPage() {
   }, [workouts])
 
   if (!routines) return <LoadingState />
-
-  const copyExample = async (id: string) => {
-    const example = EXAMPLE_ROUTINES.find((r) => r.id === id)!
-    await saveRoutine(copyRoutine(example, example.name))
-    toast({ message: tr.copied })
-  }
 
   return (
     <Page>
@@ -110,22 +101,6 @@ export function TrainPage() {
           ))}
         </div>
       )}
-
-      <SectionTitle>{tr.exampleRoutines}</SectionTitle>
-      <p className="mb-3 text-sm text-muted">{tr.exampleNote}</p>
-      <div className="flex flex-col gap-3">
-        {EXAMPLE_ROUTINES.map((r) => (
-          <RoutineCard
-            key={r.id}
-            routine={r}
-            lastDone={null}
-            onOpen={() => void copyExample(r.id)}
-            onStart={() => void copyExample(r.id)}
-            startLabel={t.common.add}
-            example
-          />
-        ))}
-      </div>
 
       <div className="mt-8 border-t border-line">
         <ListRow

@@ -20,7 +20,7 @@ import { useToast } from '../../../ui/toast/toastContext'
 import { useNow } from '../../../ui/useNow'
 import { ExercisePickerSheet } from '../library/ExercisePickerSheet'
 import { ExerciseCard } from './ExerciseCard'
-import { ExerciseMenuSheet } from './ExerciseMenuSheet'
+import { ExerciseMenuSheet, type View as MenuView } from './ExerciseMenuSheet'
 import { FinishSheet } from './FinishSheet'
 import { primeAudio } from './restSound'
 import { RestTimer } from './RestTimer'
@@ -42,6 +42,7 @@ export function ActiveWorkoutPage() {
   const nowMs = useNow(1000)
   const [edit, setEdit] = useState<ValueEdit | null>(null)
   const [menuFor, setMenuFor] = useState<string | null>(null)
+  const [menuView, setMenuView] = useState<MenuView>('main')
   const [substituteFor, setSubstituteFor] = useState<string | null>(null)
   const [adding, setAdding] = useState(false)
   const [finishing, setFinishing] = useState(false)
@@ -266,6 +267,7 @@ export function ActiveWorkoutPage() {
             item={item}
             exercise={exerciseOf(item)}
             plan={plans.get(item.id)!}
+            showHint={data.workouts.length < 3}
             substituteName={
               item.substitutedBy
                 ? (exerciseOf(workout.exercises.find((e) => e.id === item.substitutedBy)!)?.name ??
@@ -276,7 +278,19 @@ export function ActiveWorkoutPage() {
               edit: (i, field) => openEdit(item, i, field),
               toggle: (i) => toggle(item, i),
               addSet: () => apply((wk) => ops.addSet(wk, item.id, newId)),
-              openMenu: () => setMenuFor(item.id),
+              openMenu: () => {
+                setMenuView('main')
+                setMenuFor(item.id)
+              },
+              skip: () => {
+                setMenuView('skip')
+                setMenuFor(item.id)
+              },
+              later: () => {
+                apply((wk) => ops.moveToEnd(wk, item.id))
+                toast({ message: w.movedLater })
+              },
+              substitute: () => setSubstituteFor(item.id),
               unskip: () => apply((wk) => ops.unskipExercise(wk, item.id)),
             }}
           />
@@ -305,7 +319,8 @@ export function ActiveWorkoutPage() {
       <ValueSheet edit={edit} onClose={() => setEdit(null)} />
       {menuItem && (
         <ExerciseMenuSheet
-          key={menuItem.id}
+          key={`${menuItem.id}|${menuView}`}
+          initialView={menuView}
           open
           onOpenChange={(o) => !o && setMenuFor(null)}
           title={exerciseOf(menuItem)?.name ?? ''}

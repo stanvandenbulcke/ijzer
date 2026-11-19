@@ -11,12 +11,16 @@ if (!file || !PROJECTS[target]) {
   process.exit(2)
 }
 const headers = { 'Content-Type': 'application/json' }
-if (process.env.SUPABASE_ACCESS_TOKEN) headers.Authorization = `Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`
-const res = await fetch(`https://api.supabase.com/v1/projects/${PROJECTS[target].ref}/database/query`, {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({ query: await readFile(file, 'utf8') }),
-})
+if (process.env.SUPABASE_ACCESS_TOKEN)
+  headers.Authorization = `Bearer ${process.env.SUPABASE_ACCESS_TOKEN}`
+const res = await fetch(
+  `https://api.supabase.com/v1/projects/${PROJECTS[target].ref}/database/query`,
+  {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ query: await readFile(file, 'utf8') }),
+  },
+)
 const body = await res.text()
 console.log(`${target} HTTP ${res.status}: ${body.slice(0, 2000)}`)
 if (!res.ok || /FAIL/.test(body)) process.exit(1)

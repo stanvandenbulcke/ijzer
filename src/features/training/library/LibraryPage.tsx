@@ -42,6 +42,17 @@ export function LibraryPage() {
       )}
       {library && (
         <>
+          <div className="mb-4 rounded-md border border-line bg-surface p-3">
+            <p className="text-sm text-muted">{l.createCustomHint}</p>
+            <Button
+              icon={Plus}
+              block
+              className="mt-2"
+              onClick={() => navigate('/train/oefeningen/nieuw')}
+            >
+              {l.createCustom}
+            </Button>
+          </div>
           <ExerciseFilters
             query={search.query}
             onQuery={search.setQuery}
@@ -54,8 +65,15 @@ export function LibraryPage() {
               title={l.noResults.title}
               body={l.noResults.body}
               action={
-                <Button icon={Plus} onClick={() => navigate('/train/oefeningen/nieuw')}>
-                  {l.newCustom}
+                <Button
+                  icon={Plus}
+                  onClick={() =>
+                    navigate(
+                      `/train/oefeningen/nieuw?naam=${encodeURIComponent(search.query.trim())}`,
+                    )
+                  }
+                >
+                  {search.query.trim() ? l.createNamed(search.query.trim()) : l.createCustom}
                 </Button>
               }
             />

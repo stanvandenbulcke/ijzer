@@ -4,6 +4,7 @@ import { formatNumber, parseDecimal } from '../../../i18n/format'
 import { Chip } from '../../../ui/Chip'
 import { TextField } from '../../../ui/TextField'
 import { ChoiceRow, Field } from '../Field'
+import { BirthDateField } from './BirthDateField'
 
 const o = t.onboarding.about
 
@@ -23,12 +24,7 @@ export function AboutStep({
         autoComplete="nickname"
         onChange={(e) => update({ name: e.target.value })}
       />
-      <TextField
-        label={o.birthYear}
-        inputMode="numeric"
-        defaultValue={draft.birthYear ?? ''}
-        onChange={(e) => update({ birthYear: parseDecimal(e.target.value) })}
-      />
+      <BirthDateField draft={draft} update={update} />
       <Field label={o.sex}>
         <ChoiceRow>
           <Chip selected={draft.sex === 'male'} onClick={() => update({ sex: 'male' })}>

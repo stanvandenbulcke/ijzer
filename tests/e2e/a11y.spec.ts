@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test'
 async function onboard(page: Page) {
   await page.goto('/welkom')
   await page.getByLabel('Naam of bijnaam').fill('Stan')
-  for (let i = 0; i < 5; i++) await page.getByRole('button', { name: 'Volgende' }).click()
+  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'Volgende' }).click()
   await page.getByRole('button', { name: 'Klaar, naar de app' }).click()
   await expect(page).toHaveURL(/\/vandaag/)
 }

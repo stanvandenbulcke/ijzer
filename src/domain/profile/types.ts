@@ -23,6 +23,8 @@ export interface Settings {
 
 export interface Profile {
   name: string
+  /** "YYYY-MM-DD" */
+  birthDate: string | null
   birthYear: number | null
   sex: Sex | null
   heightCm: number | null

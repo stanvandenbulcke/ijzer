@@ -13,7 +13,6 @@ import { LoadingState } from '../../ui/LoadingState'
 import { AboutStep } from './steps/AboutStep'
 import { ActivityStep } from './steps/ActivityStep'
 import { GoalStep } from './steps/GoalStep'
-import { GymStep } from './steps/GymStep'
 import { InstallStep } from './steps/InstallStep'
 import { ScheduleStep } from './steps/ScheduleStep'
 
@@ -24,7 +23,6 @@ const STEPS: Array<{ title: string; body?: string; Component: ComponentType<Step
   { title: o.about.title, body: o.about.body, Component: AboutStep },
   { title: o.goal.title, body: o.goal.body, Component: GoalStep },
   { title: o.activity.title, Component: ActivityStep },
-  { title: o.gym.title, body: o.gym.body, Component: GymStep },
   { title: o.schedule.title, body: o.schedule.body, Component: ScheduleStep },
   { title: o.install.title, body: o.install.body, Component: InstallStep },
 ]

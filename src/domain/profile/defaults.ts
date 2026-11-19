@@ -12,6 +12,7 @@ export const DEFAULT_EQUIPMENT: GymEquipment = {
 
 export const DEFAULT_PROFILE: Profile = {
   name: '',
+  birthDate: null,
   birthYear: null,
   sex: null,
   heightCm: null,
