@@ -1,33 +1,64 @@
-# Plan — Fase 0: Fundament & setup
+# Plan — Fase 1: Design system, app-shell, landingspagina, auth, onboarding
 
-Doel: een leeg maar compleet project dat gebouwd, getest en gedeployed kan worden, en dat Stan
-op zijn iPhone kan openen.
+Doel: na deze fase kan je een account maken, inloggen, de onboarding doorlopen en door de vijf
+tabs navigeren. De tabs zelf zijn nog leeg (met een nette "komt in Fase X"-staat); de echte
+inhoud (routines, workouts, voeding…) komt vanaf Fase 2.
 
-## A. Door Claude (klaar)
+Status: **wacht op goedkeuring van Stan.**
 
-1. Spec naar `docs/SPEC.md`, `CLAUDE.md` en alle docs aanmaken.
-2. Project scaffolden: Vite + React + TypeScript strict, Tailwind met eigen tokens, React Router.
-3. Mappenstructuur uit §3.2 met een README per feature.
-4. Kwaliteit: ESLint, Prettier, Vitest, Playwright op iPhone-formaat, secret-scan, CI-workflow.
-5. PWA: manifest, service worker, tijdelijk icoon, self-hosted fonts.
-6. Een tijdelijke startpagina die bewijst dat alles samenwerkt.
+## Blok A — Design system (geen Supabase nodig)
 
-## B. Door Stan (nodig om verder te kunnen)
+1. Tokens afwerken: contrastcontrole (WCAG AA) voor elk tekst/achtergrond-paar, spiergroepkleuren.
+2. Eén iconenset kiezen: **Lucide** (dunne lijnen, open-source).
+3. Basiscomponenten in `src/ui/`: Button, IconButton, TextField, NumberPad (eigen keypad),
+   Stepper, Sheet (onderaan uitschuivend paneel), SegmentedControl (sub-tabs), Chip, Toast met
+   "Ongedaan maken", ProgressRing, EmptyState, ListRow met hairlines.
+4. App-gevoel op iPhone: geen per ongeluk geselecteerde tekst bij tikken, geen zoom bij
+   invoervelden, safe areas (notch, home-balk), tikdoelen ≥ 44 px.
+5. **/design-pagina** met alle tokens en componenten, in donker en licht.
+   Tijdelijk ook online bereikbaar, zodat je hem op je iPhone kan bekijken; na goedkeuring
+   alleen nog in dev.
 
-1. GitHub-account + lege privé-repo `ijzer`, en GitHub koppelen aan Claude.
-2. Hosting-account (voorstel: Cloudflare) en de repo eraan koppelen.
-3. Supabase-account met projecten `ijzer-dev` en `ijzer-prod`.
-4. Beslissen: keep-alive tegen het pauzeren van Supabase, ja of nee.
+**STOP: jij keurt de stijl goed op /design voordat ik verder bouw.**
 
-## C. Daarna door Claude
+## Blok B — App-shell en landingspagina
 
-1. Code pushen naar GitHub, CI groen.
-2. Eerste deploy + controleren dat preview-URL's werken; security headers nakijken.
-3. Stan test op iPhone (Safari → Deel → Zet op beginscherm).
-4. Fase 0 afsluiten; plan voor Fase 1 (design system, /design-pagina, auth, onboarding).
+1. Onderste tabbalk: Vandaag · Train · Voeding · Progressie · Ik, met lege maar ontworpen schermen.
+2. Echte landingspagina (§4.1): grote typografische hero, geanimeerde SVG-halter met schuivende
+   schijven, echte app-schermen met demodata, knoppen **Account maken** en **Inloggen**,
+   beginscherm-uitleg. Al ingelogd → meteen naar Vandaag.
 
-## Afwijkingen van de spec (ter goedkeuring)
+## Blok C — Supabase en accounts
 
-- TypeScript 6 i.p.v. 7, omdat ESLint versie 7 nog niet ondersteunt (ADR-002).
-- Pakketten als Dexie, Supabase, Recharts worden pas geïnstalleerd in de fase die ze gebruikt (ADR-003).
-- De installatie van Node/Git/VS Code op Windows is optioneel geworden, omdat Claude in de cloud bouwt (ADR-005).
+1. Projecten `ijzer-dev` en `ijzer-prod` koppelen. De app krijgt alleen de publieke sleutel.
+2. Eerste migratie: tabel `profiles` met RLS (alleen de eigenaar).
+3. **RLS-tests**: twee testgebruikers; bewijzen dat B niets van A kan lezen of wijzigen.
+4. Registreren en wachtwoord vergeten via een **6-cijferige code** in de app (geen links: een
+   link opent in Safari en niet in je beginscherm-app). Lange sessie, zelden opnieuw inloggen.
+5. Beveiliging: Content-Security-Policy met de Supabase-adressen, secret-scan blijft in CI.
+6. Keep-alive: een gratis GitHub Action die om de paar dagen een lichte request doet, zodat
+   Supabase niet in slaap valt.
+
+## Blok D — Onboarding (`/welkom`)
+
+Stap voor stap, overslaanbaar en later aanpasbaar: naam, geboortejaar, geslacht, lengte,
+gewicht → doel en tempo → activiteit en stappendoel → gym-uitrusting (stang, schijven,
+dumbbell-stappen) → trainingsdagen per week → beginscherm-uitleg. Opgeslagen in `profiles`.
+
+## Blok E — Afronden
+
+- E2E-test: registreren → code invoeren → onboarding → tabs.
+- Screenshots 390×844 en 430×932, donker en licht, zelf bekeken.
+- Security-review en design-review door aparte subagents.
+- Docs bijwerken, deployen, testinstructies voor jou.
+
+## Nieuwe pakketten in deze fase
+
+`@supabase/supabase-js`, `zod`, `react-hook-form`, `@radix-ui/react-dialog` (toegankelijke
+sheets, volledig zelf gestyled), `lucide-react`, `motion`, `@tanstack/react-query`, `date-fns`.
+
+## Wat ik van jou nodig heb
+
+1. Supabase-account met de twee projecten (stappen volgen in de chat).
+2. Goedkeuring van de stijl op /design (na blok A).
+3. Is "IJZER" goed als naam? (Mag ook later, in Fase 9.)

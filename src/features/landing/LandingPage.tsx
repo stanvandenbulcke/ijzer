@@ -3,7 +3,9 @@ import { t } from '../../i18n'
 
 /** True when the app runs from the iOS/Android home screen instead of a browser tab. */
 function isStandalone(): boolean {
-  return window.matchMedia('(display-mode: standalone)').matches
+  // iOS has its own flag; the media query covers the other platforms.
+  const iosStandalone = (navigator as Navigator & { standalone?: boolean }).standalone === true
+  return iosStandalone || window.matchMedia('(display-mode: standalone)').matches
 }
 
 /**

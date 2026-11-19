@@ -1,6 +1,7 @@
 # Progress / handoff
 
-**Current phase:** 0 — Fundament & setup (code part done, waiting for Stan's accounts)
+**Current phase:** 0 → 1. Phase 0 done except Supabase accounts. Phase 1 plan in `docs/PLAN.md`,
+waiting for Stan's approval.
 
 ## Done
 
@@ -14,6 +15,7 @@
 - [x] PWA manifest, service worker, temporary icon, self-hosted fonts
 - [x] Secret scan of `dist/` (`npm run check:secrets`), GitHub Actions CI workflow
 - [x] Pushed to GitHub (`stanvandenbulcke/ijzer`, private), CI green
+- [x] iOS standalone detection also checks `navigator.standalone`
 - [x] Hosting: Cloudflare Workers (static assets), auto-deploy on push to `main`
       → https://ijzer.stanvandenbulck.workers.dev — verified: pages, deep links (SPA fallback),
       manifest, service worker, fonts, security headers from `public/_headers`
@@ -21,8 +23,13 @@
 ## Waiting for Stan
 
 - [ ] Supabase account with projects `ijzer-dev` and `ijzer-prod` (needed at the start of phase 1)
-- [ ] Answer: optional keep-alive against Supabase pausing? (SPEC §11.5)
-- [ ] Test on iPhone: open the deployed URL in Safari, add to home screen
+- [ ] Approve the phase 1 plan
+
+## Decisions from Stan
+
+- Keep-alive against Supabase pausing: **yes** (build in phase 1 once the projects exist).
+- iPhone test 2026-11-19: installed on the home screen, opens fine. Stan expected a working app;
+  explained that phase 0 is only the placeholder. Real landing page + login come in phase 1.
 
 ## Not done yet in phase 0
 
