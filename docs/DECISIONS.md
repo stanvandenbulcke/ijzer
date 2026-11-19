@@ -38,8 +38,12 @@ contrast as text on the light theme.
 Git, VS Code) is optional and documented in GIDS_VOOR_STAN.md.
 **Consequences:** Nothing is safe until it is pushed to GitHub — the container is temporary.
 
-## Open — hosting platform
+## ADR-006 — Hosting on Cloudflare Workers (static assets)
 
-Cloudflare (Pages/Workers static assets) vs Vercel Hobby. Leaning Cloudflare: free without a
-non-commercial clause, unlimited bandwidth, `public/_headers` already prepared. Decide when Stan
-creates the account; verify current docs first.
+**Context:** Need free HTTPS hosting with auto-deploy from GitHub (SPEC §2).
+**Decision:** Cloudflare Workers with static assets, connected to the GitHub repo in the
+Cloudflare dashboard (no wrangler file in the repo yet). Chosen over Vercel Hobby: no
+non-commercial clause, no bandwidth cap.
+**Consequences:** Every push to `main` deploys to https://ijzer.stanvandenbulck.workers.dev.
+Deep links fall back to `index.html` (SPA). Security headers come from `public/_headers`.
+CSP still to add once Supabase URLs are known (phase 1).
