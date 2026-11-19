@@ -42,9 +42,13 @@ export function sessions(perfs: Performance[]): SessionSummary[] {
  * trustworthy e1RM and are left out: a gap, not a zero.
  */
 export function e1rmSeries(perfs: Performance[]): SeriesPoint[] {
-  return sessions(perfs)
-    .filter((s) => s.bestE1rm !== null)
-    .map((s) => ({ day: s.day, value: Math.round(s.bestE1rm! * 10) / 10 }))
+  // Two sessions on one day become one point (the best), so a chart never draws a vertical line.
+  const byDay = new Map<string, number>()
+  for (const s of sessions(perfs)) {
+    if (s.bestE1rm === null) continue
+    byDay.set(s.day, Math.max(byDay.get(s.day) ?? 0, Math.round(s.bestE1rm * 10) / 10))
+  }
+  return [...byDay.entries()].map(([day, value]) => ({ day, value }))
 }
 
 /** Best e1RM per session, newest last; used by stagnation and progression rules. */

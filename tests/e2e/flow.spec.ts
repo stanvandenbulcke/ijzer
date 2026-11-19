@@ -30,11 +30,12 @@ async function pickExercise(page: Page, query: string, name: string) {
   await expect(sheet).toBeHidden()
 }
 
-async function keypad(page: Page, digits: string) {
+/** Types on our keypad and taps Klaar. After a weight the reps keypad opens by itself. */
+async function keypad(page: Page, digits: string, closes = true) {
   const sheet = page.getByRole('dialog')
   for (const d of digits) await sheet.getByRole('button', { name: d, exact: true }).click()
   await sheet.getByRole('button', { name: 'Klaar' }).click()
-  await expect(sheet).toBeHidden()
+  if (closes) await expect(sheet).toBeHidden()
 }
 
 test('onboarding, routine, workout with skip, summary, then PR on the next workout', async ({
@@ -63,8 +64,8 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await page.getByRole('button', { name: 'Start' }).first().click()
   await expect(page).toHaveURL(/\/training$/)
   await page.getByRole('button', { name: 'kg 1' }).first().click()
-  await keypad(page, '60')
-  await page.getByRole('button', { name: 'Reps 1' }).first().click()
+  await keypad(page, '60', false)
+  await expect(page.getByRole('dialog').getByRole('status', { name: 'Reps' })).toBeVisible()
   await keypad(page, '8')
   await page.getByRole('button', { name: 'Set 1 afvinken' }).first().click()
   await expect(

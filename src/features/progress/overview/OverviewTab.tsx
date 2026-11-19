@@ -117,7 +117,7 @@ export function OverviewTab({
                 key={m}
                 type="button"
                 onClick={() => navigate(`/progressie/spier/${m}`)}
-                className="press flex min-h-9 items-center gap-2 text-left text-sm"
+                className="press flex min-h-11 items-center gap-2 text-left text-sm"
               >
                 <span
                   aria-hidden

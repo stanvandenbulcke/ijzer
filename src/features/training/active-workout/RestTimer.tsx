@@ -48,7 +48,7 @@ export function RestTimer({
       role="timer"
       aria-label={done ? w.restDone : w.restLabel(formatDuration(remaining))}
       className={cx(
-        'flex items-center gap-3 border-b border-line px-4 py-2 transition-colors duration-200',
+        'flex items-center gap-3 border-t border-line-strong px-4 py-2 transition-colors duration-200',
         done ? 'rest-flash bg-plate-green text-on-accent' : 'bg-surface',
       )}
     >
@@ -73,14 +73,14 @@ export function RestTimer({
           <button
             type="button"
             onClick={() => onAdjust(-15)}
-            className="press h-11 rounded-md border border-line px-2 font-display text-lg font-bold"
+            className="press h-12 rounded-md border border-line-strong px-2.5 font-display text-lg font-bold"
           >
             {w.restMinus}
           </button>
           <button
             type="button"
             onClick={() => onAdjust(15)}
-            className="press h-11 rounded-md border border-line px-2 font-display text-lg font-bold"
+            className="press h-12 rounded-md border border-line-strong px-2.5 font-display text-lg font-bold"
           >
             {w.restPlus}
           </button>

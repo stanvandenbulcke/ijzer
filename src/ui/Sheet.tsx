@@ -20,7 +20,7 @@ export function Sheet({ open, onOpenChange, title, description, children }: Shee
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="anim-backdrop fixed inset-0 z-40 bg-[rgb(0_0_0/0.6)]" />
+        <Dialog.Overlay className="anim-backdrop fixed inset-0 z-40 bg-scrim" />
         <Dialog.Content className="anim-sheet fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92dvh] max-w-md flex-col rounded-t-lg border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] outline-none">
           <div aria-hidden className="mx-auto mt-2 h-1 w-9 rounded-full bg-line-strong" />
           <div className="flex items-center gap-2 px-4 pt-1">

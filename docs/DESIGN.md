@@ -28,7 +28,7 @@ Plate colours are used in two ways, with separate tokens:
 | `red-text`, `blue-text`, `green-text` | #F05A6B, #6E9BF2, #3DBE5E | #B81D32, #2459B8, #18692E | plate colours as text                          |
 
 **Volume zones** (fractional sets per muscle per week, SPEC §5.3 R1):
-none = `surface-2` · low (< 6) = dark/pale blue · moderate (6–9) = blue · target (10–20) = green ·
+none = `surface-2` · low (< 6) = muted blue (#3A5FA8 dark / #A9C1EC light) · moderate (6–9) = blue · target (10–20) = green ·
 high (21–25) = yellow · very high (> 25) = red.
 
 **Muscle regions** (chips, dots): push = red · pull = blue · legs = green · core = yellow ·

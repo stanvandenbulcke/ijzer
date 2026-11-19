@@ -6,6 +6,7 @@ import { me } from './me'
 import { nutrition } from './nutrition'
 import { onboarding } from './onboarding'
 import { insights, progress } from './progress'
+import { ARTICLE_FOR_RULE, articles, scienceUi } from './science'
 import { today } from './today'
 import { training } from './training'
 
@@ -24,6 +25,7 @@ export const nl = {
   progress,
   insights,
   me,
+  science: { ...scienceUi, articles, articleForRule: ARTICLE_FOR_RULE },
   design,
 }
 

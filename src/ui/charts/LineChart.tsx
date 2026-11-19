@@ -79,20 +79,20 @@ export function LineChart({
               x={PAD.left - 6}
               y={scale.y(v) + 4}
               textAnchor="end"
-              fontSize="10"
+              fontSize="11"
               fill="var(--text-muted)"
             >
               {formatNumber(v, 0)}
             </text>
           </g>
         ))}
-        <text x={PAD.left} y={height - 6} fontSize="10" fill="var(--text-muted)">
+        <text x={PAD.left} y={height - 6} fontSize="11" fill="var(--text-muted)">
           {formatDayShort(scale.first)}
         </text>
         <text
           x={W - PAD.right}
           y={height - 6}
-          fontSize="10"
+          fontSize="11"
           textAnchor="end"
           fill="var(--text-muted)"
         >

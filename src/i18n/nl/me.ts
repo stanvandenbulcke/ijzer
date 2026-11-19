@@ -26,6 +26,8 @@ export const me = {
   wiped: 'Alles gewist',
   about: 'Over',
   credits: 'Credits en licenties',
+  science: 'Wetenschap-bibliotheek',
+  scienceHint: 'Waarom de app je deze tips geeft',
   version: (v: string) => `Versie ${v}`,
   design: 'Ontwerppagina',
   creditsTitle: 'Credits',

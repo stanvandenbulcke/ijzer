@@ -31,7 +31,7 @@ function TabContent({ tab, active }: { tab: Tab; active: boolean }) {
     <>
       {active && <span aria-hidden className="absolute inset-x-3 top-0 h-[3px] bg-focus" />}
       <Icon aria-hidden size={24} strokeWidth={active ? 2.25 : 1.75} />
-      <span className="text-[11px] font-semibold tracking-wide">{tab.label}</span>
+      <span className="text-xs font-semibold tracking-wide">{tab.label}</span>
     </>
   )
 }

@@ -242,6 +242,8 @@ export const training = {
         `Je zit in een cut en je prestaties zakten wat (${p}). Kracht behouden is ook winst: zelfde gewicht.`,
     },
     sameAsLastSet: 'Vorige set',
+    proposal: 'voorstel',
+    weighInAgain: 'Aanpassen',
     lastTime: 'Vorige keer',
     restTitle: 'Rust',
     restLabel: (time: string) => `Rust: nog ${time}`,

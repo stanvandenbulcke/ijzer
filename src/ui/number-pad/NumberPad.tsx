@@ -113,7 +113,7 @@ export function NumberPad({
               key={q.label}
               type="button"
               onClick={() => send({ type: 'set', value: q.value })}
-              className="press flex min-h-11 shrink-0 flex-col items-start justify-center rounded-md border border-line px-3 py-1 text-left"
+              className="press flex min-h-11 shrink-0 flex-col items-start justify-center rounded-md border border-line-strong px-3 py-1 text-left"
             >
               <span className="text-xs text-muted">{q.label}</span>
               <span className="font-display text-lg leading-tight font-bold">

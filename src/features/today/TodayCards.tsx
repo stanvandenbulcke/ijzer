@@ -87,7 +87,7 @@ export function WeightCard({
           onClick={onLog}
           className="min-h-11 px-3 text-lg"
         >
-          {last?.day === today ? d.weightToday : d.logWeight}
+          {last?.day === today ? t.training.workout.weighInAgain : d.logWeight}
         </Button>
       }
     >

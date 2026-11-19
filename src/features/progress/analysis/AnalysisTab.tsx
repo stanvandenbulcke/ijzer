@@ -1,5 +1,6 @@
 import { HelpCircle } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router'
 import type { TrainingData } from '../../../data/useTrainingData'
 import { analyse, freshness, type Freshness, type Insight } from '../../../domain/analysis/rules'
 import { MUSCLE_IDS } from '../../../domain/muscles/taxonomy'
@@ -88,7 +89,19 @@ function InsightCard({
         <HelpCircle aria-hidden size={16} />
         {t.common.why}
       </button>
-      {open && <p className="selectable text-sm text-muted">{why}</p>}
+      {open && (
+        <p className="selectable text-sm text-muted">
+          {why}{' '}
+          {t.science.articleForRule[insight.id] && (
+            <Link
+              to={`/wetenschap/${t.science.articleForRule[insight.id]}`}
+              className="font-semibold text-accent-text underline"
+            >
+              {t.science.readMore}
+            </Link>
+          )}
+        </p>
+      )}
     </article>
   )
 }

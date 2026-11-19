@@ -1,3 +1,5 @@
+import { downloadBlob } from '../../../ui/download'
+
 /**
  * Share image after a workout (SPEC §4.4): drawn on a canvas in our own style, shared via
  * the Web Share API. Nothing is ever shared automatically.
@@ -84,10 +86,5 @@ export async function shareImage(blob: Blob, filename: string, title: string): P
       return // cancelled by the user
     }
   }
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
+  downloadBlob(blob, filename)
 }

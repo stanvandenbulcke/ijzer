@@ -1,11 +1,29 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vitest/config'
 import pkg from './package.json' with { type: 'json' }
 
 // https://vite.dev/config/
+/**
+ * The global headers from public/_headers (Cloudflare), also applied by `vite preview`, so the
+ * e2e tests run with the same Content-Security-Policy as production.
+ */
+function productionHeaders(): Record<string, string> {
+  const block =
+    readFileSync(new URL('./public/_headers', import.meta.url), 'utf8').split(/^\/\S+$/m)[1] ?? ''
+  return Object.fromEntries(
+    block
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.includes(': '))
+      .map((line) => [line.slice(0, line.indexOf(': ')), line.slice(line.indexOf(': ') + 2)]),
+  )
+}
+
 export default defineConfig({
+  preview: { headers: productionHeaders() },
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     react(),

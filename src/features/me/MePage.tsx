@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ChevronRight, Download, Info, Trash2, UserRound } from 'lucide-react'
+import { BookOpen, ChevronRight, Download, Info, Trash2, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { APP_VERSION } from '../../app/config'
@@ -15,6 +15,7 @@ import { LoadingState } from '../../ui/LoadingState'
 import { Page, PageHeader } from '../../ui/PageHeader'
 import { Sheet } from '../../ui/Sheet'
 import { TextField } from '../../ui/TextField'
+import { downloadBlob } from '../../ui/download'
 import { applyTheme, getStoredTheme, type Theme } from '../../ui/theme'
 import { useToast } from '../../ui/toast/toastContext'
 
@@ -73,12 +74,7 @@ export function MePage() {
   const onOff = (v: boolean) => (v ? m.on : m.off)
 
   const download = async () => {
-    const url = URL.createObjectURL(await exportAll())
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `ijzer-export-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    downloadBlob(await exportAll(), `ijzer-export-${new Date().toISOString().slice(0, 10)}.json`)
     toast({ message: m.exportDone })
   }
 
@@ -150,6 +146,12 @@ export function MePage() {
 
       <Group title={m.about}>
         <div className="border-t border-line">
+          <ListRow
+            title={m.science}
+            subtitle={m.scienceHint}
+            leading={<BookOpen aria-hidden />}
+            onClick={() => navigate('/wetenschap')}
+          />
           <ListRow
             title={m.credits}
             leading={<Info aria-hidden />}

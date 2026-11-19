@@ -16,6 +16,7 @@ const training = () => import('../features/training')
 const nutrition = () => import('../features/nutrition')
 const progress = () => import('../features/progress')
 const me = () => import('../features/me')
+const science = () => import('../features/science')
 
 /**
  * All routes. The tab routes mirror the tab bar (SPEC §3.1) and each lives in its own
@@ -75,6 +76,8 @@ export const router = createBrowserRouter([
 
       { path: '/ik', lazy: page(me, (m) => m.MePage) },
       { path: '/ik/credits', lazy: page(me, (m) => m.CreditsPage) },
+      { path: '/wetenschap', lazy: page(science, (m) => m.SciencePage) },
+      { path: '/wetenschap/:id', lazy: page(science, (m) => m.ArticlePage) },
     ],
   },
   {

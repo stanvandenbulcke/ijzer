@@ -88,7 +88,7 @@ export function TodayPage() {
           <Card title={d.nextTitle}>
             <p className="font-display text-3xl font-black uppercase">{d.noRoutine}</p>
             <p className="text-sm text-muted">{d.noRoutineBody}</p>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex flex-col gap-2">
               <Button icon={Plus} onClick={() => navigate('/train/routine/nieuw')}>
                 {d.makeRoutine}
               </Button>

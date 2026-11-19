@@ -4,6 +4,8 @@ export interface ToastOptions {
   message: string
   /** Optional action, typically "Ongedaan maken". */
   action?: { label: string; onAction: () => void }
+  /** 'pr' shows the toast in red-plate colours with the PR animation. */
+  tone?: 'default' | 'pr'
   /** Milliseconds before it disappears. Default 5 s: long enough to tap undo. */
   duration?: number
 }

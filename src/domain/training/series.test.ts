@@ -31,3 +31,13 @@ describe('e1rmSeries', () => {
     expect(e1rmSeries([])).toEqual([])
   })
 })
+
+describe('e1rmSeries on one day', () => {
+  it('merges two sessions on the same day into the best point', () => {
+    const sameDay = performances([
+      workout('2026-11-19T08:00:00Z', [exercise('bench', [set(80, 5)])]),
+      workout('2026-11-19T18:00:00Z', [exercise('bench', [set(80, 8)])]),
+    ])
+    expect(e1rmSeries(sameDay)).toEqual([{ day: '2026-11-19', value: 101.3 }])
+  })
+})

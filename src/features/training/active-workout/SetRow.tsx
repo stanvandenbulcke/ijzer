@@ -27,9 +27,10 @@ function Cell({
     <button
       type="button"
       onClick={onClick}
-      aria-label={label}
+      // Screen readers hear the value too, and whether it is only a proposal.
+      aria-label={`${label}: ${value}${ghost ? ` (${w.proposal})` : ''}`}
       className={cx(
-        'press flex h-11 items-center justify-center gap-0.5 rounded-sm bg-surface-2 font-display text-2xl font-bold',
+        'press flex h-12 items-center justify-center gap-0.5 rounded-sm bg-surface-2 font-display text-2xl font-bold',
         ghost && 'text-muted',
       )}
     >
@@ -67,7 +68,7 @@ export function SetRow({
   const name = set.type === 'warmup' ? `${t.training.setTypes.warmup} ${label}` : label
 
   return (
-    <div className={cx(single ? SINGLE_GRID : SET_GRID, 'border-t border-line py-1.5')}>
+    <div className={cx(single ? SINGLE_GRID : SET_GRID, 'border-t border-line py-2')}>
       <span className="flex justify-center">
         {isPr ? (
           <span className="pr-pop">
@@ -110,13 +111,13 @@ export function SetRow({
         aria-pressed={set.completed}
         aria-label={set.completed ? w.uncheck(name) : w.check(name)}
         className={cx(
-          'press flex size-11 items-center justify-center rounded-sm border',
+          'press flex h-12 w-14 items-center justify-center rounded-sm border',
           set.completed
             ? 'border-plate-green bg-plate-green text-on-accent'
             : 'border-line-strong text-muted',
         )}
       >
-        <Check aria-hidden size={24} strokeWidth={2.5} />
+        <Check aria-hidden size={28} strokeWidth={2.75} />
       </button>
     </div>
   )

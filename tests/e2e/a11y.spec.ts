@@ -27,6 +27,8 @@ const PAGES = [
   '/progressie/lichaam',
   '/progressie/analyse',
   '/ik',
+  '/wetenschap',
+  '/wetenschap/lengthened',
 ]
 
 for (const theme of ['dark', 'light'] as const) {

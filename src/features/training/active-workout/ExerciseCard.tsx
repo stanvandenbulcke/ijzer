@@ -97,8 +97,9 @@ export function ExerciseCard({
 
   return (
     <article
+      id={`exercise-${item.id}`}
       className={cx(
-        'rounded-md border bg-surface p-3',
+        'scroll-mt-24 rounded-md border bg-surface p-3',
         item.status === 'in_progress' ? 'border-line-strong' : 'border-line',
       )}
     >

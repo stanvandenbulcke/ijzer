@@ -116,7 +116,11 @@ export function ActiveWorkoutPage() {
         maxDecimals: 2,
         quickValues: quick,
         plates: bar ? { barKg: bar, inventory: profile.equipment.plates } : undefined,
-        onDone: (value) => save({ weightKg: value }),
+        onDone: (value) => {
+          save({ weightKg: value })
+          // Straight on to the reps of the same set: one sheet less per set.
+          if (set.reps === null) openEdit(item, index, 'reps')
+        },
       })
     } else if (field === 'reps') {
       const quick = [
@@ -184,7 +188,20 @@ export function ActiveWorkoutPage() {
         cutting: profile.goal === 'cut',
       })
       const kinds = plan.prKinds[index] ?? []
-      if (kinds.length > 0) toast({ message: w.prToast(w.prKinds[kinds[0]!]) })
+      if (kinds.length > 0) toast({ message: w.prToast(w.prKinds[kinds[0]!]), tone: 'pr' })
+      // Last set of this exercise done: bring the next open exercise into view.
+      if (updated.sets.every((s) => s.completed)) {
+        const nextId = ops.currentExerciseId(next)
+        if (nextId) {
+          window.setTimeout(
+            () =>
+              document
+                .getElementById(`exercise-${nextId}`)
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+            250,
+          )
+        }
+      }
     }
   }
 
@@ -221,22 +238,16 @@ export function ActiveWorkoutPage() {
                 {workout.name}
               </h1>
             </div>
-            <Button onClick={() => setFinishing(true)}>{w.finish}</Button>
+            <Button variant="secondary" onClick={() => setFinishing(true)}>
+              {w.finish}
+            </Button>
           </div>
         </header>
-        <div className="mx-auto max-w-md">
-          <RestTimer
-            workout={workout}
-            sound={profile.settings.restSound}
-            onAdjust={(d) => apply((wk) => ops.adjustRest(wk, d))}
-            onClear={() => apply(ops.clearRest)}
-          />
-        </div>
       </div>
 
       <main
         className="mx-auto flex max-w-md flex-col gap-3 px-4 pt-3"
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 2rem)' }}
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 7rem)' }}
       >
         {workout.exercises.length === 0 && (
           <EmptyState
@@ -282,6 +293,15 @@ export function ActiveWorkoutPage() {
         )}
       </main>
 
+      {/* Rest timer docked at the bottom, in thumb reach (design review). */}
+      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md pb-[env(safe-area-inset-bottom)]">
+        <RestTimer
+          workout={workout}
+          sound={profile.settings.restSound}
+          onAdjust={(d) => apply((wk) => ops.adjustRest(wk, d))}
+          onClear={() => apply(ops.clearRest)}
+        />
+      </div>
       <ValueSheet edit={edit} onClose={() => setEdit(null)} />
       {menuItem && (
         <ExerciseMenuSheet

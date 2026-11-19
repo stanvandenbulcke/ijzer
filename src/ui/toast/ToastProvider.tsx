@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { t } from '../../i18n'
+import { cx } from '../cx'
 import { ToastContext, type ToastOptions } from './toastContext'
 
 interface ActiveToast extends ToastOptions {
@@ -33,7 +34,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         {toast && (
           <div
             key={toast.id}
-            className="anim-toast pointer-events-auto flex min-h-14 items-center gap-3 rounded-md border border-line-strong bg-surface-2 py-2 pr-2 pl-4"
+            className={cx(
+              'pointer-events-auto flex min-h-14 items-center gap-3 rounded-md border py-2 pr-2 pl-4',
+              toast.tone === 'pr'
+                ? 'pr-pop border-plate-red bg-plate-red font-semibold text-on-plate'
+                : 'anim-toast border-line-strong bg-surface-2',
+            )}
           >
             <span className="flex-1">{toast.message}</span>
             {toast.action && (

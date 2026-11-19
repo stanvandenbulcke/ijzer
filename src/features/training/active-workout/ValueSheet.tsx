@@ -56,7 +56,7 @@ export function ValueSheet({ edit, onClose }: { edit: ValueEdit | null; onClose:
       onOpenChange={(open) => !open && onClose()}
       title={edit?.title ?? ''}
     >
-      {edit && <ValueSheetBody key={edit.title} edit={edit} onClose={onClose} />}
+      {edit && <ValueSheetBody key={`${edit.title}|${edit.label}`} edit={edit} onClose={onClose} />}
     </Sheet>
   )
 }
@@ -71,8 +71,9 @@ function ValueSheetBody({ edit, onClose }: { edit: ValueEdit; onClose: () => voi
         value={edit.value}
         onChange={setValue}
         onDone={() => {
-          edit.onDone(value, edit.rir !== undefined ? rir : undefined)
+          // Close first: onDone may open the next value (kg → reps).
           onClose()
+          edit.onDone(value, edit.rir !== undefined ? rir : undefined)
         }}
         unit={edit.unit}
         step={edit.step}
@@ -80,7 +81,7 @@ function ValueSheetBody({ edit, onClose }: { edit: ValueEdit; onClose: () => voi
         quickValues={edit.quickValues}
       />
       {edit.plates && value !== null && value > 0 && (
-        <PlateLine kg={value} {...edit.plates} barKg={edit.plates.barKg} />
+        <PlateLine kg={value} barKg={edit.plates.barKg} inventory={edit.plates.inventory} />
       )}
       {edit.rir !== undefined && (
         <div className="flex flex-col gap-1.5">

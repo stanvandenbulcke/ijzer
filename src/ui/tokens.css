@@ -20,6 +20,7 @@
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-focus: var(--focus);
+  --color-scrim: var(--scrim);
 
   /* Plate colours as FILLS (identical in both themes, like the real plates). */
   --color-plate-yellow: var(--plate-yellow);
@@ -74,6 +75,7 @@
   --text: #f2efe6;
   --text-muted: #a8a496;
   --focus: #f2c14e;
+  --scrim: rgb(0 0 0 / 0.6);
 
   --plate-yellow: #f2c14e;
   --plate-red: #d7263d;
@@ -89,7 +91,7 @@
   --blue-text: #6e9bf2;
   --green-text: #3dbe5e;
 
-  --zone-low: #1f3a6b;
+  --zone-low: #3a5fa8;
 }
 
 :root[data-theme='light'] {
