@@ -11,6 +11,8 @@ export interface SupabaseProject {
    * They are not synced; their changes wait safely in the outbox until the table exists.
    */
   notMigrated?: readonly string[]
+  /** Server features not deployed to this project yet: the app hides them instead of failing. */
+  notDeployed?: readonly ('together' | 'barcode')[]
 }
 
 const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
@@ -21,6 +23,8 @@ const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
   prod: {
     url: 'https://hjnmljxonfautstydfyt.supabase.co',
     publishableKey: 'sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k',
+    // Waiting for Stan's go: migrations 0600 (barcodes) and 0700 (buddies) + food-lookup function.
+    notDeployed: ['together', 'barcode'],
   },
 }
 
@@ -31,3 +35,7 @@ export const supabaseProject: SupabaseProject | null = PROJECTS[target]
 
 /** Accounts and cloud backup are available in this build. */
 export const accountsEnabled = supabaseProject !== null
+
+/** Is this server feature available in this build's project? */
+export const hasFeature = (feature: 'together' | 'barcode'): boolean =>
+  accountsEnabled && !supabaseProject?.notDeployed?.includes(feature)

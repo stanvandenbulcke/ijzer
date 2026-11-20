@@ -2,6 +2,7 @@ import type { OffFood } from '../../supabase/functions/_shared/offNormalize'
 import { db, type FoodRow } from './db'
 import { notDeleted } from './rows'
 import { supabase } from './supabase/client'
+import { hasFeature } from './supabase/config'
 
 export type LookupResult =
   | { kind: 'own'; food: FoodRow }
@@ -11,6 +12,7 @@ export type LookupResult =
   | { kind: 'limit' }
   | { kind: 'offline' }
   | { kind: 'error' }
+  | { kind: 'unavailable' }
 
 /**
  * Barcode → product (SPEC §4.5 "Barcodeflow"): first your own products, then the shared cache /
@@ -22,6 +24,7 @@ export async function lookupBarcode(barcode: string): Promise<LookupResult> {
   const client = supabase()
   const { data: session } = (await client?.auth.getSession()) ?? { data: { session: null } }
   if (!client || !session.session) return { kind: 'signed-out' }
+  if (!hasFeature('barcode')) return { kind: 'unavailable' }
   if (!navigator.onLine) return { kind: 'offline' }
   const { data, error } = await client.functions.invoke<{ found: boolean; food: OffFood | null }>(
     'food-lookup',

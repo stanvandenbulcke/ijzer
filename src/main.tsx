@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import { setupServiceWorker } from './app/pwa'
 import { requestPersistentStorage } from './data/db'
+import { LiveAgent } from './app/LiveAgent'
 import { SyncAgent } from './app/SyncAgent'
 import { router } from './app/router'
 import { applyTheme, getStoredTheme } from './ui/theme'
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
     <MotionConfig reducedMotion="user">
       <ToastProvider>
         <SyncAgent />
+        <LiveAgent />
         <RouterProvider router={router} />
       </ToastProvider>
     </MotionConfig>

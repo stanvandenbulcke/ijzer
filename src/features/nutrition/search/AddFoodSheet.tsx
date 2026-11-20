@@ -124,6 +124,7 @@ export function AddFoodSheet({
         offline: sc.offline,
         limit: sc.limit,
         error: sc.error,
+        unavailable: sc.unavailable,
       }[result.kind]
       // Not found: an empty form (never zeros pretending to be values) with the barcode filled in.
       setView({ kind: 'create', name: '', initial: null, barcode: code, notice })

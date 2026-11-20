@@ -85,6 +85,7 @@ export const router = createBrowserRouter([
       { path: '/train/oefeningen/nieuw', lazy: page(training, (m) => m.CustomExercisePage) },
       { path: '/train/oefeningen/:id', lazy: page(training, (m) => m.ExerciseDetailPage) },
       { path: '/train/geschiedenis', lazy: page(training, (m) => m.HistoryPage) },
+      { path: '/train/samen', lazy: page(training, (m) => m.TogetherPage) },
       { path: '/train/geschiedenis/:id', lazy: page(training, (m) => m.WorkoutDetailPage) },
 
       { path: '/voeding', lazy: page(nutrition, (m) => m.NutritionPage) },

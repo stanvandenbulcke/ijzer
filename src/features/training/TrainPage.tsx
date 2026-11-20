@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
-import { BookOpen, History, Plus } from 'lucide-react'
+import { BookOpen, History, Plus, Users } from 'lucide-react'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { useRoutines } from '../../data/routinesRepo'
+import { hasFeature } from '../../data/supabase/config'
 import { useActiveWorkout, useFinishedWorkouts } from '../../data/workoutsRepo'
 import { localDay } from '../../domain/time'
 import { t } from '../../i18n'
@@ -115,6 +116,14 @@ export function TrainPage() {
           leading={<History aria-hidden />}
           onClick={() => navigate('/train/geschiedenis')}
         />
+        {hasFeature('together') && (
+          <ListRow
+            title={t.together.entry}
+            subtitle={t.together.entryHint}
+            leading={<Users aria-hidden />}
+            onClick={() => navigate('/train/samen')}
+          />
+        )}
       </div>
     </Page>
   )

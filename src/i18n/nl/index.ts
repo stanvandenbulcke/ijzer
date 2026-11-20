@@ -9,6 +9,7 @@ import { onboarding } from './onboarding'
 import { insights, progress } from './progress'
 import { ARTICLE_FOR_RULE, articles, scienceUi } from './science'
 import { today } from './today'
+import { together } from './together'
 import { training } from './training'
 import { wrapped } from './wrapped'
 
@@ -31,6 +32,7 @@ export const nl = {
   science: { ...scienceUi, articles, articleForRule: ARTICLE_FOR_RULE },
   design,
   wrapped,
+  together,
 }
 
 export type Messages = typeof nl

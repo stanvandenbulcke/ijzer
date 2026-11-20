@@ -90,6 +90,8 @@ export const nutrition = {
     limit: 'Je hebt vandaag al veel barcodes opgezocht. Morgen kan het weer.',
     error: 'Opzoeken lukte niet. Maak het product zelf aan of probeer opnieuw.',
     source: 'Productgegevens: Open Food Facts (ODbL).',
+    unavailable:
+      'Opzoeken in Open Food Facts staat nog niet aan. Neem de waarden van het etiket over: daarna vind je hem altijd terug.',
   },
   quick: {
     title: 'Snel toevoegen',

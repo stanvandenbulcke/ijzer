@@ -211,3 +211,14 @@ cache but never write it (RLS tests). In the app a scan first checks own product
 open an editable form before anything is saved. Scanner: ZXing (Apache-2.0/MIT), lazy-loaded;
 the camera image never leaves the phone.
 
+## ADR-026 — Samen trainen: one-time codes, private Realtime pair channels
+
+**Context:** Stan wants to train "together" with his girlfriend; he chose that the other may see
+exercise, kg and reps live (2026-11-20).
+**Decision:** Linking with a 6-character one-time code (24 h, one open code per user, max 20
+tries a day) through security-definer RPCs; `buddy_links` holds both directions, readable only
+by their owner. Live data goes over a private Realtime broadcast channel `pair:<id>:<id>` whose
+policies on `realtime.messages` allow only the two linked accounts. Nothing of one account is
+stored for the other. The snapshot holds only ticked sets (skipped = marked, never zeros); a
+"Deel mijn training live" switch turns sending off. Server features that are not deployed in a
+project are hidden (`notDeployed` in `src/data/supabase/config.ts`) instead of failing.
