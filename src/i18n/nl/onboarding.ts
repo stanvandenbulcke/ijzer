@@ -5,7 +5,7 @@ export const onboarding = {
   next: 'Volgende',
   back: 'Vorige',
   finish: 'Klaar, naar de app',
-  laterNote: 'Alles kan je later aanpassen onder Ik.',
+  laterNote: 'Alles kan je later aanpassen in het tabblad Ik.',
   about: {
     title: 'Wie ben je?',
     body: 'Voor je begroeting en om je verbruik te schatten.',
@@ -13,7 +13,7 @@ export const onboarding = {
     birthDate: 'Geboortedatum',
     birthDatePlaceholder: 'dd/mm/jjjj',
     birthDateError: 'Dat is geen geldige datum. Typ bijvoorbeeld 15/03/2007.',
-    sex: 'Geslacht (voor de BMR-formule)',
+    sex: 'Geslacht (om je verbruik te schatten)',
     male: 'Man',
     female: 'Vrouw',
     none: 'Zeg ik liever niet',
@@ -22,12 +22,12 @@ export const onboarding = {
   },
   goal: {
     title: 'Wat is je doel?',
-    body: 'Dit stuurt je calorie-advies en hoe streng de progressie-tips zijn.',
+    body: 'Dit bepaalt je calorie-advies (zodra Voeding er is) en de tips van de coach.',
     cut: 'Afvallen',
     maintain: 'Onderhouden',
     bulk: 'Aankomen',
     pace: 'Tempo per week',
-    pacePct: (pct: string) => `${pct} % van je gewicht`,
+    pacePct: (kg: string | null, pct: string) => (kg ? `± ${kg} kg per week` : `${pct} % per week`),
     safety:
       'Afvallen gaat nooit sneller dan 1 % per week: zo behoud je zoveel mogelijk spier. Geen medisch advies; bij twijfel: arts of diëtist.',
   },
@@ -53,8 +53,9 @@ export const onboarding = {
   },
   schedule: {
     title: 'Hoe vaak train je?',
-    body: 'Alleen een richtlijn voor je weekreeks. Rustdagen worden nooit bestraft.',
+    body: 'Je weekdoel op Vandaag. Een rustdag telt nooit tegen je.',
     perWeek: 'Trainingen per week',
+    timesPerWeek: (n: number) => (n === 1 ? '1 keer per week' : `${n} keer per week`),
   },
   install: {
     title: 'Op je beginscherm',

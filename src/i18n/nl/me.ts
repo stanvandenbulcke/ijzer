@@ -8,6 +8,7 @@ export const me = {
   theme: 'Thema',
   themeDark: 'Donker',
   themeLight: 'Licht',
+  themeAuto: 'Zoals je iPhone',
   restCompound: 'Rust na zware oefeningen',
   restIsolation: 'Rust na isolatie-oefeningen',
   wakeLock: 'Scherm aan houden tijdens training',
@@ -29,7 +30,6 @@ export const me = {
   science: 'Wetenschap-bibliotheek',
   scienceHint: 'Waarom de app je deze tips geeft',
   version: (v: string) => `Versie ${v}`,
-  design: 'Ontwerppagina',
   creditsTitle: 'Credits',
   creditsItems: [
     [

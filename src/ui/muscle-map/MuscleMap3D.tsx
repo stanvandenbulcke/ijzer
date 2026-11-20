@@ -3,15 +3,25 @@ import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 
 import { t } from '../../i18n'
 import { IconButton } from '../Button'
 import { BACK, FRONT } from './shapes'
-import { showsBack } from './turn'
+import { preferredSide, showsBack } from './turn'
 import { Figure, type MuscleFill } from './MuscleMap'
+
+const muscles = (shapes: typeof FRONT) =>
+  new Set(shapes.flatMap((s) => (s.muscle ? [s.muscle] : [])))
+const FRONT_MUSCLES = muscles(FRONT)
+const BACK_MUSCLES = muscles(BACK)
+const FRONT_ONLY = new Set([...FRONT_MUSCLES].filter((m) => !BACK_MUSCLES.has(m)))
+const BACK_ONLY = new Set([...BACK_MUSCLES].filter((m) => !FRONT_MUSCLES.has(m)))
 
 /**
  * Big body in 3D: drag sideways (or tap the button) to turn between front and back. The faces
- * are real 3D planes with perspective, so it feels like turning a statue.
+ * are real 3D planes with perspective, so it feels like turning a statue. It opens on the side
+ * where most of the trained muscles are, so a glute day never looks empty.
  */
 export function MuscleMap3D({ fills, label }: { fills: MuscleFill; label: string }) {
-  const rotate = useMotionValue(0)
+  const rotate = useMotionValue(
+    preferredSide(Object.keys(fills), FRONT_ONLY, BACK_ONLY) === 'back' ? 180 : 0,
+  )
   const reduced = useReducedMotion()
   const frontOpacity = useTransform(rotate, (r) => (showsBack(r) ? 0 : 1))
   const backOpacity = useTransform(rotate, (r) => (showsBack(r) ? 1 : 0))

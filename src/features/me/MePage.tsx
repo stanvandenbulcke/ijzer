@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BookOpen, ChevronRight, Download, Info, Trash2, UserRound } from 'lucide-react'
+import { BookOpen, Download, Info, Trash2, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { APP_VERSION } from '../../app/config'
@@ -89,14 +89,20 @@ export function MePage() {
           leading={<UserRound aria-hidden />}
           onClick={() => navigate('/welkom?terug=/ik')}
         />
+        <ListRow
+          title={m.science}
+          subtitle={m.scienceHint}
+          leading={<BookOpen aria-hidden />}
+          onClick={() => navigate('/wetenschap')}
+        />
       </div>
 
       <Group title={m.settings}>
         <Choice
           label={m.theme}
           value={theme}
-          options={['dark', 'light'] as Theme[]}
-          format={(v) => (v === 'dark' ? m.themeDark : m.themeLight)}
+          options={['dark', 'light', 'auto'] as Theme[]}
+          format={(v) => (v === 'dark' ? m.themeDark : v === 'light' ? m.themeLight : m.themeAuto)}
           onPick={(v) => {
             setTheme(v)
             applyTheme(v)
@@ -148,20 +154,9 @@ export function MePage() {
       <Group title={m.about}>
         <div className="border-t border-line">
           <ListRow
-            title={m.science}
-            subtitle={m.scienceHint}
-            leading={<BookOpen aria-hidden />}
-            onClick={() => navigate('/wetenschap')}
-          />
-          <ListRow
             title={m.credits}
             leading={<Info aria-hidden />}
             onClick={() => navigate('/ik/credits')}
-          />
-          <ListRow
-            title={m.design}
-            leading={<ChevronRight aria-hidden />}
-            onClick={() => navigate('/design')}
           />
         </div>
         <p className="text-sm text-muted">{m.version(APP_VERSION)}</p>

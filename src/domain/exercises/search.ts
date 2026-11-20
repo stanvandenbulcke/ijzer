@@ -1,5 +1,6 @@
 import type { MuscleId } from '../muscles/taxonomy'
 import type { Equipment, Exercise } from '../training/types'
+import { DUTCH_MUSCLE_WORDS, DUTCH_WORDS } from './dutchTerms'
 
 /** Lowercase, without accents and punctuation: "Push-Ups" → "push ups". */
 export function normalize(text: string): string {
@@ -84,6 +85,38 @@ function score(item: Indexed, query: string, tokens: string[]): number {
   return fuzzy ? 20 : 0
 }
 
+/** Muscles meant by a Dutch word or its start ("bil" → glutes), from 3 letters on. */
+export function dutchMuscles(token: string): MuscleId[] {
+  if (token.length < 3) return []
+  const hits = new Set<MuscleId>()
+  for (const [word, muscles] of Object.entries(DUTCH_MUSCLE_WORDS))
+    if (word.startsWith(token)) for (const m of muscles) hits.add(m)
+  return [...hits]
+}
+
+/** "bulgaarse split squat" → "bulgarian split squat". Unknown words stay as they are. */
+export function translateDutch(query: string): string {
+  return query
+    .split(' ')
+    .map((word) => DUTCH_WORDS[word] ?? word)
+    .join(' ')
+}
+
+/** Score for a query that names a muscle in Dutch: direct hits first, then helpers. */
+function muscleScore(exercise: Exercise, tokens: string[]): number {
+  const wanted = tokens.map(dutchMuscles)
+  if (wanted.some((m) => m.length === 0)) return 0
+  const best = Math.min(
+    ...wanted.map((muscles) =>
+      Math.max(
+        0,
+        ...exercise.muscles.filter((m) => muscles.includes(m.muscle)).map((m) => m.weight),
+      ),
+    ),
+  )
+  return best >= 1 ? 50 : best >= 0.5 ? 30 : 0
+}
+
 export interface ExerciseFilter {
   /** Only exercises that train this muscle directly. */
   muscle?: MuscleId
@@ -99,7 +132,9 @@ export function matchesFilter(exercise: Exercise, filter: ExerciseFilter): boole
 
 /**
  * Search by name or gym abbreviation ("rdl", "ohp", "bss"), tolerant of one typo per word.
- * Without a query the list keeps its order (curated first). Hand-checked exercises win ties.
+ * Dutch works too: muscle words ("billen", "buik") find exercises for that muscle and common
+ * words are translated ("bulgaarse" → "bulgarian"). Without a query the list keeps its order
+ * (curated first). Hand-checked exercises win ties.
  */
 export function searchExercises(
   exercises: Exercise[],
@@ -111,10 +146,17 @@ export function searchExercises(
   if (!q) return candidates.map((i) => i.exercise)
 
   const tokens = q.split(' ')
+  const translated = translateDutch(q)
+  const translatedTokens = translated.split(' ')
   return candidates
     .map((item) => ({
       item,
-      score: score(item, q, tokens) + (item.exercise.quality !== 'auto' ? 5 : 0),
+      score:
+        Math.max(
+          score(item, q, tokens),
+          translated === q ? 0 : score(item, translated, translatedTokens),
+          muscleScore(item.exercise, tokens),
+        ) + (item.exercise.quality !== 'auto' ? 5 : 0),
     }))
     .filter((r) => r.score > 5)
     .sort((a, b) => b.score - a.score || a.item.name.length - b.item.name.length)

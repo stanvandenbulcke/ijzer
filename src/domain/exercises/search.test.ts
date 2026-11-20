@@ -76,6 +76,29 @@ describe('searchExercises', () => {
   it('returns nothing for nonsense', () => {
     expect(searchExercises(list, 'xyzzy')).toEqual([])
   })
+
+  it('understands Dutch muscle words, also as a prefix', () => {
+    const glutes = [
+      ...list,
+      ex('thrust', 'Barbell Hip Thrust', { muscles: [{ muscle: 'glutes', weight: 1 }] }),
+      ex('lunge', 'Dumbbell Lunges', {
+        muscles: [
+          { muscle: 'quads', weight: 1 },
+          { muscle: 'glutes', weight: 0.5 },
+        ],
+      }),
+    ]
+    expect(ids(searchExercises(glutes, 'billen'))).toEqual(['thrust', 'lunge'])
+    expect(ids(searchExercises(glutes, 'bil')).slice(0, 1)).toEqual(['thrust'])
+    expect(ids(searchExercises(glutes, 'Bilspieren'))[0]).toBe('thrust')
+    expect(searchExercises(glutes, 'bi').map((e) => e.id)).not.toContain('thrust')
+  })
+
+  it('translates common Dutch words in exercise names', () => {
+    expect(ids(searchExercises(list, 'bulgaarse'))[0]).toBe('bss')
+    expect(ids(searchExercises(list, 'roemeense'))[0]).toBe('rdl')
+    expect(ids(searchExercises(list, 'hurken'))).toContain('squat')
+  })
 })
 
 describe('alternatives', () => {

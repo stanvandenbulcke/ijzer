@@ -21,3 +21,23 @@ export function heatFills(volume: MuscleVolume): MuscleFill {
   }
   return fills
 }
+
+/** Sets in one session at which a muscle shows at full colour. */
+const SESSION_FULL = 4
+
+/**
+ * Fills for ONE workout: the weekly zones would call 3 sets "too little", so a single session
+ * uses one colour that gets brighter with more sets instead.
+ */
+export function sessionFills(volume: MuscleVolume): MuscleFill {
+  const fills: MuscleFill = {}
+  for (const m of MUSCLE_IDS as readonly MuscleId[]) {
+    const sets = volume[m] ?? 0
+    if (sets > 0)
+      fills[m] = {
+        color: 'var(--plate-yellow)',
+        opacity: 0.4 + 0.6 * Math.min(1, sets / SESSION_FULL),
+      }
+  }
+  return fills
+}

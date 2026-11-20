@@ -10,10 +10,9 @@ import { defaultRestSec, incrementFor } from '../../../domain/profile/defaults'
 import { warmupSets } from '../../../domain/strength/warmup'
 import { planExercise } from '../../../domain/training/exercisePlan'
 import { ghostForExercise, ghostForSession } from '../../../domain/training/ghost'
-import type { Exercise, WorkoutExercise } from '../../../domain/training/types'
 import * as ops from '../../../domain/training/workoutOps'
 import { t } from '../../../i18n'
-import { formatDuration, formatNumber } from '../../../i18n/format'
+import { formatDuration } from '../../../i18n/format'
 import { Button } from '../../../ui/Button'
 import { EmptyState } from '../../../ui/EmptyState'
 import { LoadingState } from '../../../ui/LoadingState'
@@ -25,14 +24,14 @@ import { ExerciseCard } from './ExerciseCard'
 import { ExerciseMenuSheet, type View as MenuView } from './ExerciseMenuSheet'
 import { FinishSheet } from './FinishSheet'
 import { GhostBar } from './GhostBar'
-import { playRecord, playSetDone, primeAudio } from './sounds'
 import { RestTimer } from './RestTimer'
+import { SaveFailedBanner } from './SaveFailedBanner'
+import { isFilled, setActions } from './setActions'
 import { useWakeLock } from './useWakeLock'
 import { useWorkoutState } from './useWorkoutState'
 import { ValueSheet, type ValueEdit } from './ValueSheet'
 
 const w = t.training.workout
-const WARMUP_REST_SEC = 60
 
 /** /training — the screen the whole app revolves around (SPEC §4.4). */
 export function ActiveWorkoutPage() {
@@ -41,7 +40,7 @@ export function ActiveWorkoutPage() {
   const stored = useActiveWorkout()
   const data = useTrainingData()
   const profile = useProfile()
-  const { workout, apply, flush } = useWorkoutState(stored)
+  const { workout, apply, flush, saveFailed } = useWorkoutState(stored)
   const nowMs = useNow(1000)
   const [edit, setEdit] = useState<ValueEdit | null>(null)
   const [menuFor, setMenuFor] = useState<string | null>(null)
@@ -78,8 +77,14 @@ export function ActiveWorkoutPage() {
   if (stored === null && !workout) return <Navigate to="/train" replace />
   if (!workout || !data || !profile) return <LoadingState />
 
-  const exerciseOf = (item: WorkoutExercise): Exercise | undefined =>
-    data.library.byId(item.exerciseId)
+  const { openEdit, toggle, tickFilled, exerciseOf, incrementOf } = setActions({
+    data,
+    profile,
+    plans,
+    apply,
+    setEdit,
+    setPrMoment,
+  })
   // Race against yourself: the whole session versus last time, weighted exercises only.
   const sessionGhost = ghostForSession(
     workout.exercises
@@ -91,163 +96,31 @@ export function ActiveWorkoutPage() {
       )
       .map((e) => ghostForExercise(e.sets, plans.get(e.id)?.previousSets ?? [])),
   )
-  const incrementOf = (item: WorkoutExercise) =>
-    item.incrementKg ?? incrementFor(exerciseOf(item)?.equipment ?? 'other', profile.equipment)
-
-  const openEdit = (
-    item: WorkoutExercise,
-    index: number,
-    field: 'weight' | 'reps' | 'seconds' | 'meters',
-  ) => {
-    const set = item.sets[index]!
-    const plan = plans.get(item.id)!
-    const proposal = plan.proposals[index]!
-    const lastTime = plan.previousBySet[index]
-    const before = [...item.sets.slice(0, index)].reverse().find((s) => s.completed)
-    const ex = exerciseOf(item)
-    const name = ex?.name ?? item.exerciseId
-    const save = (changes: Partial<typeof set>) =>
-      apply((wk) => ops.updateSet(wk, item.id, set.id, changes))
-
-    if (field === 'weight') {
-      const quick = [
-        before?.weightKg != null && {
-          label: w.sameAsLastSet,
-          value: before.weightKg,
-        },
-        lastTime?.weightKg != null && { label: w.lastTime, value: lastTime.weightKg },
-      ].filter(Boolean) as ValueEdit['quickValues']
-      const bar =
-        ex?.equipment === 'barbell'
-          ? profile.equipment.barKg
-          : ex?.equipment === 'ez_bar'
-            ? 10
-            : null
-      setEdit({
-        title: name,
-        label: w.columns.kg,
-        value: set.weightKg ?? proposal.weightKg,
-        unit: t.common.kg,
-        step: incrementOf(item),
-        maxDecimals: 2,
-        quickValues: quick,
-        plates: bar ? { barKg: bar, inventory: profile.equipment.plates } : undefined,
-        onDone: (value) => {
-          save({ weightKg: value })
-          // Straight on to the reps of the same set: one sheet less per set.
-          if (set.reps === null) openEdit(item, index, 'reps')
-        },
-      })
-    } else if (field === 'reps') {
-      const quick = [
-        before?.reps != null && { label: w.sameAsLastSet, value: before.reps },
-        lastTime?.reps != null && { label: w.lastTime, value: lastTime.reps },
-      ].filter(Boolean) as ValueEdit['quickValues']
-      setEdit({
-        title: name,
-        label: w.columns.reps,
-        value: set.reps ?? proposal.reps,
-        unit: t.common.reps,
-        step: 1,
-        maxDecimals: 0,
-        quickValues: quick,
-        rir: set.rir,
-        onDone: (value, rir) => save({ reps: value, rir: rir ?? null }),
-      })
-    } else {
-      const seconds = field === 'seconds'
-      setEdit({
-        title: name,
-        label: seconds ? w.columns.sec : w.columns.m,
-        value: (seconds ? set.seconds : set.meters) ?? null,
-        unit: seconds ? 's' : 'm',
-        step: seconds ? 5 : 10,
-        maxDecimals: 0,
-        quickValues: [],
-        onDone: (value) => save(seconds ? { seconds: value } : { meters: value }),
-      })
-    }
-  }
-
-  const toggle = (item: WorkoutExercise, index: number) => {
-    const set = item.sets[index]!
-    if (set.completed) {
-      apply((wk) => ops.uncompleteSet(wk, item.id, set.id))
-      return
-    }
-    const type = exerciseOf(item)?.type ?? 'weight_reps'
-    const proposal = plans.get(item.id)!.proposals[index]!
-    if (type === 'time' && !set.seconds) return openEdit(item, index, 'seconds')
-    if (type === 'distance' && !set.meters) return openEdit(item, index, 'meters')
-    const weightKg = set.weightKg ?? proposal.weightKg ?? (type === 'weight_reps' ? null : 0)
-    const reps = set.reps ?? proposal.reps
-    if (type !== 'time' && type !== 'distance') {
-      if (weightKg === null) return openEdit(item, index, 'weight')
-      if (reps === null) return openEdit(item, index, 'reps')
-    }
-    primeAudio()
-    if (profile.settings.sounds) playSetDone()
-    const rest = set.type === 'warmup' ? WARMUP_REST_SEC : item.restSec
-    const next = apply((wk) =>
-      ops.completeSet(wk, item.id, set.id, { weightKg, reps }, now(), rest),
-    )
-    // Live PR detection (SPEC §4.4).
-    const updated = next?.exercises.find((e) => e.id === item.id)
-    if (next && updated) {
-      const ex = exerciseOf(item)
-      const plan = planExercise({
-        workout: next,
-        exercise: updated,
-        type: ex?.type ?? 'weight_reps',
-        finishedWorkouts: data.workouts,
-        history: data.perfsOf(item.exerciseId),
-        incrementKg: incrementOf(item),
-        cutting: profile.goal === 'cut',
-      })
-      const kinds = plan.prKinds[index] ?? []
-      if (kinds.length > 0) {
-        if (profile.settings.sounds) playRecord()
-        const done = updated.sets[index]!
-        setPrMoment({
-          id: done.id,
-          exercise: ex?.name ?? item.exerciseId,
-          kind: w.prKinds[kinds[0]!],
-          value:
-            ex?.type === 'time'
-              ? `${done.seconds ?? 0} s`
-              : `${formatNumber(done.weightKg ?? 0, 2)} kg × ${done.reps ?? 0}`,
-        })
-      }
-      // Last set of this exercise done: bring the next open exercise into view.
-      if (updated.sets.every((s) => s.completed)) {
-        const nextId = ops.currentExerciseId(next)
-        if (nextId) {
-          window.setTimeout(
-            () =>
-              document
-                .getElementById(`exercise-${nextId}`)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-            250,
-          )
-        }
-      }
-    }
-  }
 
   const menuItem = workout.exercises.find((e) => e.id === menuFor)
   const substituteItem = workout.exercises.find((e) => e.id === substituteFor)
-  const openCount = workout.exercises.filter(
-    (e) =>
-      (e.status === 'pending' || e.status === 'in_progress') && !e.sets.some((s) => s.completed),
-  ).length
+  const openNames = workout.exercises
+    .filter(
+      (e) =>
+        (e.status === 'pending' || e.status === 'in_progress') && !e.sets.some((s) => s.completed),
+    )
+    .map((e) => exerciseOf(e)?.name ?? e.exerciseId)
+  const filledCount = workout.exercises.reduce(
+    (n, e) => n + e.sets.filter((s) => isFilled(s, exerciseOf(e)?.type ?? 'weight_reps')).length,
+    0,
+  )
 
   const finish = async () => {
     apply((wk) => ops.finishWorkout(wk, now()))
-    await flush()
-    navigate(`/training/klaar/${workout.id}`, { replace: true })
+    try {
+      await flush()
+      navigate(`/training/klaar/${workout.id}`, { replace: true })
+    } catch {
+      setFinishing(false)
+    }
   }
   const discard = async () => {
-    await flush()
+    await flush().catch(() => undefined)
     await deleteWorkout(workout.id)
     toast({ message: w.discarded })
     navigate('/train', { replace: true })
@@ -279,6 +152,7 @@ export function ActiveWorkoutPage() {
         </header>
       </div>
 
+      {saveFailed && <SaveFailedBanner onRetry={() => void flush().catch(() => undefined)} />}
       <main
         className="mx-auto flex max-w-md flex-col gap-3 px-4 pt-3"
         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 7rem)' }}
@@ -358,6 +232,7 @@ export function ActiveWorkoutPage() {
           onOpenChange={(o) => !o && setMenuFor(null)}
           title={exerciseOf(menuItem)?.name ?? ''}
           actions={{
+            explain: () => navigate(`/train/oefeningen/${menuItem.exerciseId}`),
             later: () => {
               apply((wk) => ops.moveToEnd(wk, menuItem.id))
               toast({ message: w.movedLater })
@@ -426,7 +301,9 @@ export function ActiveWorkoutPage() {
       <FinishSheet
         open={finishing}
         onOpenChange={setFinishing}
-        openCount={openCount}
+        openNames={openNames}
+        filledCount={filledCount}
+        onTickFilled={() => tickFilled(workout)}
         onFinish={() => void finish()}
         onDiscard={() => void discard()}
       />

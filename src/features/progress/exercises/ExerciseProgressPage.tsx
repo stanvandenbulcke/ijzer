@@ -71,7 +71,7 @@ export function ExerciseProgressPage() {
           />
         ) : (
           <p className="text-muted">
-            {sessions(inPeriod).length === 0 ? t.training.lib.noHistory : p.empty.body}
+            {sessions(inPeriod).length === 0 ? t.training.lib.noHistory : p.chartNeedsTwo}
           </p>
         )}
       </Section>

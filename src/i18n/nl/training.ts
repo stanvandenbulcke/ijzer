@@ -11,10 +11,6 @@ export const training = {
   libraryHint: 'Bibliotheek en eigen oefeningen',
   history: 'Geschiedenis',
   historyHint: 'Al je trainingen',
-  exampleRoutines: 'Voorbeeldroutines',
-  exampleNote: 'Voorbeeld: kopieer en pas aan naar jouw smaak.',
-  copyExample: 'Kopieer naar mijn routines',
-  copied: 'Gekopieerd naar je routines',
   noRoutines: {
     title: 'Nog geen routines',
     body: 'Bouw je eerste routine: kies oefeningen, sets en rust. Daarna start je met één tik.',
@@ -59,7 +55,7 @@ export const training = {
 
   lib: {
     title: 'Oefeningen',
-    search: 'Zoek: bench, rdl, ohp…',
+    search: 'Zoek: billen, squat, bench…',
     searchLabel: 'Zoek een oefening',
     allMuscles: 'Alle spieren',
     allEquipment: 'Alle uitrusting',
@@ -68,7 +64,7 @@ export const training = {
     count: (n: number) => (n === 1 ? '1 oefening' : `${n} oefeningen`),
     noResults: {
       title: 'Niets gevonden',
-      body: 'Probeer een andere naam of afkorting, of maak zelf een oefening aan.',
+      body: 'Probeer een spier (billen, rug), een Engelse naam (hip thrust) of een afkorting (rdl). Staat hij er echt niet tussen? Maak hem zelf aan.',
     },
     loadError: {
       title: 'Bibliotheek niet geladen',
@@ -122,17 +118,20 @@ export const training = {
     newTitle: 'Nieuwe routine',
     editTitle: 'Routine bewerken',
     name: 'Naam',
-    namePlaceholder: 'Bijv. Push A, Benen zwaar',
+    namePlaceholder: 'Bijv. Benen & billen, Bovenlichaam',
     nameRequired: 'Geef je routine een naam.',
     color: 'Kleur',
     folder: 'Map (optioneel)',
-    folderPlaceholder: 'Bijv. Push/Pull/Legs',
+    folderPlaceholder: 'Bijv. Schema 3 dagen',
     exercises: 'Oefeningen',
     addExercise: 'Oefening toevoegen',
     noExercises: 'Nog geen oefeningen. Voeg er een toe.',
     sets: 'Sets',
     reps: 'Reps',
-    rir: 'RIR',
+    rir: 'Reps over (RIR)',
+    rirHint: 'Hoeveel reps je nog had kunnen doen. 1–3 is ideaal. Leeg laten mag.',
+    advancedShow: 'Meer instellingen: opwarmen, RIR, progressie',
+    advancedHide: 'Minder instellingen',
     rest: 'Rust',
     restSec: (s: string) => `${s} rust`,
     progression: 'Progressie',
@@ -159,7 +158,8 @@ export const training = {
     setType: 'Soort set',
     setTypeHint: 'Tik een set om er een dropset of tot-falen-set van te maken.',
     volumePreview: 'Volume per spier in deze routine',
-    volumeNote: 'Fractionele sets: direct telt 1, indirect telt ½.',
+    volumeNote:
+      'Een oefening telt 1 set voor de spier die hij vooral traint en ½ set voor spieren die meehelpen.',
     noVolume: 'Voeg oefeningen toe om het volume te zien.',
     save: 'Routine opslaan',
     saved: 'Routine opgeslagen',
@@ -176,8 +176,18 @@ export const training = {
     finishTitle: 'Training afronden?',
     finishOpen: (n: number) =>
       n === 1
-        ? '1 oefening is nog niet gedaan en wordt als overgeslagen bewaard.'
-        : `${n} oefeningen zijn nog niet gedaan en worden als overgeslagen bewaard.`,
+        ? '1 oefening is nog niet gedaan en wordt als overgeslagen bewaard:'
+        : `${n} oefeningen zijn nog niet gedaan en worden als overgeslagen bewaard:`,
+    filledNotTicked: (n: number) =>
+      n === 1
+        ? '1 set is ingevuld maar niet afgevinkt. Niet afgevinkt telt niet mee.'
+        : `${n} sets zijn ingevuld maar niet afgevinkt. Niet afgevinkt telt niet mee.`,
+    tickAll: 'Alles afvinken',
+    discardSure: 'Zeker? Alles van deze training wordt verwijderd.',
+    saveFailed: 'Je laatste wijziging kon niet op dit toestel bewaard worden.',
+    saveRetry: 'Opnieuw',
+    perDumbbell: 'kg per dumbbell',
+    explain: "Uitleg en foto's",
     finishConfirm: 'Afronden',
     discard: 'Training weggooien',
     discardConfirm: 'Weggooien: niets wordt bewaard',
@@ -256,8 +266,8 @@ export const training = {
       label: (text: string, sets: number) => `${text} na ${sets === 1 ? '1 set' : `${sets} sets`}`,
     },
     lastTimeOn: (day: string) => `Vorige keer: ${day}`,
-    firstTime: 'Eerste keer: kies een gewicht en tik op de getallen.',
-    hint: 'Grijze getallen zijn een voorstel op basis van vorige keer. Lukte het? Tik op ✓. Anders tik je op een getal om het aan te passen.',
+    firstTime: 'Eerste keer: tik op ✓, typ je gewicht en reps en tik op Klaar.',
+    hint: 'Grijze getallen zijn een voorstel. Lukte het? Tik op ✓. Anders tik je eerst op een getal om het aan te passen. Alleen afgevinkte sets tellen mee.',
     weighInAgain: 'Aanpassen',
     lastTime: 'Vorige keer',
     restTitle: 'Rust',
@@ -288,6 +298,7 @@ export const training = {
     volume: 'Volume',
     prs: 'Records',
     musclesHit: 'Spieren geraakt',
+    musclesHitNote: 'Feller geel = meer sets. Sleep of tik op het pijltje om te draaien.',
     vsLast: 'Vergeleken met vorige keer',
     vsLastNone: 'Eerste keer deze routine.',
     vsLastVolume: (delta: string) => `Volume ${delta}`,

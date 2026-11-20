@@ -1,4 +1,4 @@
-import { MUSCLE_IDS, type MuscleId } from '../../../domain/muscles/taxonomy'
+import { MUSCLE_IDS, MUSCLE_REGION, type MuscleId } from '../../../domain/muscles/taxonomy'
 import { workingSets } from '../../../domain/training/routineEdit'
 import type { Exercise, Routine } from '../../../domain/training/types'
 import { plannedVolume } from '../../../domain/volume/fractionalSets'
@@ -38,7 +38,10 @@ export function VolumePreview({
   const fills: MuscleFill = {}
   for (const m of trained)
     fills[m] = { color: 'var(--plate-yellow)', opacity: 0.35 + 0.65 * (volume[m]! / max) }
-  const missing = WATCH.filter((m) => !volume[m])
+  // Only mention forgotten muscles of a body part this routine trains: a leg day is not
+  // expected to hit the rear delts.
+  const regions = new Set(trained.map((m) => MUSCLE_REGION[m]))
+  const missing = WATCH.filter((m) => !volume[m] && regions.has(MUSCLE_REGION[m]))
 
   return (
     <div className="flex flex-col gap-3">

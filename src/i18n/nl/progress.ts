@@ -35,7 +35,10 @@ export const progress = {
     minutes: 'min',
   },
   recordWall: 'Recordmuur',
-  recordWallNote: 'Je beste geschatte 1RM per oefening (Epley).',
+  recordWallNote:
+    'Hoeveel kg je naar schatting 1 keer zou kunnen tillen, berekend uit je beste set. Een schatting, geen test.',
+  recordWallLabel: (name: string, kg: string) => `${name}: geschat maximum ${kg} kg`,
+  chartNeedsTwo: 'Na je tweede sessie van deze oefening zie je hier een lijn.',
   heatTitle: 'Hoe hard je elke spier raakte',
   calendar: 'Trainingen, laatste 12 weken',
   calendarLabel: (n: number) => `${n} trainingen in de laatste 12 weken`,

@@ -42,7 +42,10 @@ export function GoalStep({
                 selected={draft.ratePctPerWeek === pct}
                 onClick={() => update({ ratePctPerWeek: clampRate(pct) })}
               >
-                {o.pacePct(formatNumber(Math.abs(pct), 2))}
+                {o.pacePct(
+                  draft.weightKg ? formatNumber((Math.abs(pct) / 100) * draft.weightKg, 2) : null,
+                  formatNumber(Math.abs(pct), 2),
+                )}
               </Chip>
             ))}
           </ChoiceRow>

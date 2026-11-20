@@ -18,6 +18,12 @@ export const today = {
         ? 'Nog 1 training voor je weekdoel'
         : `Nog ${n} trainingen voor je weekdoel`,
   nextTitle: 'Training van vandaag',
+  doneTodayTitle: 'Vandaag getraind',
+  doneTodayBody: (sets: number) =>
+    `Bewaard: ${sets === 1 ? '1 set' : `${sets} sets`}. Rust goed, daar word je sterker van.`,
+  doneTodaySummary: 'Bekijk je training',
+  doneTodayNext: (name: string) => `Volgende keer: ${name}`,
+  doneTodayAgain: 'Nog een training starten',
   nextHint: 'Volgende in je rotatie',
   noRoutine: 'Nog geen routine',
   noRoutineBody: 'Maak een routine of begin een vrije training.',
@@ -29,7 +35,7 @@ export const today = {
   streakNone: 'Rustdagen tellen nooit tegen je.',
   weekdays: ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'],
   lastPr: 'Laatste record',
-  noPr: 'Je eerste records verschijnen na je tweede training per oefening.',
+  noPr: 'Records verschijnen zodra je een oefening beter doet dan de vorige keer.',
   weight: 'Gewicht',
   logWeight: 'Weeg je',
   weightToday: 'Vandaag gewogen',

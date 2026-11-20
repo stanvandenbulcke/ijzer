@@ -156,11 +156,6 @@ function RoutineEditor({
       </div>
 
       <h2 className="mt-8 mb-3 border-b border-line pb-1.5 font-display text-2xl font-bold uppercase">
-        {e.volumePreview}
-      </h2>
-      <VolumePreview routine={draft} byId={library.byId} />
-
-      <h2 className="mt-8 mb-3 border-b border-line pb-1.5 font-display text-2xl font-bold uppercase">
         {e.exercises}
       </h2>
       {draft.exercises.length === 0 && <p className="mb-3 text-muted">{e.noExercises}</p>}
@@ -200,6 +195,11 @@ function RoutineEditor({
       >
         {e.addExercise}
       </Button>
+
+      <h2 className="mt-8 mb-3 border-b border-line pb-1.5 font-display text-2xl font-bold uppercase">
+        {e.volumePreview}
+      </h2>
+      <VolumePreview routine={draft} byId={library.byId} />
 
       <div className="mt-8 flex flex-col gap-3">
         <Button size="lg" block onClick={() => void save()}>

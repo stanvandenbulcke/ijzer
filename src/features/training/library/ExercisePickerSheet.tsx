@@ -82,7 +82,12 @@ export function ExercisePickerSheet({
           {search.results.length === 0 && search.query.trim() ? (
             <div className="flex flex-col gap-3 py-6 text-center">
               <p className="text-muted">{l.noResults.body}</p>
-              <Button icon={Plus} block onClick={() => setCreating(search.query.trim())}>
+              <Button
+                variant="secondary"
+                icon={Plus}
+                block
+                onClick={() => setCreating(search.query.trim())}
+              >
                 {l.createNamed(search.query.trim())}
               </Button>
             </div>

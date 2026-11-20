@@ -56,9 +56,18 @@ export function TodayPage() {
     return null
   }, [data])
 
+  // Volume advice needs a few weeks of data; in the first two weeks the coach gives tips instead.
+  const firstDay = data?.workouts.at(-1)?.startedAt
+  const settled =
+    firstDay !== undefined &&
+    Date.parse(`${today}T12:00:00Z`) - Date.parse(firstDay) > 14 * 86_400_000
+  const doneToday = data?.workouts.find((w) => localDay(w.startedAt) === today) ?? null
+  const doneTodaySets =
+    doneToday && data ? summarizeWorkout(doneToday, data.workouts, data.library.byId).sets : 0
+
   const insight = useMemo(
     () =>
-      data && profile
+      data && profile && settled
         ? (analyse({
             perfs: data.perfs,
             byId: data.library.byId,
@@ -66,7 +75,7 @@ export function TodayPage() {
             cutting: profile.goal === 'cut',
           })[0] ?? null)
         : null,
-    [data, profile, today],
+    [data, profile, today, settled],
   )
 
   if (!profile || !routines || data === undefined || !weights) return <LoadingState />
@@ -104,6 +113,25 @@ export function TodayPage() {
             <p className="font-display text-3xl font-black uppercase">{active.name}</p>
             <Button block className="mt-3" onClick={() => navigate('/training')}>
               {t.training.continueWorkout}
+            </Button>
+          </Card>
+        ) : doneToday ? (
+          <Card title={d.doneTodayTitle}>
+            <p className="font-display text-4xl leading-none font-black uppercase">
+              {doneToday.name}
+            </p>
+            <p className="mt-1 text-sm text-muted">{d.doneTodayBody(doneTodaySets)}</p>
+            <Button
+              variant="secondary"
+              block
+              className="mt-3"
+              onClick={() => navigate(`/train/geschiedenis/${doneToday.id}`)}
+            >
+              {d.doneTodaySummary}
+            </Button>
+            {next && <p className="mt-3 text-sm text-muted">{d.doneTodayNext(next.name)}</p>}
+            <Button variant="ghost" block className="mt-1" onClick={() => void start()}>
+              {d.doneTodayAgain}
             </Button>
           </Card>
         ) : next ? (

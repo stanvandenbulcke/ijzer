@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router'
 import type { TrainingData } from '../../../data/useTrainingData'
 import { MUSCLE_REGION } from '../../../domain/muscles/taxonomy'
 import { recordWall } from '../../../domain/training/totals'
+import { t } from '../../../i18n'
 import { formatNumber } from '../../../i18n/format'
+
+const p = t.progress
 
 const PLATE = {
   push: 'var(--plate-red)',
@@ -36,6 +39,7 @@ export function RecordWall({ data }: { data: TrainingData }) {
             key={r.exerciseId}
             type="button"
             onClick={() => navigate(`/progressie/oefening/${encodeURIComponent(r.exerciseId)}`)}
+            aria-label={p.recordWallLabel(exercise?.name ?? r.exerciseId, formatNumber(r.e1rm, 0))}
             className="flex flex-col items-center gap-1.5 text-center"
             initial={{ rotate: -90, opacity: 0, x: -30 }}
             animate={{ rotate: 0, opacity: 1, x: 0 }}
@@ -55,6 +59,17 @@ export function RecordWall({ data }: { data: TrainingData }) {
                 fill={INK[region]}
               >
                 {formatNumber(r.e1rm, 0)}
+              </text>
+              <text
+                x="32"
+                y="51"
+                textAnchor="middle"
+                fontFamily="Big Shoulders Display"
+                fontWeight="700"
+                fontSize="8"
+                fill={INK[region]}
+              >
+                {t.common.kg}
               </text>
             </svg>
             <span className="line-clamp-2 text-xs leading-tight">

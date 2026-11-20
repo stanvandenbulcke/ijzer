@@ -40,7 +40,10 @@ function Cell({
   )
 }
 
-/** One set: label · last time · value cells · tick. Untouched values show the proposal dimmed. */
+/**
+ * One set: label · last time · value cells · tick. Proposals are dimmed; typed values are in
+ * full colour, and the tick is highlighted until the set is ticked.
+ */
 export function SetRow({
   set,
   label,
@@ -63,7 +66,8 @@ export function SetRow({
   const single = isSingleValue(type)
   const weight = set.weightKg ?? proposal.weightKg
   const reps = set.reps ?? proposal.reps
-  const ghost = !set.completed
+  // Typed in but not ticked yet: values in full colour, the tick invites a tap.
+  const typed = !set.completed && (set.reps !== null || set.seconds !== null || set.meters !== null)
   const isPr = set.completed && prKinds.length > 0
   const name = set.type === 'warmup' ? `${t.training.setTypes.warmup} ${label}` : label
 
@@ -85,7 +89,7 @@ export function SetRow({
         <Cell
           label={type === 'time' ? w.columns.sec : w.columns.m}
           value={formatNumber((type === 'time' ? set.seconds : set.meters) ?? 0, 0)}
-          ghost={ghost}
+          ghost={(type === 'time' ? set.seconds : set.meters) === null}
           onClick={() => onEdit(type === 'time' ? 'seconds' : 'meters')}
         />
       ) : (
@@ -93,14 +97,14 @@ export function SetRow({
           <Cell
             label={`${w.columns.kg} ${name}`}
             value={weight === null ? '–' : formatNumber(weight, 2)}
-            ghost={ghost || set.weightKg === null}
+            ghost={set.weightKg === null}
             onClick={() => onEdit('weight')}
           />
           <Cell
             label={`${w.columns.reps} ${name}`}
             value={reps === null ? '–' : String(reps)}
             suffix={set.rir !== null ? `@${set.rir}` : undefined}
-            ghost={ghost || set.reps === null}
+            ghost={set.reps === null}
             onClick={() => onEdit('reps')}
           />
         </>
@@ -114,7 +118,9 @@ export function SetRow({
           'press flex h-12 w-14 items-center justify-center rounded-sm border',
           set.completed
             ? 'set-stamp border-plate-green bg-plate-green text-on-accent'
-            : 'border-line-strong text-muted',
+            : typed
+              ? 'border-2 border-accent-edge text-accent-text'
+              : 'border-line-strong text-muted',
         )}
       >
         <Check aria-hidden size={28} strokeWidth={2.75} />

@@ -66,6 +66,7 @@ export function LibraryPage() {
               body={l.noResults.body}
               action={
                 <Button
+                  variant="secondary"
                   icon={Plus}
                   onClick={() =>
                     navigate(

@@ -102,7 +102,8 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await expect(page).toHaveURL(/\/vandaag/)
 
   // Second workout: last time is shown, one tap logs +1 rep on the weakest set → reps PR.
-  await page.getByRole('button', { name: 'Start' }).click()
+  await expect(page.getByText('Vandaag getraind')).toBeVisible()
+  await page.getByRole('button', { name: 'Nog een training starten' }).click()
   await expect(page.getByText('60 × 8').first()).toBeVisible()
   await expect(page.getByText(/Doel vandaag/).first()).toBeVisible()
   await page.getByRole('button', { name: 'Set 1 afvinken' }).first().click()
@@ -164,4 +165,39 @@ test('library search with abbreviations and exercise detail', async ({ page }, t
     path: `test-results/screens/flow-exercise-${testInfo.project.name}.png`,
     fullPage: true,
   })
+})
+
+test('ticking an empty set asks for the values and then ticks it; finish names what is open', async ({
+  page,
+}) => {
+  await onboard(page)
+  await page.goto('/train')
+  await page.getByRole('button', { name: /Vrije training/ }).click()
+  await pickExercise(page, 'billen', 'Barbell Hip Thrust')
+  await pickExercise(page, 'bulgaarse', 'Split Squat with Dumbbells')
+
+  // ✓ on an empty set: keypad for kg, then reps, and "Klaar" ticks the set.
+  await page.getByRole('button', { name: 'Set 1 afvinken' }).first().click()
+  await keypad(page, '40', false)
+  await keypad(page, '8')
+  await expect(
+    page.getByRole('button', { name: 'Set 1 niet meer afgevinkt' }).first(),
+  ).toHaveAttribute('aria-pressed', 'true')
+
+  // Typed in but not ticked: the finish sheet offers to tick it and names the open exercise.
+  await page.getByRole('button', { name: 'kg 2' }).first().click()
+  await keypad(page, '40', false)
+  await keypad(page, '9')
+  await page.getByRole('button', { name: 'Afronden' }).first().click()
+  const sheet = page.getByRole('dialog')
+  await expect(sheet.getByText('1 set is ingevuld maar niet afgevinkt')).toBeVisible()
+  await expect(sheet.getByText('Split Squat with Dumbbells')).toBeVisible()
+  await sheet.getByRole('button', { name: 'Alles afvinken' }).click()
+  await expect(sheet.getByText('ingevuld maar niet afgevinkt')).toBeHidden()
+  await sheet.getByRole('button', { name: 'Afronden' }).click()
+  await expect(page.getByRole('heading', { name: 'Goed gewerkt' })).toBeVisible()
+
+  // Today now says you trained, instead of offering the same workout again.
+  await page.getByRole('button', { name: 'Klaar' }).click()
+  await expect(page.getByText('Vandaag getraind')).toBeVisible()
 })

@@ -1,5 +1,14 @@
 import type { ReactNode } from 'react'
-import { ChevronDown, ChevronUp, Copy, Link2, Link2Off, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import {
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Link2,
+  Link2Off,
+  SlidersHorizontal,
+  Trash2,
+} from 'lucide-react'
 import {
   applyTargets,
   cycleSetType,
@@ -30,7 +39,10 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
-/** One exercise in the routine builder. */
+/**
+ * One exercise in the routine builder. Only sets, reps and rest are shown; warm-ups, RIR, set
+ * types, progression and a note sit under "Meer instellingen" with sensible defaults.
+ */
 export function RoutineExerciseEditor({
   item,
   exercise,
@@ -57,6 +69,7 @@ export function RoutineExerciseEditor({
   const work = workingSets(item)
   const first = work[0]
   const name = exercise?.name ?? item.exerciseId
+  const [advanced, setAdvanced] = useState(false)
 
   return (
     <article
@@ -95,17 +108,7 @@ export function RoutineExerciseEditor({
       </div>
 
       <div className="mt-2 flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-3">
-          <Row label={t.training.setTypes.warmup}>
-            <Stepper
-              label={t.training.setTypes.warmup}
-              value={warmupSets(item).length}
-              min={0}
-              max={4}
-              maxDecimals={0}
-              onChange={(n) => onChange(setCounts(item, n, work.length))}
-            />
-          </Row>
+        <div className="flex flex-wrap items-end gap-4">
           <Row label={e.sets}>
             <Stepper
               label={e.sets}
@@ -116,8 +119,6 @@ export function RoutineExerciseEditor({
               onChange={(n) => onChange(setCounts(item, warmupSets(item).length, n))}
             />
           </Row>
-        </div>
-        <div className="flex flex-wrap items-end gap-4">
           <Row label={e.reps}>
             <div className="flex items-center gap-1.5">
               <MiniNumber
@@ -133,33 +134,7 @@ export function RoutineExerciseEditor({
               />
             </div>
           </Row>
-          <Row label={e.rir}>
-            <MiniNumber
-              label={e.rir}
-              value={first?.rir ?? null}
-              onChange={(rir) => onChange(applyTargets(item, { rir }))}
-            />
-          </Row>
         </div>
-        <Row label={e.setType}>
-          <div className="flex flex-wrap gap-1.5">
-            {item.sets.map((s, i) =>
-              s.type === 'warmup' ? null : (
-                <Chip
-                  key={i}
-                  selected={s.type !== 'working'}
-                  onClick={() => onChange(cycleSetType(item, i))}
-                  className="min-w-11 justify-center"
-                >
-                  {s.type === 'working'
-                    ? i + 1 - warmupSets(item).length
-                    : t.training.setTypeShort[s.type]}
-                </Chip>
-              ),
-            )}
-          </div>
-          <p className="text-sm text-muted">{e.setTypeHint}</p>
-        </Row>
         <Row label={e.rest}>
           <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 [scrollbar-width:none]">
             {RESTS.map((sec) => (
@@ -174,31 +149,81 @@ export function RoutineExerciseEditor({
             ))}
           </div>
         </Row>
-        <Row label={e.progression}>
-          <div className="flex flex-wrap gap-1.5">
-            {MODELS.map((m) => (
-              <Chip
-                key={m}
-                selected={item.progression === m}
-                onClick={() => onChange({ ...item, progression: m })}
-              >
-                {e.progressionModels[m]}
-              </Chip>
-            ))}
-          </div>
-          <p className="text-sm text-muted">{e.progressionHints[item.progression]}</p>
-        </Row>
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-semibold tracking-widest text-muted uppercase">
-            {e.note}
-          </span>
-          <input
-            value={item.note}
-            placeholder={e.notePlaceholder}
-            onChange={(ev) => onChange({ ...item, note: ev.target.value })}
-            className="min-h-11 rounded-sm border border-line-strong bg-surface px-3 outline-none placeholder:text-muted focus:border-focus"
-          />
-        </label>
+        <button
+          type="button"
+          aria-expanded={advanced}
+          onClick={() => setAdvanced((v) => !v)}
+          className="press flex min-h-11 items-center gap-2 self-start text-sm font-semibold text-accent-text"
+        >
+          <SlidersHorizontal aria-hidden size={18} />
+          {advanced ? e.advancedHide : e.advancedShow}
+        </button>
+        {advanced && (
+          <>
+            <Row label={t.training.setTypes.warmup}>
+              <Stepper
+                label={t.training.setTypes.warmup}
+                value={warmupSets(item).length}
+                min={0}
+                max={4}
+                maxDecimals={0}
+                onChange={(n) => onChange(setCounts(item, n, work.length))}
+              />
+            </Row>
+            <Row label={e.rir}>
+              <MiniNumber
+                label={e.rir}
+                value={first?.rir ?? null}
+                onChange={(rir) => onChange(applyTargets(item, { rir }))}
+              />
+              <p className="text-sm text-muted">{e.rirHint}</p>
+            </Row>
+            <Row label={e.setType}>
+              <div className="flex flex-wrap gap-1.5">
+                {item.sets.map((s, i) =>
+                  s.type === 'warmup' ? null : (
+                    <Chip
+                      key={i}
+                      selected={s.type !== 'working'}
+                      onClick={() => onChange(cycleSetType(item, i))}
+                      className="min-w-11 justify-center"
+                    >
+                      {s.type === 'working'
+                        ? i + 1 - warmupSets(item).length
+                        : t.training.setTypeShort[s.type]}
+                    </Chip>
+                  ),
+                )}
+              </div>
+              <p className="text-sm text-muted">{e.setTypeHint}</p>
+            </Row>
+            <Row label={e.progression}>
+              <div className="flex flex-wrap gap-1.5">
+                {MODELS.map((m) => (
+                  <Chip
+                    key={m}
+                    selected={item.progression === m}
+                    onClick={() => onChange({ ...item, progression: m })}
+                  >
+                    {e.progressionModels[m]}
+                  </Chip>
+                ))}
+              </div>
+              <p className="text-sm text-muted">{e.progressionHints[item.progression]}</p>
+            </Row>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold tracking-widest text-muted uppercase">
+                {e.note}
+              </span>
+              <input
+                value={item.note}
+                placeholder={e.notePlaceholder}
+                onChange={(ev) => onChange({ ...item, note: ev.target.value })}
+                className="min-h-11 rounded-sm border border-line-strong bg-surface px-3 outline-none placeholder:text-muted focus:border-focus"
+              />
+            </label>
+          </>
+        )}
       </div>
     </article>
   )

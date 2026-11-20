@@ -1,4 +1,5 @@
 import {
+  BookOpen,
   Clock,
   Flame,
   NotebookPen,
@@ -20,6 +21,7 @@ const w = t.training.workout
 const REASONS: SkipReason[] = ['busy', 'time', 'pain', 'motivation', 'other']
 
 export interface MenuActions {
+  explain: () => void
   later: () => void
   substitute: () => void
   skip: (reason: SkipReason | null) => void
@@ -63,6 +65,11 @@ export function ExerciseMenuSheet({
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : close())} title={title}>
       {view === 'main' && (
         <div className="border-t border-line">
+          <ListRow
+            title={w.explain}
+            leading={<BookOpen aria-hidden />}
+            onClick={run(actions.explain)}
+          />
           <ListRow title={w.later} leading={<Clock aria-hidden />} onClick={run(actions.later)} />
           <ListRow
             title={w.substitute}

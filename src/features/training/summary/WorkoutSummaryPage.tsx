@@ -15,7 +15,7 @@ import { Badge } from '../../../ui/Badge'
 import { Button } from '../../../ui/Button'
 import { Chip } from '../../../ui/Chip'
 import { LoadingState } from '../../../ui/LoadingState'
-import { heatFills } from '../../../ui/muscle-map/heat'
+import { sessionFills } from '../../../ui/muscle-map/heat'
 import { MuscleMap3D } from '../../../ui/muscle-map/MuscleMap3D'
 import { CountUp } from '../../../ui/motion/CountUp'
 import { Stagger } from '../../../ui/motion/Stagger'
@@ -133,11 +133,12 @@ export function WorkoutSummaryPage() {
           {s.musclesHit}
         </h2>
         <MuscleMap3D
-          fills={heatFills(summary.muscles)}
+          fills={sessionFills(summary.muscles)}
           label={Object.keys(summary.muscles)
             .map((m) => t.muscles[m as keyof typeof t.muscles])
             .join(', ')}
         />
+        <p className="mt-2 text-center text-sm text-muted">{s.musclesHitNote}</p>
         <p className="mt-3 text-sm text-muted">
           {summary.volumeChange === null
             ? s.vsLastNone

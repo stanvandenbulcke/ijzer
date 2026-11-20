@@ -91,7 +91,7 @@
   --blue-text: #6e9bf2;
   --green-text: #3dbe5e;
 
-  --zone-low: #3a5fa8;
+  --zone-low: #8a8578;
 }
 
 :root[data-theme='light'] {
@@ -113,7 +113,7 @@
   --blue-text: #2459b8;
   --green-text: #18692e;
 
-  --zone-low: #a9c1ec;
+  --zone-low: #b3ad9e;
 }
 
 html {
