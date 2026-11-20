@@ -6,6 +6,11 @@
 export interface SupabaseProject {
   url: string
   publishableKey: string
+  /**
+   * Local tables whose server table does not exist in this project yet (migration not applied).
+   * They are not synced; their changes wait safely in the outbox until the table exists.
+   */
+  notMigrated?: readonly string[]
 }
 
 const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
@@ -16,6 +21,8 @@ const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
   prod: {
     url: 'https://hjnmljxonfautstydfyt.supabase.co',
     publishableKey: 'sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k',
+    // Waiting for Stan's go for 20261120000500_nutrition.sql on prod.
+    notMigrated: ['foods', 'foodLogs', 'nutritionDays'],
   },
 }
 

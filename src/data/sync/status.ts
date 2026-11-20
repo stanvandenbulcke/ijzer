@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 
-export type SyncState = 'idle' | 'syncing' | 'offline' | 'error' | 'signed-out' | 'needs-choice'
+export type SyncState =
+  'idle' | 'syncing' | 'offline' | 'error' | 'signed-out' | 'needs-choice' | 'partial'
 
 export interface SyncStatus {
   state: SyncState

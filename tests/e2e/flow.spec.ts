@@ -157,7 +157,10 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
 
   // IRON Wrapped for this month, as a story.
   await page.goto('/progressie/overzicht')
-  await page.getByRole('button', { name: /in IRON/ }).first().click()
+  await page
+    .getByRole('button', { name: /in IRON/ })
+    .first()
+    .click()
   await expect(page).toHaveURL(/\/wrapped\//)
   await page.getByRole('button', { name: 'Volgende' }).click()
   await expect(page.getByText('trainingen', { exact: true })).toBeVisible()

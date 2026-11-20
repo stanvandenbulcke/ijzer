@@ -90,6 +90,7 @@ export const auth = {
       error: 'Opslaan in de cloud mislukt. Tik om opnieuw te proberen.',
       'signed-out': 'Niet ingelogd',
       'needs-choice': 'Kies eerst wat er met de gegevens op dit toestel gebeurt',
+      partial: 'Training opgeslagen in de cloud. Voeding staat voorlopig alleen op dit toestel.',
     },
     lastSynced: (time: string) => `Laatst gesynchroniseerd om ${time}`,
     create: 'Account maken',

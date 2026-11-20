@@ -25,6 +25,7 @@ import { Page, PageHeader } from '../../ui/PageHeader'
 import { ValueEntrySheet } from '../../ui/ValueEntrySheet'
 import { CheckInCard } from './CheckInCard'
 import { CoachCard } from './CoachCard'
+import { NutritionCard } from './NutritionCard'
 import { Card, WeekCard, WeightCard } from './TodayCards'
 
 const d = t.today
@@ -197,9 +198,7 @@ export function TodayPage() {
 
         <WeightCard points={points} today={today} onLog={() => setWeighing(true)} />
 
-        <Card title={d.nutrition}>
-          <p className="text-sm text-muted">{d.nutritionSoon}</p>
-        </Card>
+        <NutritionCard today={today} />
       </Stagger>
       <ValueEntrySheet
         open={weighing}

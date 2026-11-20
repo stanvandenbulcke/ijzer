@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fromRemote, remoteWins, toRemote } from './mapping'
+import { fromRemote, remoteWins, SYNCED_TABLES, syncableTables, toRemote } from './mapping'
 
 const meta = {
   createdAt: '2026-11-19T10:00:00.000Z',
@@ -50,5 +50,12 @@ describe('sync mapping', () => {
     expect(remoteWins({ ...meta, updatedAt: '2026-11-19T10:00:00.000Z' }, remote)).toBe(true)
     expect(remoteWins(meta, remote)).toBe(true)
     expect(remoteWins({ ...meta, updatedAt: '2026-11-19T12:00:00.000Z' }, remote)).toBe(false)
+  })
+})
+
+describe('syncableTables', () => {
+  it('leaves out tables that are not migrated in this project yet', () => {
+    expect(syncableTables(['foods'])).not.toContain('foods')
+    expect(syncableTables()).toEqual(SYNCED_TABLES)
   })
 })

@@ -1,7 +1,4 @@
 # nutrition/foods
 
-'Mijn producten': private foods, edit/favourite/delete.
-
-- **Fase:** 5
-- **Belangrijkste bestanden:** (nog leeg)
-- **Afhankelijkheden:** alleen `src/domain`, `src/data`, `src/ui`, `src/i18n` — nooit een andere feature.
+"Mijn producten": `FoodsPage` (list, search, edit, delete with undo) and the reusable
+`FoodForm` (values per 100 g/ml from the label, kcal sanity check).

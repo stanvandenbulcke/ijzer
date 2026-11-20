@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie'
 import type { Profile } from '../domain/profile/types'
+import type { Food, FoodLog } from '../domain/nutrition/types'
 import type { Exercise, Routine, Workout } from '../domain/training/types'
 
 /** Sync bookkeeping on every row (SPEC §7.1). Deleted rows stay as tombstones for sync. */
@@ -25,6 +26,14 @@ export interface CheckInRow extends RowMeta {
   energy: number
   sleep: number
 }
+export type FoodRow = Food & RowMeta
+export type FoodLogRow = FoodLog & RowMeta
+/** Per-day nutrition status: "dag volledig gelogd" matters for the adaptive TDEE (SPEC §5.5). */
+export interface NutritionDayRow extends RowMeta {
+  id: string
+  day: string
+  complete: boolean
+}
 export interface ProfileRow extends RowMeta {
   id: 'me'
   profile: Profile
@@ -39,7 +48,15 @@ export interface OutboxEntry {
 }
 
 export type SyncedTable =
-  'profile' | 'customExercises' | 'routines' | 'workouts' | 'bodyWeights' | 'checkIns'
+  | 'profile'
+  | 'customExercises'
+  | 'routines'
+  | 'workouts'
+  | 'bodyWeights'
+  | 'checkIns'
+  | 'foods'
+  | 'foodLogs'
+  | 'nutritionDays'
 
 /** Small key-value store for sync bookkeeping: owner of the local data, pull cursors. */
 export interface MetaRow {
@@ -58,6 +75,9 @@ export class IjzerDb extends Dexie {
   workouts!: Table<WorkoutRow, string>
   bodyWeights!: Table<BodyWeightRow, string>
   checkIns!: Table<CheckInRow, string>
+  foods!: Table<FoodRow, string>
+  foodLogs!: Table<FoodLogRow, string>
+  nutritionDays!: Table<NutritionDayRow, string>
   outbox!: Table<OutboxEntry, number>
   meta!: Table<MetaRow, string>
 
@@ -75,6 +95,12 @@ export class IjzerDb extends Dexie {
     this.version(2).stores({ meta: 'key' })
     // v3: daily energy/sleep check-ins.
     this.version(3).stores({ checkIns: 'id, &day, updatedAt' })
+    // v4: nutrition diary.
+    this.version(4).stores({
+      foods: 'id, barcode, updatedAt',
+      foodLogs: 'id, day, updatedAt',
+      nutritionDays: 'id, &day, updatedAt',
+    })
   }
 }
 

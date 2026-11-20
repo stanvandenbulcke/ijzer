@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { logBodyWeight } from '../bodyRepo'
+import { saveCheckIn } from '../checkInsRepo'
 import { db } from '../db'
 import { getCursor } from './meta'
 import { pull, push } from './syncEngine'
@@ -13,7 +14,11 @@ import { pull, push } from './syncEngine'
 type Row = Record<string, unknown> & { id: string; server_updated_at: string }
 
 function fakeClient(tables: Record<string, Row[]>, hooks: { onUpsert?: () => Promise<void> } = {}) {
-  const calls = { upserts: [] as Array<{ table: string; rows: Row[] }>, failUpsert: false }
+  const calls = {
+    upserts: [] as Array<{ table: string; rows: Row[] }>,
+    failUpsert: false,
+    failTables: new Set<string>(),
+  }
   const from = (table: string) => {
     const rows = (tables[table] ??= [])
     let filter: (r: Row) => boolean = () => true
@@ -37,6 +42,7 @@ function fakeClient(tables: Record<string, Row[]>, hooks: { onUpsert?: () => Pro
       upsert: async (payload: Row[]) => {
         await hooks.onUpsert?.()
         if (calls.failUpsert) return { error: { message: 'offline' } }
+        if (calls.failTables.has(table)) return { error: { message: `no table ${table}` } }
         calls.upserts.push({ table, rows: payload })
         return { error: null }
       },
@@ -86,6 +92,17 @@ describe('push', () => {
     calls.failUpsert = true
     await expect(push(client, 'user-a')).rejects.toThrow('offline')
     expect(await db.outbox.count()).toBe(1)
+  })
+
+  it('sends the other tables when one table fails, and keeps only that outbox', async () => {
+    await logBodyWeight('2026-11-19', 78.4)
+    await saveCheckIn('2026-11-19', { energy: 4, sleep: 3 })
+    const { client, calls } = fakeClient({})
+    calls.failTables.add('check_ins')
+    await expect(push(client, 'user-a')).rejects.toThrow('no table check_ins')
+    expect(calls.upserts.map((u) => u.table)).toEqual(['body_weights'])
+    const left = await db.outbox.toArray()
+    expect(left.map((e) => e.table)).toEqual(['checkIns'])
   })
 
   it('keeps changes made while a push is running for the next round', async () => {

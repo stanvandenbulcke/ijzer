@@ -1,7 +1,4 @@
 # nutrition/search
 
-Search own foods, recents, NEVO and Open Food Facts.
-
-- **Fase:** 5
-- **Belangrijkste bestanden:** (nog leeg)
-- **Afhankelijkheden:** alleen `src/domain`, `src/data`, `src/ui`, `src/i18n` — nooit een andere feature.
+`AddFoodSheet`: search own products, recently used first; make a product or quick add when
+it is not there. Open Food Facts and NEVO plug in here later.

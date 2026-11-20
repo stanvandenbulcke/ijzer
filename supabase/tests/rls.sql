@@ -18,6 +18,9 @@ insert into public.routines (id, data, created_at, updated_at) values ('a2000000
 insert into public.workouts (id, data, created_at, updated_at) values ('a3000000-0000-4000-8000-000000000003', '{"name":"A"}', now(), now());
 insert into public.body_weights (id, data, created_at, updated_at) values ('a4000000-0000-4000-8000-000000000004', '{}', now(), now());
 insert into public.check_ins (id, data, created_at, updated_at) values ('a5000000-0000-4000-8000-000000000005', '{}', now(), now());
+insert into public.foods (id, data, created_at, updated_at) values ('a6000000-0000-4000-8000-000000000006', '{}', now(), now());
+insert into public.food_logs (id, data, created_at, updated_at) values ('a7000000-0000-4000-8000-000000000007', '{}', now(), now());
+insert into public.nutrition_days (id, data, created_at, updated_at) values ('a8000000-0000-4000-8000-000000000008', '{}', now(), now());
 
 do $$
 declare n int;
@@ -42,7 +45,7 @@ declare
   n int;
   t text;
 begin
-  foreach t in array array['profiles', 'custom_exercises', 'routines', 'workouts', 'body_weights', 'check_ins'] loop
+  foreach t in array array['profiles', 'custom_exercises', 'routines', 'workouts', 'body_weights', 'check_ins', 'foods', 'food_logs', 'nutrition_days'] loop
     execute format('select count(*) from public.%I', t) into n;
     if n <> 0 then raise exception 'FAIL: B can read % of A', t; end if;
   end loop;

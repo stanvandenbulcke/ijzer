@@ -21,7 +21,9 @@ async function syncRound(): Promise<void> {
   try {
     await push(client, userId)
     await pull(client)
-    setSyncStatus({ state: 'idle', lastSyncedAt: new Date().toISOString() })
+    // Changes for tables the server does not have yet stay queued: say so honestly.
+    const waiting = await db.outbox.count()
+    setSyncStatus({ state: waiting ? 'partial' : 'idle', lastSyncedAt: new Date().toISOString() })
   } catch {
     setSyncStatus({ state: navigator.onLine ? 'error' : 'offline' })
   }
@@ -91,13 +93,14 @@ async function clearLocal(): Promise<void> {
 
 /** Did someone already use the app on this device without an account? */
 export async function hasLocalData(): Promise<boolean> {
-  const [profile, workouts, routines, weights] = await Promise.all([
+  const [profile, workouts, routines, weights, logs] = await Promise.all([
     db.profile.get('me'),
     db.workouts.count(),
     db.routines.count(),
     db.bodyWeights.count(),
+    db.foodLogs.count(),
   ])
-  return Boolean(profile?.profile.onboardedAt) || workouts + routines + weights > 0
+  return Boolean(profile?.profile.onboardedAt) || workouts + routines + weights + logs > 0
 }
 
 export type Ownership = 'ok' | 'choose' | 'switch'

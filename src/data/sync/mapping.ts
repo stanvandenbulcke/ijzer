@@ -8,9 +8,16 @@ export const REMOTE_TABLE: Record<SyncedTable, string> = {
   workouts: 'workouts',
   bodyWeights: 'body_weights',
   checkIns: 'check_ins',
+  foods: 'foods',
+  foodLogs: 'food_logs',
+  nutritionDays: 'nutrition_days',
 }
 
 export const SYNCED_TABLES = Object.keys(REMOTE_TABLE) as SyncedTable[]
+
+/** Tables that are synced with this project (see `notMigrated` in supabase/config.ts). */
+export const syncableTables = (notMigrated: readonly string[] = []): SyncedTable[] =>
+  SYNCED_TABLES.filter((t) => !notMigrated.includes(t))
 
 export interface RemoteRow {
   id: string

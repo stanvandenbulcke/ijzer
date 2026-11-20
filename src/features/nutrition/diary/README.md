@@ -1,7 +1,4 @@
 # nutrition/diary
 
-Food diary per meal, day totals, 'day fully logged' flag.
-
-- **Fase:** 5
-- **Belangrijkste bestanden:** (nog leeg)
-- **Afhankelijkheden:** alleen `src/domain`, `src/data`, `src/ui`, `src/i18n` — nooit een andere feature.
+Meals of one day (`MealSection`), the portion sheet (`PortionSheet`: keypad, units, shortcuts,
+live kcal), quick add (`QuickAddSheet`) and the 7-day overview (`WeekOverview`).

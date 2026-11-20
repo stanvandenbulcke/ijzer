@@ -1,7 +1,4 @@
 # nutrition/targets
 
-Calorie and macro targets.
-
-- **Fase:** 5-6
-- **Belangrijkste bestanden:** (nog leeg)
-- **Afhankelijkheden:** alleen `src/domain`, `src/data`, `src/ui`, `src/i18n` — nooit een andere feature.
+`TargetsCard`: kcal ring and macro bars. The numbers come from `src/data/useTargets.ts`
+(profile + weight trend → `src/domain/nutrition/targets.ts`).

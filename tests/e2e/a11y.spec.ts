@@ -24,6 +24,7 @@ const PAGES = [
   '/train/oefeningen',
   '/train/routine/nieuw',
   '/voeding',
+  '/voeding/producten',
   '/progressie/lichaam',
   '/progressie/analyse',
   '/progressie/spiergroepen',
