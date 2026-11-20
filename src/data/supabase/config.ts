@@ -13,9 +13,10 @@ const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
     url: 'https://qtrdccxbmbqmvrtelxyl.supabase.co',
     publishableKey: 'sb_publishable_DrAvqTPUyPnM-bnIFen9DA_yEOB1bUn',
   },
-  // Filled in once ijzer-prod has its tables (needs Stan's go-ahead). Until then the live app
-  // runs without accounts.
-  prod: null,
+  prod: {
+    url: 'https://hjnmljxonfautstydfyt.supabase.co',
+    publishableKey: 'sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k',
+  },
 }
 
 /** `npm run dev` and the e2e build (`--mode e2e`) use dev; the production build uses prod. */

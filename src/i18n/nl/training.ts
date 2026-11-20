@@ -289,7 +289,7 @@ export const training = {
     note: 'Notitie',
     notePlaceholder: 'Hoe ging het?',
     share: 'Delen',
-    shareTitle: (name: string) => `${name} — IJZER`,
+    shareTitle: (name: string) => `${name} — IRON`,
     updateRoutine: 'Routine bijwerken met wat je vandaag deed?',
     updateRoutineYes: 'Ja, bijwerken',
     routineUpdated: 'Routine bijgewerkt',

@@ -34,8 +34,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'IJZER',
-        short_name: 'IJZER',
+        name: 'IRON',
+        short_name: 'IRON',
         description: 'Log je training in seconden, zie of je sterker wordt, en begrijp waarom.',
         lang: 'nl-BE',
         start_url: '/',

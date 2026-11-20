@@ -161,3 +161,11 @@ celebration. Small loops (set stamp, exercise icon flip, loading bar) stay plain
 **Context:** The dataset photos (red gym walls, early-2000s look) felt odd to Stan.
 **Decision:** Photos are shown monochrome with a light plate-yellow tint, and list icons
 alternate start/end photo as a tiny loop. No external videos/GIFs (SPEC §4.2 media rules).
+
+## ADR-021 — Name: IRON; accounts live on ijzer-prod
+
+**Context:** Stan found "IJZER" boring and chose "IRON" (English, short). He approved setting up
+ijzer-prod on 2026-11-20.
+**Decision:** `APP_NAME = 'IRON'` (manifest, title, texts). The repository, Supabase projects
+and internal identifiers keep the codename `ijzer`. The production build talks to ijzer-prod
+(same migrations and RLS tests as dev); a GitHub Action calls `keep_alive()` every 3 days.

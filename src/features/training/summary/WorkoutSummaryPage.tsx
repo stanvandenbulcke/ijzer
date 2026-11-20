@@ -93,7 +93,7 @@ export function WorkoutSummaryPage() {
         ? `${name(pr.exerciseId)} ${formatNumber(pr.weightKg ?? 0, 2)} × ${pr.reps ?? 0}`
         : null,
     })
-    if (blob) await shareImage(blob, 'ijzer-training.png', s.shareTitle(workout.name))
+    if (blob) await shareImage(blob, 'iron-training.png', s.shareTitle(workout.name))
   }
 
   return (

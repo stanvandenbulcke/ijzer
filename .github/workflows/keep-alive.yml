@@ -1,0 +1,22 @@
+name: Keep Supabase awake
+# Free Supabase projects pause after 7 days without activity (SPEC §2). A light read every
+# three days keeps them awake. Uses only the public publishable keys (protected by RLS).
+on:
+  schedule:
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping ijzer-prod
+        run: >
+          curl -fsS -o /dev/null -X POST -H 'Content-Type: application/json' -d '{}'
+          'https://hjnmljxonfautstydfyt.supabase.co/rest/v1/rpc/keep_alive'
+          -H 'apikey: sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k'
+      - name: Ping ijzer-dev
+        run: >
+          curl -fsS -o /dev/null -X POST -H 'Content-Type: application/json' -d '{}'
+          'https://qtrdccxbmbqmvrtelxyl.supabase.co/rest/v1/rpc/keep_alive'
+          -H 'apikey: sb_publishable_DrAvqTPUyPnM-bnIFen9DA_yEOB1bUn'

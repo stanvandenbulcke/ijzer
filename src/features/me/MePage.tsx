@@ -75,7 +75,7 @@ export function MePage() {
   const onOff = (v: boolean) => (v ? m.on : m.off)
 
   const download = async () => {
-    downloadBlob(await exportAll(), `ijzer-export-${new Date().toISOString().slice(0, 10)}.json`)
+    downloadBlob(await exportAll(), `iron-export-${new Date().toISOString().slice(0, 10)}.json`)
     toast({ message: m.exportDone })
   }
 

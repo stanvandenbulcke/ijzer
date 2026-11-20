@@ -11,7 +11,7 @@ export async function exportAll(): Promise<Blob> {
     db.bodyWeights.toArray(),
   ])
   const payload = {
-    app: 'IJZER',
+    app: 'IRON',
     version: APP_VERSION,
     exportedAt: new Date().toISOString(),
     profile,

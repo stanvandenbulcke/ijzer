@@ -28,7 +28,7 @@ export const auth = {
     title: 'Nieuw wachtwoord',
     body: 'Kies een nieuw wachtwoord voor je account.',
     submit: 'Wachtwoord opslaan',
-    done: 'Gelukt. Open IJZER nu vanaf je beginscherm en log in met je nieuwe wachtwoord.',
+    done: 'Gelukt. Open IRON nu vanaf je beginscherm en log in met je nieuwe wachtwoord.',
     invalid: 'Deze link is verlopen of al gebruikt. Vraag een nieuwe aan.',
     toLogin: 'Naar inloggen',
   },

@@ -58,7 +58,7 @@ export const onboarding = {
   },
   install: {
     title: 'Op je beginscherm',
-    body: 'Dan opent IJZER schermvullend als een echte app, ook zonder internet.',
+    body: 'Dan opent IRON schermvullend als een echte app, ook zonder internet.',
     done: 'Top: je gebruikt de app al vanaf je beginscherm.',
   },
 }

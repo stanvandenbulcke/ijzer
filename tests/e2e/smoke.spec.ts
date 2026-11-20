@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('landing placeholder renders and is installable', async ({ page }, testInfo) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1, name: 'IJZER' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'IRON' })).toBeVisible()
 
   // PWA basics: manifest is linked and served.
   const manifestHref = await page.locator('link[rel="manifest"]').getAttribute('href')
