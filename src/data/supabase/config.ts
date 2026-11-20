@@ -23,8 +23,6 @@ const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
   prod: {
     url: 'https://hjnmljxonfautstydfyt.supabase.co',
     publishableKey: 'sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k',
-    // Waiting for Stan's go: migrations 0600 (barcodes) and 0700 (buddies) + food-lookup function.
-    notDeployed: ['together', 'barcode'],
   },
 }
 

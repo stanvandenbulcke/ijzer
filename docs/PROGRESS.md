@@ -82,9 +82,10 @@ levels, Wrapped, check-in insights. Live: https://ijzer.stanvandenbulck.workers.
 ## Next (in order)
 
 1. ~~Prod migration for nutrition~~ — applied 2026-11-20 with Stan's go; RLS tests pass on prod.
-2. Samen trainen (ADR-026) and barcodes (ADR-025) are built and tested on ijzer-dev; on prod
-   they wait for Stan's go: migrations `..0600_food_lookup`, `..0700_buddies`, secret
-   `OFF_CONTACT`, function `food-lookup`; then remove `notDeployed` for prod.
+2. ~~Samen trainen (ADR-026) and barcodes (ADR-025) on prod~~ — live 2026-11-20 with Stan's
+   go (migrations 0600–0800, secret `OFF_CONTACT`, function `food-lookup`); `rls.sql` green on
+   prod. `buddies.sql` on prod needs Realtime's daily partition of `realtime.messages`, which
+   Supabase creates once a client uses Realtime: run it again after the first live session.
 3. NEVO (Stan downloads the file), label/plate photo (free Google AI Studio key from Stan).
 4. Adaptive TDEE + weekly check-in, measurements, steps (Shortcuts), recipes, supplements.
 5. After Stan approves the style: gate /design to dev (ADR-009).
@@ -94,7 +95,7 @@ levels, Wrapped, check-in insights. Live: https://ijzer.stanvandenbulck.workers.
 - [x] Go for the nutrition tables on ijzer-prod (given)
 - [x] Samen trainen: the other sees exercise, kg and reps live (Stan's choice)
 - [x] Barcodes: Stan's own address in the Open Food Facts User-Agent (stored as a secret)
-- [ ] Go to put barcodes + Samen trainen on ijzer-prod
+- [x] Go to put barcodes + Samen trainen on ijzer-prod (given)
 - [ ] Optional: free Google AI Studio key (label and plate photos), NEVO download
 - [ ] After both accounts exist: switch off open sign-ups in Supabase (fewer spam accounts)
 
