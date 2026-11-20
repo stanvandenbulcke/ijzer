@@ -21,8 +21,6 @@ const PROJECTS: Record<'dev' | 'prod', SupabaseProject | null> = {
   prod: {
     url: 'https://hjnmljxonfautstydfyt.supabase.co',
     publishableKey: 'sb_publishable_xnUQju8uTlkmTk1lql8SuQ_e2Pt5E_k',
-    // Waiting for Stan's go for 20261120000500_nutrition.sql on prod.
-    notMigrated: ['foods', 'foodLogs', 'nutritionDays'],
   },
 }
 

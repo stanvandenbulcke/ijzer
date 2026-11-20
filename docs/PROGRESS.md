@@ -81,8 +81,7 @@ levels, Wrapped, check-in insights. Live: https://ijzer.stanvandenbulck.workers.
 
 ## Next (in order)
 
-1. **Prod migration for nutrition** (`20261120000500_nutrition.sql`) — needs Stan's go; then
-   remove `notMigrated` for prod in `src/data/supabase/config.ts`.
+1. ~~Prod migration for nutrition~~ — applied 2026-11-20 with Stan's go; RLS tests pass on prod.
 2. Samen trainen + buddies (Realtime) — needs Stan's choices on what the other person sees.
 3. Barcode (Open Food Facts edge function; needs a contact address for the User-Agent), NEVO
    (Stan downloads the file), label/plate photo (free Google AI Studio key from Stan).
@@ -91,7 +90,7 @@ levels, Wrapped, check-in insights. Live: https://ijzer.stanvandenbulck.workers.
 
 ## Waiting for Stan
 
-- [ ] Go for the nutrition tables on ijzer-prod
+- [x] Go for the nutrition tables on ijzer-prod (given)
 - [ ] Samen trainen: what may the other person see (live sets? weights? only "training")
 - [ ] For barcodes: which e-mail address may go in the Open Food Facts User-Agent
 - [ ] Optional: free Google AI Studio key (label and plate photos), NEVO download
