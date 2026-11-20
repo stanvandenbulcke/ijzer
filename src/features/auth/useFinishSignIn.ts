@@ -8,6 +8,7 @@ export function useFinishSignIn() {
   return async (userId: string) => {
     const outcome = await afterSignIn(userId)
     if (outcome === 'choose') return navigate('/account/koppelen', { replace: true })
+    if (outcome === 'switch') return navigate('/account/koppelen?wissel=1', { replace: true })
     const profile = await loadProfile()
     navigate(profile.onboardedAt ? '/vandaag' : '/welkom', { replace: true })
   }

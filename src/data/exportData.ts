@@ -1,5 +1,6 @@
 import { APP_VERSION } from '../app/config'
 import { db } from './db'
+import { supabase } from './supabase/client'
 
 /** All local data as one JSON file (SPEC §4.11 "data-export"). */
 export async function exportAll(): Promise<Blob> {
@@ -23,8 +24,9 @@ export async function exportAll(): Promise<Blob> {
   return new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
 }
 
-/** Deletes the whole local database. */
+/** Deletes the whole local database and signs out on this device. */
 export async function wipeAll(): Promise<void> {
+  await supabase()?.auth.signOut({ scope: 'local' })
   db.close()
   await db.delete()
 }

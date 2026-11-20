@@ -17,6 +17,7 @@ insert into public.custom_exercises (id, data, created_at, updated_at) values ('
 insert into public.routines (id, data, created_at, updated_at) values ('a2000000-0000-4000-8000-000000000002', '{}', now(), now());
 insert into public.workouts (id, data, created_at, updated_at) values ('a3000000-0000-4000-8000-000000000003', '{"name":"A"}', now(), now());
 insert into public.body_weights (id, data, created_at, updated_at) values ('a4000000-0000-4000-8000-000000000004', '{}', now(), now());
+insert into public.check_ins (id, data, created_at, updated_at) values ('a5000000-0000-4000-8000-000000000005', '{}', now(), now());
 
 do $$
 declare n int;
@@ -41,7 +42,7 @@ declare
   n int;
   t text;
 begin
-  foreach t in array array['profiles', 'custom_exercises', 'routines', 'workouts', 'body_weights'] loop
+  foreach t in array array['profiles', 'custom_exercises', 'routines', 'workouts', 'body_weights', 'check_ins'] loop
     execute format('select count(*) from public.%I', t) into n;
     if n <> 0 then raise exception 'FAIL: B can read % of A', t; end if;
   end loop;
@@ -65,9 +66,32 @@ begin
   exception when insufficient_privilege then null;
   end;
 
+  -- The client's real operation is an upsert: B upserting onto A's id must not overwrite it.
   begin
-    update public.workouts set user_id = 'a0000000-0000-4000-8000-00000000000a' where user_id = (select auth.uid());
+    insert into public.workouts (id, user_id, data, created_at, updated_at)
+      values ('a3000000-0000-4000-8000-000000000003', 'b0000000-0000-4000-8000-00000000000b', '{"hacked":true}', now(), now() + interval '1 day')
+      on conflict (id) do update set data = excluded.data, updated_at = excluded.updated_at;
+    raise exception 'FAIL: B can upsert onto a workout of A';
+  exception when insufficient_privilege or unique_violation then null;
+  end;
+
+  -- B owns a row and tries to hand it to A.
+  insert into public.routines (id, data, created_at, updated_at) values ('b2000000-0000-4000-8000-000000000002', '{}', now(), now());
+  begin
+    update public.routines set user_id = 'a0000000-0000-4000-8000-00000000000a' where id = 'b2000000-0000-4000-8000-000000000002';
+    raise exception 'FAIL: B can move a row to A';
   exception when insufficient_privilege then null;
+  end;
+end;
+$$;
+
+do $$
+begin
+  begin
+    insert into public.body_weights (id, data, created_at, updated_at)
+      values ('b4000000-0000-4000-8000-000000000004', jsonb_build_object('x', repeat('a', 300000)), now(), now());
+    raise exception 'FAIL: a document larger than 256 kB was accepted';
+  exception when check_violation then null;
   end;
 end;
 $$;

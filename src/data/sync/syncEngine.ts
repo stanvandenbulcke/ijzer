@@ -68,38 +68,62 @@ async function applyRemote(table: SyncedTable, row: RemoteRow): Promise<void> {
   await (db[table] as unknown as { put: (r: unknown) => Promise<unknown> }).put(next)
 }
 
-/** Fetches every row changed on the server since the last pull (by server time). */
-export async function pull(client: SupabaseClient): Promise<number> {
+/**
+ * Re-read this much before the cursor on every pull. Rows from transactions that committed
+ * slightly out of order are then still picked up; applying a row twice is harmless.
+ */
+export const OVERLAP_MS = 5 * 60_000
+
+/**
+ * Fetches every row changed on the server since the last pull (by server time). Pages are
+ * ordered by (server_updated_at, id), so rows with the same timestamp are never skipped at a
+ * page boundary (data-loss review).
+ */
+export async function pull(client: SupabaseClient, pageSize = PAGE): Promise<number> {
   let received = 0
   for (const table of SYNCED_TABLES) {
     const remote = REMOTE_TABLE[table]
-    let cursor = await getCursor(remote)
+    const stored = await getCursor(remote)
+    const since = new Date(Math.max(0, Date.parse(stored) - OVERLAP_MS)).toISOString()
+    let after: { ts: string; id: string } | null = null
+    let newest = stored
     for (;;) {
-      const { data, error } = await client
+      let query = client
         .from(remote)
         .select('id, data, created_at, updated_at, deleted_at, server_updated_at')
-        .gt('server_updated_at', cursor)
         .order('server_updated_at', { ascending: true })
-        .limit(PAGE)
+        .order('id', { ascending: true })
+        .limit(pageSize)
+      query = after
+        ? query.or(
+            `server_updated_at.gt."${after.ts}",and(server_updated_at.eq."${after.ts}",id.gt.${after.id})`,
+          )
+        : query.gte('server_updated_at', since)
+      const { data, error } = await query
       if (error) throw new Error(`pull ${table}: ${error.message}`)
       const rows = (data ?? []) as RemoteRow[]
       await db.transaction('rw', [db[table], db.meta], async () => {
         for (const row of rows) await applyRemote(table, row)
-        if (rows.length) await setCursor(remote, rows.at(-1)!.server_updated_at!)
       })
       received += rows.length
-      if (rows.length < PAGE) break
-      cursor = rows.at(-1)!.server_updated_at!
+      const last = rows.at(-1)
+      if (last?.server_updated_at) {
+        after = { ts: last.server_updated_at, id: last.id }
+        if (Date.parse(last.server_updated_at) > Date.parse(newest)) newest = last.server_updated_at
+      }
+      if (rows.length < pageSize) break
     }
+    if (newest !== stored) await setCursor(remote, newest)
   }
   return received
 }
 
 /** Puts every local row in the outbox, e.g. when local-only data is moved into an account. */
-export async function enqueueEverything(): Promise<void> {
+export async function enqueueEverything(options: { skipProfile?: boolean } = {}): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', [...SYNCED_TABLES.map((t) => db[t]), db.outbox], async () => {
     for (const table of SYNCED_TABLES) {
+      if (table === 'profile' && options.skipProfile) continue
       const keys = (await (
         db[table] as unknown as { toCollection: () => { primaryKeys: () => Promise<string[]> } }
       )
