@@ -18,6 +18,16 @@ export const today = {
         ? 'Nog 1 training voor je weekdoel'
         : `Nog ${n} trainingen voor je weekdoel`,
   nextTitle: 'Training van vandaag',
+  checkIn: {
+    title: 'Hoe voel je je vandaag?',
+    energy: 'Energie',
+    sleep: 'Slaap vannacht',
+    low: 'slecht',
+    high: 'top',
+    scoreLabel: (n: number) => `${n} van 5`,
+    why: 'Twee tikken per dag. Na een paar weken zie je onder Progressie › Analyse of je beter traint na een goede nacht.',
+    thanks: 'Bewaard. Je kan het vandaag nog aanpassen.',
+  },
   doneTodayTitle: 'Vandaag getraind',
   doneTodayBody: (sets: number) =>
     `Bewaard: ${sets === 1 ? '1 set' : `${sets} sets`}. Rust goed, daar word je sterker van.`,

@@ -18,6 +18,7 @@ const progress = () => import('../features/progress')
 const me = () => import('../features/me')
 const science = () => import('../features/science')
 const auth = () => import('../features/auth')
+const wrapped = () => import('../features/wrapped')
 
 /**
  * All routes. The tab routes mirror the tab bar (SPEC §3.1) and each lives in its own
@@ -106,6 +107,7 @@ export const router = createBrowserRouter([
     children: [
       { path: '/training', lazy: page(training, (m) => m.ActiveWorkoutPage) },
       { path: '/training/klaar/:id', lazy: page(training, (m) => m.WorkoutSummaryPage) },
+      { path: '/wrapped/:period', lazy: page(wrapped, (m) => m.WrappedPage) },
     ],
   },
   { path: '*', element: <NotFoundPage /> },

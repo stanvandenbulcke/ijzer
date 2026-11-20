@@ -18,6 +18,13 @@ export interface BodyWeightRow extends RowMeta {
   day: string
   kg: number
 }
+/** Morning check-in (1–5), one per day. Feeds the insights screen. */
+export interface CheckInRow extends RowMeta {
+  id: string
+  day: string
+  energy: number
+  sleep: number
+}
 export interface ProfileRow extends RowMeta {
   id: 'me'
   profile: Profile
@@ -31,7 +38,8 @@ export interface OutboxEntry {
   at: string
 }
 
-export type SyncedTable = 'profile' | 'customExercises' | 'routines' | 'workouts' | 'bodyWeights'
+export type SyncedTable =
+  'profile' | 'customExercises' | 'routines' | 'workouts' | 'bodyWeights' | 'checkIns'
 
 /** Small key-value store for sync bookkeeping: owner of the local data, pull cursors. */
 export interface MetaRow {
@@ -49,6 +57,7 @@ export class IjzerDb extends Dexie {
   routines!: Table<RoutineRow, string>
   workouts!: Table<WorkoutRow, string>
   bodyWeights!: Table<BodyWeightRow, string>
+  checkIns!: Table<CheckInRow, string>
   outbox!: Table<OutboxEntry, number>
   meta!: Table<MetaRow, string>
 
@@ -64,6 +73,8 @@ export class IjzerDb extends Dexie {
     })
     // v2: accounts. `meta` holds which user owns the local data and the pull cursors.
     this.version(2).stores({ meta: 'key' })
+    // v3: daily energy/sleep check-ins.
+    this.version(3).stores({ checkIns: 'id, &day, updatedAt' })
   }
 }
 

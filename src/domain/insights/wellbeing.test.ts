@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { exercise, set, workout } from '../training/fixtures'
 import { performances } from '../training/performances'
-import { MIN_PAIRED, sessionPerformance, wellbeingInsights, type CheckIn } from './wellbeing'
+import {
+  MIN_PAIRED,
+  pairedDays,
+  sessionPerformance,
+  wellbeingInsights,
+  type CheckIn,
+} from './wellbeing'
 
 const day = (i: number) => `2026-10-${String(i + 1).padStart(2, '0')}`
 
@@ -43,5 +49,15 @@ describe('wellbeingInsights', () => {
     const { perfs, checkIns } = data()
     expect(wellbeingInsights(checkIns.slice(0, MIN_PAIRED - 1), perfs)).toEqual([])
     expect(wellbeingInsights(checkIns, perfs).some((i) => i.factor === 'energy')).toBe(false)
+  })
+})
+
+describe('half-filled check-ins', () => {
+  it('ignores a factor that was not answered (0) instead of counting it as a bad night', () => {
+    const { checkIns, perfs } = data()
+    const energyOnly = checkIns.map((c) => ({ ...c, sleep: 0 }))
+    expect(wellbeingInsights(energyOnly, perfs).map((i) => i.factor)).not.toContain('sleep')
+    expect(pairedDays(energyOnly, perfs)).toBe(0)
+    expect(pairedDays(checkIns, perfs)).toBeGreaterThan(0)
   })
 })

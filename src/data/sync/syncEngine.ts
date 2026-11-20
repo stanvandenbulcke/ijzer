@@ -56,13 +56,14 @@ async function applyRemote(table: SyncedTable, row: RemoteRow): Promise<void> {
     { updatedAt: string; createdAt: string; deletedAt: string | null } | undefined
   if (!remoteWins(current, row)) return
   const next = fromRemote(table, row)
-  if (table === 'bodyWeights') {
-    // One weigh-in per day: a row for the same day from another device replaces ours.
+  if (table === 'bodyWeights' || table === 'checkIns') {
+    // One row per day: a row for the same day from another device replaces ours (newest wins).
+    const perDay = db[table] as unknown as typeof db.bodyWeights
     const day = (next as { day?: string }).day
-    const sameDay = day ? await db.bodyWeights.where('day').equals(day).first() : undefined
+    const sameDay = day ? await perDay.where('day').equals(day).first() : undefined
     if (sameDay && sameDay.id !== next.id) {
       if (Date.parse(sameDay.updatedAt) > Date.parse(row.updated_at)) return
-      await db.bodyWeights.delete(sameDay.id)
+      await perDay.delete(sameDay.id)
     }
   }
   await (db[table] as unknown as { put: (r: unknown) => Promise<unknown> }).put(next)

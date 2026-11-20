@@ -81,27 +81,34 @@ export function wellbeingInsights(checkIns: CheckIn[], perfs: Performance[]): We
   const pairs = [...sessionPerformance(perfs).values()]
     .map((s) => ({ ratio: s.ratio, checkIn: byDay.get(s.day) }))
     .filter((p): p is { ratio: number; checkIn: CheckIn } => p.checkIn !== undefined)
-  if (pairs.length < MIN_PAIRED) return []
-
   const insights: WellbeingInsight[] = []
   for (const factor of ['sleep', 'energy'] as const) {
-    const good = pairs.filter((p) => p.checkIn[factor] >= 4)
-    const poor = pairs.filter((p) => p.checkIn[factor] <= 2)
+    // A half-filled check-in (only energy, say) counts only for the factor that was answered.
+    const answered = pairs.filter((p) => p.checkIn[factor] >= 1 && p.checkIn[factor] <= 5)
+    if (answered.length < MIN_PAIRED) continue
+    const good = answered.filter((p) => p.checkIn[factor] >= 4)
+    const poor = answered.filter((p) => p.checkIn[factor] <= 2)
     if (good.length < MIN_PER_GROUP || poor.length < MIN_PER_GROUP) continue
     const mean = (xs: typeof pairs) => xs.reduce((a, p) => a + p.ratio, 0) / xs.length
     insights.push({
       factor,
-      paired: pairs.length,
+      paired: answered.length,
       goodDays: good.length,
       poorDays: poor.length,
       differencePct: (mean(good) - mean(poor)) * 100,
       correlation: pearson(
-        pairs.map((p) => p.checkIn[factor]),
-        pairs.map((p) => p.ratio),
+        answered.map((p) => p.checkIn[factor]),
+        answered.map((p) => p.ratio),
       ),
     })
   }
   return insights
+}
+
+/** Training days that have a (complete) check-in: progress towards the first insight. */
+export function pairedDays(checkIns: CheckIn[], perfs: Performance[]): number {
+  const days = new Set(checkIns.filter((c) => c.energy >= 1 && c.sleep >= 1).map((c) => c.day))
+  return [...sessionPerformance(perfs).values()].filter((s) => days.has(s.day)).length
 }
 
 /** Day of a check-in for "now", in Belgian time. */

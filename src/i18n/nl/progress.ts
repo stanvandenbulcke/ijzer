@@ -34,6 +34,45 @@ export const progress = {
     hours: 'uur',
     minutes: 'min',
   },
+  levels: {
+    title: 'Spierlevels',
+    note: 'Elke set en elk nieuw record laat een spier stijgen. Tik een spier voor details.',
+    empty: 'Rond je eerste training af: dan krijgen je spieren hun eerste level.',
+    level: (n: number) => `Level ${n}`,
+    toNext: (muscle: string) => `${muscle}: voortgang naar het volgende level`,
+    detail: (sets: string, prs: number) =>
+      `${sets} sets${prs > 0 ? ` · ${prs === 1 ? '1 sessie' : `${prs} sessies`} met een record` : ''}`,
+    tiers: {
+      plate5: '1',
+      plate10: '2–4',
+      plate15: '5–8',
+      plate20: '9–12',
+      plate25: '13+',
+    },
+    how: 'Hoe werkt dit?',
+    explanation: [
+      'Elke afgevinkte set geeft punten aan de spieren die hij traint: 1 punt voor de spier die de oefening vooral traint, ½ punt voor spieren die meehelpen.',
+      'Word je sterker op een oefening (een nieuw geschat maximum), dan krijgt de spier die hij vooral traint 10 bonuspunten.',
+      'Levels worden steeds moeilijker: level 2 vraagt 10 punten, level 5 160 en level 10 810. Het maximum is level 20.',
+      'De kleuren zijn die van echte halterschijven: wit (5 kg) voor level 1, groen (10) voor 2–4, geel (15) voor 5–8, blauw (20) voor 9–12 en rood (25) vanaf 13.',
+      'Overgeslagen oefeningen en sets die je niet afvinkte tellen nergens mee. Een level is een spelletje om je te motiveren, geen meting van hoe groot of sterk een spier echt is.',
+    ],
+  },
+  wellbeing: {
+    title: 'Slaap, energie en kracht',
+    note: 'Op basis van je check-ins op Vandaag en hoe sterk je die dag was, vergeleken met je eigen record.',
+    factor: { sleep: 'een goede nacht', energy: 'een dag met veel energie' },
+    stronger: (factor: string, pct: string) => `Na ${factor} was je gemiddeld ${pct} % sterker`,
+    weaker: (factor: string, pct: string) => `Na ${factor} was je gemiddeld ${pct} % zwakker`,
+    basis: (n: number, good: number, poor: number) =>
+      `Gebaseerd op ${n} trainingen: ${good} goede (4–5) en ${poor} slechte (1–2) dagen.`,
+    strength: { weak: 'Zwak verband', moderate: 'Matig verband', strong: 'Duidelijk verband' },
+    notYet: (n: number, min: number) => `${n} van ${min} trainingsdagen met een check-in.`,
+    howTo:
+      'Vul elke dag op Vandaag je energie en slaap in. Je ziet hier pas iets als er genoeg goede én slechte dagen zijn, zodat het geen toeval is.',
+    causation:
+      'Let op: een verband is geen bewijs. Misschien train je beter na een goede nacht, maar het kan ook iets anders zijn (stress, eten, het uur van je training).',
+  },
   recordWall: 'Recordmuur',
   recordWallNote:
     'Hoeveel kg je naar schatting 1 keer zou kunnen tillen, berekend uit je beste set. Een schatting, geen test.',

@@ -9,6 +9,7 @@ import { insightText } from '../../../i18n/insightText'
 import { Badge } from '../../../ui/Badge'
 import { cx } from '../../../ui/cx'
 import { Section } from '../Section'
+import { WellbeingSection } from './WellbeingSection'
 
 const a = t.progress.analysis
 const RULES_OF_THUMB = new Set(['R6', 'R7', 'R8'])
@@ -101,6 +102,7 @@ export function AnalysisTab({
           </ul>
         </Section>
       )}
+      <WellbeingSection data={data} />
     </>
   )
 }

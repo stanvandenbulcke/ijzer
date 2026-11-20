@@ -21,7 +21,7 @@ import { CountUp } from '../../../ui/motion/CountUp'
 import { Stagger } from '../../../ui/motion/Stagger'
 import { Page } from '../../../ui/PageHeader'
 import { useToast } from '../../../ui/toast/toastContext'
-import { renderShareCard, shareImage } from './shareCard'
+import { renderShareCard, shareImage } from '../../../ui/share/shareCard'
 
 const s = t.training.summary
 const w = t.training.workout

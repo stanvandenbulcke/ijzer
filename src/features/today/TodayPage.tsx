@@ -23,6 +23,7 @@ import { LoadingState } from '../../ui/LoadingState'
 import { Stagger } from '../../ui/motion/Stagger'
 import { Page, PageHeader } from '../../ui/PageHeader'
 import { ValueEntrySheet } from '../../ui/ValueEntrySheet'
+import { CheckInCard } from './CheckInCard'
 import { CoachCard } from './CoachCard'
 import { Card, WeekCard, WeightCard } from './TodayCards'
 
@@ -161,6 +162,8 @@ export function TodayPage() {
         )}
 
         <WeekCard status={status} today={today} />
+
+        <CheckInCard today={today} />
 
         <Card title={d.lastPr}>
           {lastPr ? (

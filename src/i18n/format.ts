@@ -66,3 +66,14 @@ export function parseDecimal(text: string): number | null {
   const value = Number(cleaned)
   return Number.isFinite(value) ? value : null
 }
+
+const monthYear = new Intl.DateTimeFormat(LOCALE, {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+/** "november 2026" for "2026-11"; "2026" stays "2026". */
+export function formatPeriod(period: string): string {
+  return /^\d{4}$/.test(period) ? period : monthYear.format(new Date(`${period}-01T00:00:00Z`))
+}

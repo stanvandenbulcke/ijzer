@@ -4,12 +4,13 @@ import { supabase } from './supabase/client'
 
 /** All local data as one JSON file (SPEC §4.11 "data-export"). */
 export async function exportAll(): Promise<Blob> {
-  const [profile, customExercises, routines, workouts, bodyWeights] = await Promise.all([
+  const [profile, customExercises, routines, workouts, bodyWeights, checkIns] = await Promise.all([
     db.profile.toArray(),
     db.customExercises.toArray(),
     db.routines.toArray(),
     db.workouts.toArray(),
     db.bodyWeights.toArray(),
+    db.checkIns.toArray(),
   ])
   const payload = {
     app: 'IRON',
@@ -20,6 +21,7 @@ export async function exportAll(): Promise<Blob> {
     routines,
     workouts,
     bodyWeights,
+    checkIns,
   }
   return new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
 }

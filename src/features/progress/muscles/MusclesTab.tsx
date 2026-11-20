@@ -7,6 +7,7 @@ import { t } from '../../../i18n'
 import { formatNumber } from '../../../i18n/format'
 import { BarRow, Section } from '../Section'
 import { ZONE_BG } from '../zones'
+import { MuscleLevels } from './MuscleLevels'
 
 export function MusclesTab({ data, today }: { data: TrainingData; today: string }) {
   const navigate = useNavigate()
@@ -22,6 +23,7 @@ export function MusclesTab({ data, today }: { data: TrainingData; today: string 
 
   return (
     <>
+      <MuscleLevels data={data} />
       <Section title={t.progress.muscleWeek} note={t.progress.tapMuscle}>
         {MUSCLE_IDS.map((m) => (
           <BarRow

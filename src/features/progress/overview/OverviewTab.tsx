@@ -16,6 +16,7 @@ import { BarRow, Section } from '../Section'
 import { ZONE_BG } from '../zones'
 import { CareerCard } from './CareerCard'
 import { RecordWall } from './RecordWall'
+import { WrappedEntry } from './WrappedEntry'
 
 const p = t.progress
 const WEEKS = 12
@@ -58,6 +59,7 @@ export function OverviewTab({
   return (
     <>
       <CareerCard data={data} />
+      <WrappedEntry data={data} today={today} />
       <Section title={p.calendar}>
         <div
           role="img"

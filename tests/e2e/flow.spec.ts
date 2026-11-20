@@ -145,6 +145,31 @@ test('onboarding, routine, workout with skip, summary, then PR on the next worko
   await benchRow.click()
   await expect(page.getByText('Rep-records')).toBeVisible()
   await shot(page, 'exercise-progress', project)
+
+  // Muscle levels from what was logged (skipped exercises give nothing).
+  await page.goto('/progressie/spiergroepen')
+  await expect(page.getByText('Spierlevels')).toBeVisible()
+  await page.waitForTimeout(600)
+  await shot(page, 'levels', project)
+  await page.getByRole('button', { name: 'Hoe werkt dit?' }).click()
+  await expect(page.getByRole('dialog')).toContainText('halterschijven')
+  await page.keyboard.press('Escape')
+
+  // IRON Wrapped for this month, as a story.
+  await page.goto('/progressie/overzicht')
+  await page.getByRole('button', { name: /in IRON/ }).first().click()
+  await expect(page).toHaveURL(/\/wrapped\//)
+  await page.getByRole('button', { name: 'Volgende' }).click()
+  await expect(page.getByText('trainingen', { exact: true })).toBeVisible()
+  await page.waitForTimeout(1200)
+  await shot(page, 'wrapped', project)
+
+  // The morning check-in on Today.
+  await page.goto('/vandaag')
+  await page.getByRole('button', { name: 'Energie: 4 van 5' }).click()
+  await page.getByRole('button', { name: 'Slaap vannacht: 3 van 5' }).click()
+  await expect(page.getByText('Bewaard. Je kan het vandaag nog aanpassen.')).toBeVisible()
+  await shot(page, 'today-after', project)
 })
 
 test('library search with abbreviations and exercise detail', async ({ page }, testInfo) => {

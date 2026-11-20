@@ -1,4 +1,4 @@
-import { downloadBlob } from '../../../ui/download'
+import { downloadBlob } from '../download'
 
 /**
  * Share image after a workout (SPEC §4.4): drawn on a canvas in our own style, shared via

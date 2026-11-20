@@ -7,6 +7,7 @@ export const REMOTE_TABLE: Record<SyncedTable, string> = {
   routines: 'routines',
   workouts: 'workouts',
   bodyWeights: 'body_weights',
+  checkIns: 'check_ins',
 }
 
 export const SYNCED_TABLES = Object.keys(REMOTE_TABLE) as SyncedTable[]

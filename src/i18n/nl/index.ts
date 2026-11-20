@@ -10,6 +10,7 @@ import { insights, progress } from './progress'
 import { ARTICLE_FOR_RULE, articles, scienceUi } from './science'
 import { today } from './today'
 import { training } from './training'
+import { wrapped } from './wrapped'
 
 /**
  * Dutch (Flemish-friendly, informal "je") UI strings, one file per tab or area so texts
@@ -29,6 +30,7 @@ export const nl = {
   me,
   science: { ...scienceUi, articles, articleForRule: ARTICLE_FOR_RULE },
   design,
+  wrapped,
 }
 
 export type Messages = typeof nl

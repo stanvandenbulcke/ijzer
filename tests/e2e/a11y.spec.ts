@@ -26,6 +26,8 @@ const PAGES = [
   '/voeding',
   '/progressie/lichaam',
   '/progressie/analyse',
+  '/progressie/spiergroepen',
+  '/wrapped/2026',
   '/ik',
   '/wetenschap',
   '/wetenschap/lengthened',
