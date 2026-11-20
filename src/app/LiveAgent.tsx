@@ -2,12 +2,20 @@ import type { RealtimeChannel } from '@supabase/supabase-js'
 import { useEffect, useMemo, useRef } from 'react'
 import { useSession } from '../data/auth'
 import { useBuddies } from '../data/live/buddies'
-import { clearBuddyLive, setBuddyLive, useLiveShare } from '../data/live/liveStore'
+import { refreshBuddies } from '../data/live/buddies'
+import { clearBuddyLive, setBuddyLive } from '../data/live/liveStore'
+import { useProfile } from '../data/profileRepo'
 import { supabase } from '../data/supabase/client'
 import { hasFeature } from '../data/supabase/config'
 import { useTrainingData } from '../data/useTrainingData'
 import { useActiveWorkout } from '../data/workoutsRepo'
-import { liveSnapshot, pairTopic, type LiveSnapshot } from '../domain/training/liveSnapshot'
+import { parseLiveSnapshot } from '../domain/training/liveParse'
+import {
+  LIVE_VERSION,
+  liveSnapshot,
+  pairTopic,
+  type LiveSnapshot,
+} from '../domain/training/liveSnapshot'
 
 const SEND_EVERY_MS = 1200
 
@@ -20,7 +28,7 @@ export function LiveAgent() {
   const session = useSession()
   const userId = session?.user.id
   const { buddies } = useBuddies()
-  const share = useLiveShare()
+  const share = useProfile()?.settings.liveShare ?? false
   const active = useActiveWorkout()
   const data = useTrainingData()
   const channels = useRef<RealtimeChannel[]>([])
@@ -48,19 +56,22 @@ export function LiveAgent() {
           config: { private: true, broadcast: { self: false } },
         })
         const send = () =>
+          latest.current &&
           void channel.send({
             type: 'broadcast',
             event: 'snapshot',
-            payload: { from: userId, snapshot: latest.current },
+            payload: { from: userId, v: LIVE_VERSION, snapshot: latest.current },
           })
         channel
           .on('broadcast', { event: 'snapshot' }, ({ payload }) => {
             if (payload?.from !== buddyId) return
             setBuddyLive(buddyId, {
-              snapshot: (payload.snapshot as LiveSnapshot | null) ?? null,
+              snapshot: parseLiveSnapshot(payload),
               receivedAt: new Date().toISOString(),
             })
           })
+          // The link was removed (by either side): stop at once.
+          .on('broadcast', { event: 'unlinked' }, () => refreshBuddies())
           // A buddy who opens the app later asks once for the current state.
           .on('broadcast', { event: 'hello' }, ({ payload }) => {
             if (payload?.from === buddyId) send()
@@ -83,18 +94,34 @@ export function LiveAgent() {
     }
   }, [userId, buddyKey])
 
-  // Send your workout a moment after every change (and once when it ends: null).
-  const payload = JSON.stringify(mine)
+  // Links can change on another device: check again on focus and every few minutes.
   useEffect(() => {
+    const onVisible = () => document.visibilityState === 'visible' && refreshBuddies()
+    document.addEventListener('visibilitychange', onVisible)
+    const interval = window.setInterval(refreshBuddies, 5 * 60_000)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  // Send your workout a moment after every change. "Stopped" (null) is sent only by a device
+  // that was sharing a workout, so another device of yours never wipes the live view.
+  const payload = JSON.stringify(mine)
+  const wasSharing = useRef(false)
+  useEffect(() => {
+    if (!mine && !wasSharing.current) return undefined
+    wasSharing.current = mine !== null
     const timer = window.setTimeout(() => {
       for (const channel of channels.current)
         void channel.send({
           type: 'broadcast',
           event: 'snapshot',
-          payload: { from: userId, snapshot: latest.current },
+          payload: { from: userId, v: LIVE_VERSION, snapshot: latest.current },
         })
     }, SEND_EVERY_MS)
     return () => window.clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `payload` is the change signal
   }, [payload, userId])
 
   return null

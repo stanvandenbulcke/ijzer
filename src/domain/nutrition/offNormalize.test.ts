@@ -44,6 +44,25 @@ describe('normalizeOff', () => {
     expect(food?.missing).toEqual(['protein', 'fat'])
   })
 
+  it('treats impossible values (anyone can edit OFF) as missing and trims long names', () => {
+    const food = normalizeOff('5400000000001', {
+      status: 1,
+      product: {
+        product_name: 'x'.repeat(300),
+        serving_quantity: -3,
+        nutriments: {
+          'energy-kcal_100g': 1e9,
+          proteins_100g: 80,
+          carbohydrates_100g: 60,
+          fat_100g: 5,
+        },
+      },
+    })
+    expect(food?.name).toHaveLength(120)
+    expect(food?.servingGrams).toBeNull()
+    expect(food?.missing).toEqual(['kcal', 'protein', 'carbs', 'fat'])
+  })
+
   it('returns null for an unknown barcode or an empty product', () => {
     expect(normalizeOff('0000', { status: 0, status_verbose: 'product not found' })).toBeNull()
     expect(normalizeOff('0000', { status: 1, product: { nutriments: {} } })).toBeNull()

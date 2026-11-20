@@ -20,6 +20,8 @@ export interface Settings {
   wakeLock: boolean
   /** Own sounds for a ticked set, end of rest and a PR. */
   sounds: boolean
+  /** Samen trainen: linked buddies see your running workout live (synced to all devices). */
+  liveShare: boolean
 }
 
 export interface Profile {

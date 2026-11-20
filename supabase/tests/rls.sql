@@ -102,7 +102,11 @@ $$;
 -- Barcode cache and usage counter: readable as documented, never writable by users.
 do $$
 begin
-  perform count(*) from public.product_cache;
+  begin
+    perform count(*) from public.product_cache;
+    raise exception 'FAIL: users can read what others scanned (product_cache)';
+  exception when insufficient_privilege then null;
+  end;
   begin
     insert into public.product_cache (barcode, data) values ('12345678', '{}');
     raise exception 'FAIL: a user can write the shared product cache';
@@ -139,5 +143,30 @@ end;
 $$;
 
 reset role;
+
+-- Catalog checks: every table in public has RLS enabled AND forced; every SECURITY DEFINER
+-- function pins its search_path; no buddy/lookup function is executable by anon.
+do $$
+declare r record;
+begin
+  for r in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
+           where n.nspname = 'public' and c.relkind = 'r' and not (c.relrowsecurity and c.relforcerowsecurity) loop
+    raise exception 'FAIL: table % has no forced RLS', r.relname;
+  end loop;
+  for r in select p.proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.prosecdef
+             and not exists (select 1 from unnest(coalesce(p.proconfig, '{}')) c where c like 'search_path=%') loop
+    raise exception 'FAIL: security definer function % has no fixed search_path', r.proname;
+  end loop;
+  if has_function_privilege('anon', 'public.create_buddy_invite()', 'execute')
+     or has_function_privilege('anon', 'public.accept_buddy_invite(text)', 'execute')
+     or has_function_privilege('anon', 'public.remove_buddy(uuid)', 'execute')
+     or has_function_privilege('anon', 'public.bump_lookup_usage(uuid, date)', 'execute')
+     or has_function_privilege('authenticated', 'public.bump_lookup_usage(uuid, date)', 'execute') then
+    raise exception 'FAIL: a function is executable by a role that must not call it';
+  end if;
+end;
+$$;
+
 select 'ALL RLS TESTS PASSED' as result;
 rollback;

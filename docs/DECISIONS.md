@@ -222,3 +222,10 @@ policies on `realtime.messages` allow only the two linked accounts. Nothing of o
 stored for the other. The snapshot holds only ticked sets (skipped = marked, never zeros); a
 "Deel mijn training live" switch turns sending off. Server features that are not deployed in a
 project are hidden (`notDeployed` in `src/data/supabase/config.ts`) instead of failing.
+**Security review (same day):** product cache no longer readable by users (it revealed what
+others scanned); 8-character uniform codes, claimed atomically; anonymous users refused;
+unlinking broadcasts `unlinked` so open channels stop at once; received snapshots are
+validated (`liveParse.ts`) and live UI sits in an error boundary; the share switch is in the
+synced profile; implausible OFF values count as missing, 7-day cache, broken answers not
+cached. Tests cover Realtime policies, expired codes, anon access, function grants and that
+every public table has forced RLS.

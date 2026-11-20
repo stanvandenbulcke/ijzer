@@ -33,31 +33,3 @@ export function useBuddyLive(): Record<string, BuddyLive> {
     () => state,
   )
 }
-
-const SHARE_KEY = 'iron.liveShare'
-
-/** "Deel mijn training live": on by default once you link with someone, per device. */
-export function getLiveShare(): boolean {
-  try {
-    return localStorage.getItem(SHARE_KEY) !== 'off'
-  } catch {
-    return true
-  }
-}
-
-export function setLiveShare(on: boolean): void {
-  try {
-    localStorage.setItem(SHARE_KEY, on ? 'on' : 'off')
-  } catch {
-    // Storage blocked: the choice holds for this visit only.
-  }
-  shareListeners.forEach((l) => l())
-}
-
-const shareListeners = new Set<() => void>()
-export function useLiveShare(): boolean {
-  return useSyncExternalStore((l) => {
-    shareListeners.add(l)
-    return () => shareListeners.delete(l)
-  }, getLiveShare)
-}

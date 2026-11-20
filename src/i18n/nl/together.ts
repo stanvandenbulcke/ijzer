@@ -14,7 +14,7 @@ export const together = {
   codeTitle: 'Jouw code',
   codeHint: 'Geldig 24 uur en maar één keer. Laat de ander die invullen bij Samen trainen.',
   haveCode: 'Heb je een code gekregen?',
-  codeLabel: 'Code van 6 tekens',
+  codeLabel: 'Code van 8 tekens',
   accept: 'Koppel',
   linked: (name: string) => (name ? `Gekoppeld met ${name}` : 'Gekoppeld'),
   errors: {

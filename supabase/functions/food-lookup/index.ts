@@ -5,7 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { isBarcode, normalizeOff } from '../_shared/offNormalize.ts'
 
 const DAILY_LIMIT = 200
-const FOUND_TTL_DAYS = 30
+const FOUND_TTL_DAYS = 7
 const MISSING_TTL_DAYS = 1
 const FIELDS = 'code,product_name,brands,nutriments,serving_quantity,quantity'
 const ORIGINS = new Set([
@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
   const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
   const { data: auth } = token ? await admin.auth.getUser(token) : { data: { user: null } }
   const user = auth.user
-  if (!user) return reply(401, { error: 'unauthorized' })
+  if (!user || user.is_anonymous) return reply(401, { error: 'unauthorized' })
 
   const body = await req.json().catch(() => ({}))
   const barcode = typeof body?.barcode === 'string' ? body.barcode.trim() : ''
@@ -82,7 +82,13 @@ Deno.serve(async (req) => {
     return reply(502, { error: 'upstream' })
   }
   if (!response.ok && response.status !== 404) return reply(502, { error: 'upstream' })
-  const json = await response.json().catch(() => ({}))
+  let json: Record<string, unknown>
+  try {
+    json = await response.json()
+  } catch {
+    // Never cache a broken answer as "not found".
+    return reply(502, { error: 'upstream' })
+  }
   const food = normalizeOff(barcode, json)
   await admin
     .from('product_cache')

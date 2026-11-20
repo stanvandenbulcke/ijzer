@@ -9,7 +9,8 @@ import {
   useBuddies,
   type Buddy,
 } from '../../../data/live/buddies'
-import { setLiveShare, useBuddyLive, useLiveShare } from '../../../data/live/liveStore'
+import { useBuddyLive } from '../../../data/live/liveStore'
+import { saveProfile, useProfile } from '../../../data/profileRepo'
 import { hasFeature } from '../../../data/supabase/config'
 import { t } from '../../../i18n'
 import { Button } from '../../../ui/Button'
@@ -18,6 +19,7 @@ import { LoadingState } from '../../../ui/LoadingState'
 import { Page, PageHeader } from '../../../ui/PageHeader'
 import { Sheet } from '../../../ui/Sheet'
 import { TextField } from '../../../ui/TextField'
+import { Quiet } from '../../../ui/Quiet'
 import { LiveCard } from './LiveCard'
 
 const g = t.together
@@ -28,7 +30,8 @@ export function TogetherPage() {
   const session = useSession()
   const { buddies, refresh } = useBuddies()
   const live = useBuddyLive()
-  const share = useLiveShare()
+  const profile = useProfile()
+  const share = profile?.settings.liveShare ?? false
   const [code, setCode] = useState<string | null>(null)
   const [typed, setTyped] = useState('')
   const [message, setMessage] = useState<string | null>(null)
@@ -76,7 +79,9 @@ export function TogetherPage() {
         ) : (
           buddies.map((b) => (
             <div key={b.id} className="flex flex-col gap-1">
-              <LiveCard name={b.name || g.unnamed} live={live[b.id]} />
+              <Quiet>
+                <LiveCard name={b.name || g.unnamed} live={live[b.id]} />
+              </Quiet>
               <Button
                 variant="ghost"
                 icon={UserMinus}
@@ -91,7 +96,14 @@ export function TogetherPage() {
         )}
         {buddies && buddies.length > 0 && (
           <div className="flex flex-col gap-1.5">
-            <Chip selected={share} onClick={() => setLiveShare(!share)} className="self-start">
+            <Chip
+              selected={share}
+              onClick={() =>
+                profile &&
+                void saveProfile({ settings: { ...profile.settings, liveShare: !share } })
+              }
+              className="self-start"
+            >
               {g.share}
             </Chip>
             <p className="text-sm text-muted">{g.shareHint}</p>
@@ -137,12 +149,12 @@ export function TogetherPage() {
           <TextField
             label={g.codeLabel}
             value={typed}
-            maxLength={6}
+            maxLength={8}
             autoCapitalize="characters"
             autoComplete="off"
             onChange={(e) => setTyped(e.target.value.toUpperCase())}
           />
-          <Button type="submit" variant="secondary" disabled={busy || typed.trim().length !== 6}>
+          <Button type="submit" variant="secondary" disabled={busy || typed.trim().length !== 8}>
             {g.accept}
           </Button>
         </form>

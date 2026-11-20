@@ -39,10 +39,10 @@ test('link with a code and follow the other workout live', async ({ browser }, t
   await stan.goto('/train/samen')
   await stan.getByRole('button', { name: 'Maak een code' }).click()
   const code = (await stan.locator('p.tracking-\\[0\\.2em\\]').textContent())?.trim() ?? ''
-  expect(code).toMatch(/^[A-Z0-9]{6}$/)
+  expect(code).toMatch(/^[A-Z2-9]{8}$/)
 
   await lotte.goto('/train/samen')
-  await lotte.getByLabel('Code van 6 tekens').fill(code)
+  await lotte.getByLabel('Code van 8 tekens').fill(code)
   await lotte.getByRole('button', { name: 'Koppel', exact: true }).click()
   await expect(lotte.getByText('Gekoppeld met Stan')).toBeVisible()
   await expect(lotte.getByText('Stan traint nu niet')).toBeVisible()

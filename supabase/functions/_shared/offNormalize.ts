@@ -21,6 +21,8 @@ const num = (v: unknown): number | null => {
   return Number.isFinite(n) && n >= 0 ? n : null
 }
 const round1 = (x: number) => Math.round(x * 10) / 10
+/** Anyone can edit OFF: values outside what food can physically contain count as missing. */
+const upTo = (v: number | null, max: number) => (v !== null && v <= max ? v : null)
 
 /** Returns null when OFF has no usable product (unknown barcode or no name and no kcal). */
 export function normalizeOff(barcode: string, response: Json): OffFood | null {
@@ -28,14 +30,21 @@ export function normalizeOff(barcode: string, response: Json): OffFood | null {
   if (!product || response.status === 0) return null
   const n = (product.nutriments ?? {}) as Json
   const kj = num(n['energy-kj_100g']) ?? (n['energy_unit'] === 'kJ' ? num(n['energy_100g']) : null)
-  const kcal = num(n['energy-kcal_100g']) ?? (kj !== null ? kj / 4.184 : null)
+  const kcal = upTo(num(n['energy-kcal_100g']) ?? (kj !== null ? kj / 4.184 : null), 950)
   const values = {
     kcal,
-    protein: num(n['proteins_100g']),
-    carbs: num(n['carbohydrates_100g']),
-    fat: num(n['fat_100g']),
+    protein: upTo(num(n['proteins_100g']), 100),
+    carbs: upTo(num(n['carbohydrates_100g']), 100),
+    fat: upTo(num(n['fat_100g']), 100),
   }
-  const name = String(product.product_name ?? '').trim()
+  if ((values.protein ?? 0) + (values.carbs ?? 0) + (values.fat ?? 0) > 105) {
+    values.protein = null
+    values.carbs = null
+    values.fat = null
+  }
+  const name = String(product.product_name ?? '')
+    .trim()
+    .slice(0, 120)
   if (!name && values.kcal === null) return null
   const missing = (Object.keys(values) as Array<keyof typeof values>).filter(
     (k) => values[k] === null,
@@ -47,16 +56,20 @@ export function normalizeOff(barcode: string, response: Json): OffFood | null {
     brand:
       String(product.brands ?? '')
         .split(',')[0]
-        ?.trim() || null,
+        ?.trim()
+        .slice(0, 80) || null,
     per100: {
       kcal: Math.round(values.kcal ?? 0),
       protein: round1(values.protein ?? 0),
       carbs: round1(values.carbs ?? 0),
       fat: round1(values.fat ?? 0),
-      fiber: num(n['fiber_100g']) === null ? null : round1(num(n['fiber_100g'])!),
+      fiber: upTo(num(n['fiber_100g']), 100) === null ? null : round1(num(n['fiber_100g'])!),
     },
     liquid: /\d\s*(ml|cl|l)\b/.test(quantity),
-    servingGrams: num(product.serving_quantity),
+    servingGrams: (() => {
+      const g = num(product.serving_quantity)
+      return g !== null && g > 0 && g <= 2000 ? g : null
+    })(),
     missing,
   }
 }

@@ -23,7 +23,13 @@ export const DEFAULT_PROFILE: Profile = {
   stepGoal: 8000,
   trainingDaysPerWeek: 4,
   equipment: DEFAULT_EQUIPMENT,
-  settings: { restCompoundSec: 150, restIsolationSec: 90, wakeLock: true, sounds: true },
+  settings: {
+    restCompoundSec: 150,
+    restIsolationSec: 90,
+    wakeLock: true,
+    sounds: true,
+    liveShare: true,
+  },
   onboardedAt: null,
 }
 

@@ -17,7 +17,7 @@ insert into public.profiles (data, created_at, updated_at) values ('{"name":"Sta
 select set_config('test.code', public.create_buddy_invite(), true);
 do $$
 begin
-  if current_setting('test.code') !~ '^[A-Z0-9]{6}$' then raise exception 'FAIL: bad invite code'; end if;
+  if current_setting('test.code') !~ '^[A-Z2-9]{8}$' then raise exception 'FAIL: bad invite code'; end if;
   if public.accept_buddy_invite(current_setting('test.code')) ->> 'status' <> 'own' then
     raise exception 'FAIL: A could link with its own code';
   end if;
@@ -44,6 +44,26 @@ begin
   r := public.accept_buddy_invite(lower(current_setting('test.code')));
   if r ->> 'status' <> 'ok' or r ->> 'name' <> 'Stan' then raise exception 'FAIL: valid code refused: %', r; end if;
   if (select count(*) from public.buddy_links) <> 1 then raise exception 'FAIL: B should see exactly its own link'; end if;
+  begin
+    update public.buddy_links set buddy_name = 'Hacked';
+    raise exception 'FAIL: a user can rename a buddy link';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform count(*) from public.buddy_attempts;
+    raise exception 'FAIL: attempt counters are readable';
+  exception when insufficient_privilege then null;
+  end;
+  -- Realtime: B may use the pair channel with A (broadcast only).
+  perform set_config('realtime.topic', public.pair_topic('a0000000-0000-4000-8000-00000000000a', 'b0000000-0000-4000-8000-00000000000b'), true);
+  insert into realtime.messages (topic, extension, event, payload, private)
+    values (realtime.topic(), 'broadcast', 'test', '{}', true);
+  begin
+    insert into realtime.messages (topic, extension, event, payload, private)
+      values (realtime.topic(), 'presence', 'test', '{}', true);
+    raise exception 'FAIL: presence allowed on a pair channel';
+  exception when insufficient_privilege then null;
+  end;
   if public.accept_buddy_invite(current_setting('test.code')) ->> 'status' <> 'invalid' then
     raise exception 'FAIL: an invite code works twice';
   end if;
@@ -56,6 +76,17 @@ do $$
 declare i int;
 begin
   if (select count(*) from public.buddy_links) <> 0 then raise exception 'FAIL: C sees links of others'; end if;
+  -- C cannot listen to or send on the pair channel of A and B.
+  perform set_config('realtime.topic', public.pair_topic('a0000000-0000-4000-8000-00000000000a', 'b0000000-0000-4000-8000-00000000000b'), true);
+  begin
+    insert into realtime.messages (topic, extension, event, payload, private)
+      values (realtime.topic(), 'broadcast', 'spy', '{}', true);
+    raise exception 'FAIL: C can send on the pair channel of A and B';
+  exception when insufficient_privilege then null;
+  end;
+  if (select count(*) from realtime.messages where topic = realtime.topic()) <> 0 then
+    raise exception 'FAIL: C can read the pair channel of A and B';
+  end if;
   for i in 1..20 loop perform public.accept_buddy_invite('AAAAAA'); end loop;
   if public.accept_buddy_invite('AAAAAA') ->> 'status' <> 'limit' then raise exception 'FAIL: no guessing limit'; end if;
   perform public.remove_buddy('a0000000-0000-4000-8000-00000000000a');
@@ -74,9 +105,46 @@ select public.remove_buddy('a0000000-0000-4000-8000-00000000000a');
 reset role;
 do $$
 begin
-  if (select count(*) from public.buddy_links) <> 0 then raise exception 'FAIL: unlinking left a row'; end if;
+  if (select count(*) from public.buddy_links
+      where user_id in ('a0000000-0000-4000-8000-00000000000a', 'b0000000-0000-4000-8000-00000000000b')) <> 0 then
+    raise exception 'FAIL: unlinking left a row';
+  end if;
 end;
 $$;
+
+-- After unlinking, A can no longer send on the pair channel.
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"a0000000-0000-4000-8000-00000000000a","role":"authenticated"}', true);
+do $$
+begin
+  perform set_config('realtime.topic', public.pair_topic('a0000000-0000-4000-8000-00000000000a', 'b0000000-0000-4000-8000-00000000000b'), true);
+  begin
+    insert into realtime.messages (topic, extension, event, payload, private)
+      values (realtime.topic(), 'broadcast', 'test', '{}', true);
+    raise exception 'FAIL: an unlinked user can still send on the pair channel';
+  exception when insufficient_privilege then null;
+  end;
+  -- An expired code does not work; a new code replaces the old one.
+  perform set_config('test.old', public.create_buddy_invite(), true);
+  perform set_config('test.new', public.create_buddy_invite(), true);
+end;
+$$;
+reset role;
+update public.buddy_invites set expires_at = now() - interval '1 minute'
+  where code = current_setting('test.new');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"b0000000-0000-4000-8000-00000000000b","role":"authenticated"}', true);
+do $$
+begin
+  if public.accept_buddy_invite(current_setting('test.old')) ->> 'status' <> 'invalid' then
+    raise exception 'FAIL: a replaced code still works';
+  end if;
+  if public.accept_buddy_invite(current_setting('test.new')) ->> 'status' <> 'invalid' then
+    raise exception 'FAIL: an expired code still works';
+  end if;
+end;
+$$;
+reset role;
 
 -- Anonymous visitors cannot call anything.
 set local role anon;
@@ -85,6 +153,16 @@ begin
   begin
     perform public.create_buddy_invite();
     raise exception 'FAIL: anon can create an invite';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.accept_buddy_invite('ABCDEFGH');
+    raise exception 'FAIL: anon can accept an invite';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.remove_buddy('a0000000-0000-4000-8000-00000000000a');
+    raise exception 'FAIL: anon can remove a link';
   exception when insufficient_privilege then null;
   end;
 end;

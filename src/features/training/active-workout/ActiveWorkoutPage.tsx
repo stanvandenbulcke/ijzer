@@ -30,6 +30,7 @@ import { isFilled, setActions } from './setActions'
 import { useWakeLock } from './useWakeLock'
 import { useWorkoutState } from './useWorkoutState'
 import { BuddyStrip } from '../together/BuddyStrip'
+import { Quiet } from '../../../ui/Quiet'
 import { ValueSheet, type ValueEdit } from './ValueSheet'
 
 const w = t.training.workout
@@ -151,7 +152,9 @@ export function ActiveWorkoutPage() {
             </div>
           )}
           <div className="relative mx-auto mt-2 max-w-md empty:hidden">
-            <BuddyStrip />
+            <Quiet>
+              <BuddyStrip />
+            </Quiet>
           </div>
         </header>
       </div>
