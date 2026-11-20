@@ -16,7 +16,7 @@
     "test:e2e": "playwright test --trace off",
     "check:secrets": "node scripts/check-secrets.mjs",
     "icons": "node scripts/make-icons.mjs",
-    "check": "npm run typecheck && npm run lint && npm run check:contrast && npm run test && npm run build && npm run check:secrets",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run check:contrast && npm run test && npm run build && npm run check:secrets",
     "check:contrast": "node scripts/check-contrast.mjs",
     "import:exercises": "node scripts/import-exercises.mjs",
     "build:e2e": "vite build --mode e2e",
