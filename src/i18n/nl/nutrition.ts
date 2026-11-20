@@ -57,7 +57,7 @@ export const nutrition = {
     newFood: 'Nieuw product',
     newNamed: (name: string) => `Maak „${name}” aan`,
     scanSoon:
-      'Barcode scannen en etiketten fotograferen komen eraan. Tot dan: maak een product één keer aan met de waarden van het etiket, daarna vind je het hier altijd terug.',
+      'Etiketten fotograferen komt eraan. Een product dat je één keer aanmaakt, vind je hier altijd terug.',
   },
   portion: {
     amount: 'Hoeveelheid',
@@ -70,6 +70,26 @@ export const nutrition = {
     live: (kcal: string, p: string, c: string, f: string) =>
       `${kcal} kcal · E ${p} g · K ${c} g · V ${f} g`,
     meal: 'Maaltijd',
+  },
+  scan: {
+    open: 'Barcode scannen',
+    title: 'Scan de barcode',
+    hint: 'Houd de barcode in het kader. Lukt het niet? Typ de cijfers onder de streepjes.',
+    typeCode: 'Of typ de code',
+    search: 'Zoek',
+    searching: 'Even zoeken…',
+    noCamera:
+      'De camera kon niet openen. Geef IRON toegang tot de camera (Instellingen › Safari › Camera) of typ de code hieronder.',
+    found: 'Gevonden in Open Food Facts. Controleer de waarden met het etiket en sla op.',
+    missing: (fields: string) =>
+      `Ontbreekt op Open Food Facts: ${fields}. Vul ze aan van het etiket.`,
+    notFound:
+      'Niet gevonden. Neem de waarden van het etiket over: daarna vind je hem altijd terug.',
+    signedOut: 'Log in om barcodes op te zoeken. Je kan het product wel zelf aanmaken.',
+    offline: 'Geen internet. Maak het product zelf aan of probeer later opnieuw.',
+    limit: 'Je hebt vandaag al veel barcodes opgezocht. Morgen kan het weer.',
+    error: 'Opzoeken lukte niet. Maak het product zelf aan of probeer opnieuw.',
+    source: 'Productgegevens: Open Food Facts (ODbL).',
   },
   quick: {
     title: 'Snel toevoegen',

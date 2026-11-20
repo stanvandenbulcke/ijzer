@@ -22,17 +22,19 @@ const text = (v: number | null | undefined) =>
 export function FoodForm({
   initial,
   initialName = '',
+  initialBarcode = '',
   submitLabel,
   onSaved,
 }: {
   initial: Food | null
   initialName?: string
+  initialBarcode?: string
   submitLabel: string
   onSaved: (food: Food) => void
 }) {
   const [name, setName] = useState(initial?.name ?? initialName)
   const [brand, setBrand] = useState(initial?.brand ?? '')
-  const [barcode, setBarcode] = useState(initial?.barcode ?? '')
+  const [barcode, setBarcode] = useState(initial?.barcode ?? initialBarcode)
   const [liquid, setLiquid] = useState(initial?.liquid ?? false)
   const [favorite, setFavorite] = useState(initial?.favorite ?? false)
   const [values, setValues] = useState<Record<NumberKey, string>>({

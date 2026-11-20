@@ -99,6 +99,28 @@ begin
 end;
 $$;
 
+-- Barcode cache and usage counter: readable as documented, never writable by users.
+do $$
+begin
+  perform count(*) from public.product_cache;
+  begin
+    insert into public.product_cache (barcode, data) values ('12345678', '{}');
+    raise exception 'FAIL: a user can write the shared product cache';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform public.bump_lookup_usage('b0000000-0000-4000-8000-00000000000b', current_date);
+    raise exception 'FAIL: a user can call bump_lookup_usage';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.lookup_usage (user_id, day, count) values ('b0000000-0000-4000-8000-00000000000b', current_date, 0);
+    raise exception 'FAIL: a user can write lookup_usage';
+  exception when insufficient_privilege then null;
+  end;
+end;
+$$;
+
 -- Anonymous visitors: no access at all.
 set local role anon;
 do $$
@@ -106,6 +128,11 @@ begin
   begin
     perform count(*) from public.workouts;
     raise exception 'FAIL: anon can query workouts';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    perform count(*) from public.product_cache;
+    raise exception 'FAIL: anon can read the product cache';
   exception when insufficient_privilege then null;
   end;
 end;

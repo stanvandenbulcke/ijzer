@@ -38,6 +38,11 @@ export const me = {
     ],
     ['Letters', 'Big Shoulders Display en Archivo, SIL Open Font License 1.1.'],
     ['Iconen', 'Lucide, ISC-licentie.'],
+    [
+      'Productgegevens (barcodes)',
+      'Open Food Facts (openfoodfacts.org), Open Database License (ODbL). Foto’s van producten: CC BY-SA.',
+    ],
+    ['Barcodelezer', 'ZXing (@zxing/library en @zxing/browser), Apache-2.0 en MIT.'],
     ['Wetenschap', 'Bronnen per tip staan in de app en in docs/SCIENCE.md.'],
   ],
 }

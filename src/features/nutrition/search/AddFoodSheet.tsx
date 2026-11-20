@@ -1,6 +1,8 @@
-import { ArrowLeft, Plus, Star, Zap } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowLeft, Plus, ScanBarcode, Star, Zap } from 'lucide-react'
+import { useCallback, useState } from 'react'
+import { lookupBarcode } from '../../../data/foodLookup'
 import { saveFood, useFoods } from '../../../data/nutritionRepo'
+import { newId } from '../../../data/rows'
 import { normalize } from '../../../domain/exercises/search'
 import type { Food } from '../../../domain/nutrition/types'
 import { t } from '../../../i18n'
@@ -8,8 +10,22 @@ import { formatNumber } from '../../../i18n/format'
 import { Button } from '../../../ui/Button'
 import { Sheet } from '../../../ui/Sheet'
 import { FoodForm } from '../foods/FoodForm'
+import { BarcodeScanner } from '../scan/BarcodeScanner'
 
 const s = t.nutrition.search
+const sc = t.nutrition.scan
+
+/** What the sheet shows: the list, the camera, or the product form (new / from a barcode). */
+type View =
+  | { kind: 'list' }
+  | { kind: 'scan'; busy: boolean }
+  | {
+      kind: 'create'
+      initial: Food | null
+      name: string
+      barcode?: string
+      notice: string | null
+    }
 
 function FoodRowButton({ food, onPick }: { food: Food; onPick: (f: Food) => void }) {
   return (
@@ -34,9 +50,23 @@ function FoodRowButton({ food, onPick }: { food: Food; onPick: (f: Food) => void
   )
 }
 
+const emptyFood = (barcode: string): Food => ({
+  id: newId(),
+  name: '',
+  brand: null,
+  barcode,
+  per100: { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: null },
+  liquid: false,
+  gramsPerPiece: null,
+  servingGrams: null,
+  favorite: false,
+  lastAmount: null,
+})
+
 /**
- * Find what you ate (SPEC §4.5): your own products and recently used ones first. Not found?
- * Make it once (values from the label) or quick-add only kcal and macros.
+ * Find what you ate (SPEC §4.5): your own products and recently used ones first, a barcode
+ * scan (own products, then Open Food Facts), or make it once / quick-add kcal and macros.
+ * Scanned values always land in an editable form first: nothing is saved unchecked.
  */
 export function AddFoodSheet({
   open,
@@ -55,14 +85,52 @@ export function AddFoodSheet({
 }) {
   const foods = useFoods()
   const [query, setQuery] = useState('')
-  const [creating, setCreating] = useState<string | null>(null)
+  const [view, setView] = useState<View>({ kind: 'list' })
   const close = (o: boolean) => {
     if (!o) {
       setQuery('')
-      setCreating(null)
+      setView({ kind: 'list' })
     }
     onOpenChange(o)
   }
+
+  const onCode = useCallback(
+    async (code: string) => {
+      setView({ kind: 'scan', busy: true })
+      const result = await lookupBarcode(code)
+      if (result.kind === 'own') return onPick(result.food)
+      if (result.kind === 'found') {
+        const f = result.food
+        const missing = f.missing
+          .map((k) => (k === 'kcal' ? t.nutrition.kcal : t.nutrition.macros[k]))
+          .join(', ')
+        return setView({
+          kind: 'create',
+          name: f.name,
+          initial: {
+            ...emptyFood(code),
+            name: f.name,
+            brand: f.brand,
+            per100: f.per100,
+            liquid: f.liquid,
+            servingGrams: f.servingGrams,
+          },
+          notice: f.missing.length ? `${sc.found} ${sc.missing(missing)}` : sc.found,
+        })
+      }
+      const notice = {
+        'not-found': sc.notFound,
+        'signed-out': sc.signedOut,
+        offline: sc.offline,
+        limit: sc.limit,
+        error: sc.error,
+      }[result.kind]
+      // Not found: an empty form (never zeros pretending to be values) with the barcode filled in.
+      setView({ kind: 'create', name: '', initial: null, barcode: code, notice })
+    },
+    [onPick],
+  )
+
   const q = normalize(query)
   const matches = (foods ?? []).filter(
     (f) => !q || normalize(`${f.name} ${f.brand ?? ''}`).includes(q),
@@ -71,33 +139,58 @@ export function AddFoodSheet({
   const recent = q
     ? []
     : recentIds.map((id) => byId.get(id)).filter((f): f is NonNullable<typeof f> => Boolean(f))
+  const back = (
+    <Button
+      variant="ghost"
+      icon={ArrowLeft}
+      className="self-start px-0"
+      onClick={() => setView({ kind: 'list' })}
+    >
+      {s.title}
+    </Button>
+  )
 
   return (
     <Sheet
       open={open}
       onOpenChange={close}
-      title={creating !== null ? t.nutrition.food.newTitle : title}
+      title={
+        view.kind === 'create' ? t.nutrition.food.newTitle : view.kind === 'scan' ? sc.title : title
+      }
     >
-      {creating !== null ? (
+      {view.kind === 'scan' ? (
         <div className="flex flex-col gap-3">
-          <Button
-            variant="ghost"
-            icon={ArrowLeft}
-            className="self-start px-0"
-            onClick={() => setCreating(null)}
-          >
-            {s.title}
-          </Button>
+          {back}
+          {view.busy ? (
+            <p role="status" className="py-8 text-center">
+              {sc.searching}
+            </p>
+          ) : (
+            <BarcodeScanner onCode={(code) => void onCode(code)} />
+          )}
+        </div>
+      ) : view.kind === 'create' ? (
+        <div className="flex flex-col gap-3">
+          {back}
+          {view.notice && (
+            <p role="status" className="rounded-md border border-accent-edge p-3 text-sm">
+              {view.notice}
+            </p>
+          )}
           <FoodForm
-            initial={null}
-            initialName={creating}
+            initial={view.initial}
+            initialName={view.name}
+            initialBarcode={view.barcode}
             submitLabel={t.nutrition.food.saveAndLog}
             onSaved={async (food) => {
               await saveFood(food)
-              setCreating(null)
+              setView({ kind: 'list' })
               onPick(food)
             }}
           />
+          {view.initial?.barcode && view.notice?.startsWith(sc.found) && (
+            <p className="text-xs text-muted">{sc.source}</p>
+          )}
         </div>
       ) : (
         <div className="flex min-h-[60dvh] flex-col gap-3">
@@ -111,11 +204,20 @@ export function AddFoodSheet({
               className="min-h-12 rounded-sm border border-line-strong bg-surface px-3 outline-none placeholder:text-muted focus:border-focus"
             />
           </label>
+          <Button icon={ScanBarcode} block onClick={() => setView({ kind: 'scan', busy: false })}>
+            {sc.open}
+          </Button>
           <div className="grid grid-cols-2 gap-2">
             <Button variant="secondary" icon={Zap} onClick={onQuickAdd}>
               {s.quickAdd}
             </Button>
-            <Button variant="secondary" icon={Plus} onClick={() => setCreating(query.trim())}>
+            <Button
+              variant="secondary"
+              icon={Plus}
+              onClick={() =>
+                setView({ kind: 'create', initial: null, name: query.trim(), notice: null })
+              }
+            >
               {s.newFood}
             </Button>
           </div>
@@ -140,7 +242,13 @@ export function AddFoodSheet({
               <div className="flex flex-col gap-2 py-3">
                 <p className="text-muted">{s.none}</p>
                 {query.trim() && (
-                  <Button variant="secondary" icon={Plus} onClick={() => setCreating(query.trim())}>
+                  <Button
+                    variant="secondary"
+                    icon={Plus}
+                    onClick={() =>
+                      setView({ kind: 'create', initial: null, name: query.trim(), notice: null })
+                    }
+                  >
                     {s.newNamed(query.trim())}
                   </Button>
                 )}

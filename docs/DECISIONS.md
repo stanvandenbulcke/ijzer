@@ -198,3 +198,16 @@ data in the app.
 **Decision:** Photos are downscaled JPEGs in IndexedDB (`photos`), never synced or exported.
 Sign-out does not remove them; "Alles wissen" does. The e2e test asserts no request leaves the
 device while adding photos.
+
+## ADR-025 — Barcodes via an edge function and a shared cache
+
+**Context:** Open Food Facts asks for a User-Agent with a contact address; browsers cannot set
+one. Stan chose his own address (2026-11-20).
+**Decision:** Edge function `food-lookup` (JWT checked inside, CORS limited to the app) looks
+in `product_cache`, else calls OFF API v2 with `IRON/1.0 (<OFF_CONTACT>)`; the address is a
+Supabase secret, never in the repo or bundle. Found products are cached 30 days, misses 1 day;
+200 lookups per user per day (`lookup_usage`, written only by the function). Users can read the
+cache but never write it (RLS tests). In the app a scan first checks own products; OFF results
+open an editable form before anything is saved. Scanner: ZXing (Apache-2.0/MIT), lazy-loaded;
+the camera image never leaves the phone.
+
