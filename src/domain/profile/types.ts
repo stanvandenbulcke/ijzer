@@ -18,7 +18,8 @@ export interface Settings {
   restIsolationSec: number
   /** Keep the screen on during a workout (Screen Wake Lock API). */
   wakeLock: boolean
-  restSound: boolean
+  /** Own sounds for a ticked set, end of rest and a PR. */
+  sounds: boolean
 }
 
 export interface Profile {

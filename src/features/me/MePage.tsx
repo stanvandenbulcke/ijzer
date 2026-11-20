@@ -124,11 +124,11 @@ export function MePage() {
           onPick={(v) => setSetting({ wakeLock: v })}
         />
         <Choice
-          label={m.restSound}
-          value={profile.settings.restSound}
+          label={m.sounds}
+          value={profile.settings.sounds}
           options={[true, false]}
           format={onOff}
-          onPick={(v) => setSetting({ restSound: v })}
+          onPick={(v) => setSetting({ sounds: v })}
         />
       </Group>
 

@@ -8,7 +8,7 @@ import { IconButton } from '../../../ui/Button'
 import { cx } from '../../../ui/cx'
 import { ProgressRing } from '../../../ui/ProgressRing'
 import { useNow } from '../../../ui/useNow'
-import { playRestDone } from './restSound'
+import { playRestDone } from './sounds'
 
 const w = t.training.workout
 

@@ -54,6 +54,8 @@ export default defineConfig({
         // App shell + exercise catalog are precached: the app works fully offline.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}', 'data/*.json'],
         navigateFallback: '/index.html',
+        // iOS fetches launch screens itself when the app is added to the home screen.
+        globIgnores: ['splash/**'],
         // Exercise photos (±20 MB) are cached the first time they are shown.
         runtimeCaching: [
           {

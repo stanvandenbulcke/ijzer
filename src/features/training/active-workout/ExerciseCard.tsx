@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import type { ExercisePlan } from '../../../domain/training/exercisePlan'
+import { ghostForExercise } from '../../../domain/training/ghost'
 import { describeSet } from '../../../domain/training/proposals'
 import type { Exercise, WorkoutExercise, WorkoutSet } from '../../../domain/training/types'
 import type { Suggestion } from '../../../domain/strength/progression'
@@ -18,6 +19,7 @@ import { Button, IconButton } from '../../../ui/Button'
 import { MuscleChip } from '../../../ui/Chip'
 import { cx } from '../../../ui/cx'
 import { ExerciseThumb } from '../../../ui/ExerciseThumb'
+import { GhostBar } from './GhostBar'
 import { isSingleValue, SET_GRID, SINGLE_GRID } from './setGrid'
 import { SetRow } from './SetRow'
 
@@ -82,6 +84,10 @@ export function ExerciseCard({
   const type = exercise?.type ?? 'weight_reps'
   const single = isSingleValue(type)
   const pain = [...item.sets].reverse().find((s) => s.pain)?.pain
+  const ghost = ghostForExercise(item.sets, plan.previousSets)
+  const ghostUnit = [...item.sets, ...plan.previousSets].every((s) => !s.weightKg)
+    ? t.common.reps
+    : t.common.kg
 
   if (item.status === 'skipped' || item.status === 'substituted') {
     return (
@@ -188,6 +194,11 @@ export function ExerciseCard({
       <p className="mt-3 text-sm text-muted">
         {plan.previousDay ? w.lastTimeOn(formatDayLong(plan.previousDay)) : w.firstTime}
       </p>
+      {ghost && !single && (
+        <div className="mt-1">
+          <GhostBar ghost={ghost} unit={ghostUnit} compact />
+        </div>
+      )}
       {showHint && plan.previousDay && item.sets.some((s) => !s.completed) && (
         <p className="mt-1 text-sm text-muted">{w.hint}</p>
       )}

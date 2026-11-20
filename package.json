@@ -20,7 +20,8 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "import:exercises": "node scripts/import-exercises.mjs",
     "build:e2e": "vite build --mode e2e",
-    "test:rls": "node scripts/run-sql.mjs supabase/tests/rls.sql dev"
+    "test:rls": "node scripts/run-sql.mjs supabase/tests/rls.sql dev",
+    "splash": "node scripts/make-splash.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

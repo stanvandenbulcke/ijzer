@@ -22,7 +22,7 @@ describe('profile', () => {
     expect((await loadProfile()).stepGoal).toBe(8000)
     await saveProfile({
       name: 'Stan',
-      settings: { restCompoundSec: 180, restIsolationSec: 90, wakeLock: false, restSound: true },
+      settings: { restCompoundSec: 180, restIsolationSec: 90, wakeLock: false, sounds: true },
     })
     const p = await loadProfile()
     expect(p.name).toBe('Stan')

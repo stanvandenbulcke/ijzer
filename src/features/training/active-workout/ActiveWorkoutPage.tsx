@@ -9,6 +9,7 @@ import { alternatives } from '../../../domain/exercises/search'
 import { defaultRestSec, incrementFor } from '../../../domain/profile/defaults'
 import { warmupSets } from '../../../domain/strength/warmup'
 import { planExercise } from '../../../domain/training/exercisePlan'
+import { ghostForExercise, ghostForSession } from '../../../domain/training/ghost'
 import type { Exercise, WorkoutExercise } from '../../../domain/training/types'
 import * as ops from '../../../domain/training/workoutOps'
 import { t } from '../../../i18n'
@@ -23,7 +24,8 @@ import { ExercisePickerSheet } from '../library/ExercisePickerSheet'
 import { ExerciseCard } from './ExerciseCard'
 import { ExerciseMenuSheet, type View as MenuView } from './ExerciseMenuSheet'
 import { FinishSheet } from './FinishSheet'
-import { primeAudio } from './restSound'
+import { GhostBar } from './GhostBar'
+import { playRecord, playSetDone, primeAudio } from './sounds'
 import { RestTimer } from './RestTimer'
 import { useWakeLock } from './useWakeLock'
 import { useWorkoutState } from './useWorkoutState'
@@ -78,6 +80,17 @@ export function ActiveWorkoutPage() {
 
   const exerciseOf = (item: WorkoutExercise): Exercise | undefined =>
     data.library.byId(item.exerciseId)
+  // Race against yourself: the whole session versus last time, weighted exercises only.
+  const sessionGhost = ghostForSession(
+    workout.exercises
+      .filter(
+        (e) =>
+          e.status !== 'skipped' &&
+          e.status !== 'substituted' &&
+          exerciseOf(e)?.type === 'weight_reps',
+      )
+      .map((e) => ghostForExercise(e.sets, plans.get(e.id)?.previousSets ?? [])),
+  )
   const incrementOf = (item: WorkoutExercise) =>
     item.incrementKg ?? incrementFor(exerciseOf(item)?.equipment ?? 'other', profile.equipment)
 
@@ -173,6 +186,7 @@ export function ActiveWorkoutPage() {
       if (reps === null) return openEdit(item, index, 'reps')
     }
     primeAudio()
+    if (profile.settings.sounds) playSetDone()
     const rest = set.type === 'warmup' ? WARMUP_REST_SEC : item.restSec
     const next = apply((wk) =>
       ops.completeSet(wk, item.id, set.id, { weightKg, reps }, now(), rest),
@@ -192,6 +206,7 @@ export function ActiveWorkoutPage() {
       })
       const kinds = plan.prKinds[index] ?? []
       if (kinds.length > 0) {
+        if (profile.settings.sounds) playRecord()
         const done = updated.sets[index]!
         setPrMoment({
           id: done.id,
@@ -256,6 +271,11 @@ export function ActiveWorkoutPage() {
               {w.finish}
             </Button>
           </div>
+          {sessionGhost && (
+            <div className="relative mx-auto mt-2 max-w-md">
+              <GhostBar ghost={sessionGhost} unit={t.common.kg} />
+            </div>
+          )}
         </header>
       </div>
 
@@ -324,7 +344,7 @@ export function ActiveWorkoutPage() {
       <div className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-md pb-[env(safe-area-inset-bottom)]">
         <RestTimer
           workout={workout}
-          sound={profile.settings.restSound}
+          sound={profile.settings.sounds}
           onAdjust={(d) => apply((wk) => ops.adjustRest(wk, d))}
           onClear={() => apply(ops.clearRest)}
         />

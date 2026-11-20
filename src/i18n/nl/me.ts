@@ -11,7 +11,7 @@ export const me = {
   restCompound: 'Rust na zware oefeningen',
   restIsolation: 'Rust na isolatie-oefeningen',
   wakeLock: 'Scherm aan houden tijdens training',
-  restSound: 'Geluid als de rust voorbij is',
+  sounds: 'Geluiden (set afvinken, einde rust, record)',
   on: 'Aan',
   off: 'Uit',
   account: 'Account en synchronisatie',
