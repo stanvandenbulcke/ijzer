@@ -15,7 +15,7 @@ export function Chip({ selected = false, className, type = 'button', ...rest }: 
       aria-pressed={selected}
       className={cx(
         'press inline-flex min-h-11 items-center gap-2 rounded-md border px-3.5 text-[15px] font-semibold',
-        selected ? 'border-focus bg-surface-2 text-text' : 'border-line text-muted',
+        selected ? 'border-text bg-text text-bg' : 'border-line-strong text-muted',
         className,
       )}
       {...rest}

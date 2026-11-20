@@ -22,7 +22,6 @@ export function CareerCard({ data }: { data: TrainingData }) {
   ] as const
   return (
     <section className="relative mt-5 overflow-hidden rounded-lg border border-line bg-surface p-4">
-      <div aria-hidden className="knurling pointer-events-none absolute inset-0" />
       <p className="relative text-xs font-semibold tracking-widest text-muted uppercase">
         {p.career}
       </p>

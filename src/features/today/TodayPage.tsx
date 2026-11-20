@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { CloudOff, Plus } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { logBodyWeight, useBodyWeights } from '../../data/bodyRepo'
@@ -99,17 +99,6 @@ export function TodayPage() {
         title={d.greeting(profile.name)}
       />
       <Stagger className="flex flex-col gap-3">
-        {accountsEnabled && session === null && (
-          <section className="rounded-md border border-focus bg-surface p-4">
-            <p className="font-display text-2xl leading-tight font-bold uppercase">
-              {t.auth.banner.title}
-            </p>
-            <p className="mt-1 text-sm text-muted">{t.auth.banner.body}</p>
-            <Button className="mt-3" onClick={() => navigate('/registreren')}>
-              {t.auth.banner.action}
-            </Button>
-          </section>
-        )}
         {active ? (
           <Card title={t.training.workoutRunningTitle}>
             <p className="font-display text-3xl font-black uppercase">{active.name}</p>
@@ -163,6 +152,20 @@ export function TodayPage() {
         )}
 
         <WeekCard status={status} today={today} />
+        {accountsEnabled && session === null && (
+          <section className="flex gap-3 rounded-md border border-line bg-surface p-3">
+            <CloudOff aria-hidden className="mt-0.5 shrink-0 text-muted" />
+            <div className="flex flex-1 flex-col items-start gap-2">
+              <p className="text-sm">
+                <span className="font-semibold">{t.auth.banner.title}.</span>{' '}
+                <span className="text-muted">{t.auth.banner.short}</span>
+              </p>
+              <Button variant="secondary" onClick={() => navigate('/registreren')}>
+                {t.auth.banner.action}
+              </Button>
+            </div>
+          </section>
+        )}
 
         <CheckInCard today={today} />
 

@@ -60,7 +60,7 @@ export const progress = {
     level: (n: number) => `Level ${n}`,
     toNext: (muscle: string) => `${muscle}: voortgang naar het volgende level`,
     detail: (sets: string, prs: number) =>
-      `${sets} sets${prs > 0 ? ` · ${prs === 1 ? '1 sessie' : `${prs} sessies`} met een record` : ''}`,
+      `${sets === '1' ? '1 set' : `${sets} sets`}${prs > 0 ? ` · ${prs === 1 ? '1 sessie' : `${prs} sessies`} met een record` : ''}`,
     tiers: {
       plate5: '1',
       plate10: '2–4',

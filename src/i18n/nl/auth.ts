@@ -70,6 +70,7 @@ export const auth = {
     title: 'Je progressie staat alleen op deze iPhone',
     body: 'Maak een gratis account: dan wordt alles automatisch bewaard in de cloud.',
     action: 'Account maken',
+    short: 'Gratis account = automatisch in de cloud.',
   },
   account: {
     title: 'Account',

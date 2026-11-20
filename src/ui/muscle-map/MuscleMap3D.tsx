@@ -38,7 +38,7 @@ export function MuscleMap3D({ fills, label }: { fills: MuscleFill; label: string
 
   return (
     <div role="img" aria-label={label} className="relative flex flex-col items-center">
-      <div className="w-40 [perspective:900px]">
+      <div className="w-28 [perspective:900px]">
         <motion.div
           className="relative aspect-[60/190] w-full touch-pan-y [transform-style:preserve-3d]"
           style={{ rotateY: rotate }}
@@ -61,7 +61,7 @@ export function MuscleMap3D({ fills, label }: { fills: MuscleFill; label: string
       </div>
       <motion.div
         aria-hidden
-        className="-mt-3 h-3 w-28 rounded-[50%] bg-line"
+        className="-mt-3 h-3 w-20 rounded-[50%] bg-line"
         style={{ scaleX: shadowScale }}
       />
       <IconButton

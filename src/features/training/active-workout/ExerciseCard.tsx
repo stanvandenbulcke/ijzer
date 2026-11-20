@@ -156,7 +156,7 @@ export function ExerciseCard({
             key={label}
             type="button"
             onClick={onClick}
-            className="press flex min-h-11 items-center justify-center gap-1.5 rounded-md border border-line-strong text-sm font-semibold"
+            className="press flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-surface-2 text-sm font-semibold"
           >
             <Icon aria-hidden size={16} />
             {label}
@@ -178,6 +178,9 @@ export function ExerciseCard({
               {t.common.why}
             </button>
           </div>
+          <p className="text-sm text-muted">
+            {plan.previousDay ? w.lastTimeOn(formatDayLong(plan.previousDay)) : w.firstTime}
+          </p>
           {why && plan.suggestion && (
             <p className="mt-1 text-sm text-muted">{whyText(plan.suggestion)}</p>
           )}
@@ -191,10 +194,12 @@ export function ExerciseCard({
         </p>
       )}
 
-      <p className="mt-3 text-sm text-muted">
-        {plan.previousDay ? w.lastTimeOn(formatDayLong(plan.previousDay)) : w.firstTime}
-      </p>
-      {ghost && !single && (
+      {!target && (
+        <p className="mt-3 text-sm text-muted">
+          {plan.previousDay ? w.lastTimeOn(formatDayLong(plan.previousDay)) : w.firstTime}
+        </p>
+      )}
+      {ghost && !single && item.status === 'in_progress' && (
         <div className="mt-1">
           <GhostBar ghost={ghost} unit={ghostUnit} compact />
         </div>

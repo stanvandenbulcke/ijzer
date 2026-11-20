@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { cx } from './cx'
 
 export interface SubTab<T extends string> {
@@ -17,6 +18,11 @@ export interface SubTabsProps<T extends string> {
  * Scrolls sideways when it does not fit; the active tab gets a thick bar like a plate edge.
  */
 export function SubTabs<T extends string>({ label, tabs, value, onChange }: SubTabsProps<T>) {
+  const activeRef = useRef<HTMLButtonElement>(null)
+  // Deep links (e.g. /progressie/analyse) must not hide the active tab off-screen.
+  useEffect(() => {
+    activeRef.current?.scrollIntoView?.({ inline: 'nearest', block: 'nearest' })
+  }, [value])
   return (
     <div
       role="tablist"
@@ -28,6 +34,7 @@ export function SubTabs<T extends string>({ label, tabs, value, onChange }: SubT
         return (
           <button
             key={tab.id}
+            ref={active ? activeRef : undefined}
             type="button"
             role="tab"
             aria-selected={active}

@@ -66,7 +66,7 @@ export function OverviewTab({
           aria-label={p.calendarLabel(
             data.workouts.filter((w) => localDay(w.startedAt) >= firstMonday).length,
           )}
-          className="grid w-fit grid-flow-col grid-rows-7 gap-[3px] [grid-auto-columns:18px]"
+          className="grid w-full grid-flow-col grid-rows-7 gap-[3px] [grid-auto-columns:minmax(0,1fr)]"
         >
           {weeks.flatMap((monday) =>
             Array.from({ length: 7 }, (_, d) => {
@@ -75,7 +75,7 @@ export function OverviewTab({
                 <span
                   key={day}
                   className={cx(
-                    'size-[18px] rounded-[3px]',
+                    'h-5 w-full rounded-[3px]',
                     day > today
                       ? 'bg-transparent'
                       : trainedDays.has(day)
@@ -88,7 +88,7 @@ export function OverviewTab({
           )}
         </div>
         <div
-          className="mt-3 grid w-fit grid-flow-col items-end gap-[3px] [grid-auto-columns:18px]"
+          className="mt-3 grid h-10 w-full grid-flow-col items-end gap-[3px] [grid-auto-columns:minmax(0,1fr)]"
           aria-hidden
         >
           {weeks.map((w) => {
@@ -97,10 +97,12 @@ export function OverviewTab({
               <span
                 key={w}
                 className={cx(
-                  'flex-1 rounded-t-sm',
+                  'rounded-t-sm',
                   n >= goalPerWeek ? 'bg-plate-green' : 'bg-line-strong',
                 )}
-                style={{ height: `${Math.max(2, n * 6)}px` }}
+                style={{
+                  height: `${Math.max(8, Math.min(100, (n / Math.max(1, goalPerWeek)) * 100))}%`,
+                }}
               />
             )
           })}

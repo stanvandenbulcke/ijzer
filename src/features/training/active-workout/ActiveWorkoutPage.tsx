@@ -140,7 +140,7 @@ export function ActiveWorkoutPage() {
                 {workout.name}
               </h1>
             </div>
-            <Button variant="secondary" onClick={() => setFinishing(true)}>
+            <Button variant="ghost" onClick={() => setFinishing(true)}>
               {w.finish}
             </Button>
           </div>
@@ -174,7 +174,7 @@ export function ActiveWorkoutPage() {
             item={item}
             exercise={exerciseOf(item)}
             plan={plans.get(item.id)!}
-            showHint={data.workouts.length < 3}
+            showHint={data.workouts.length < 2}
             substituteName={
               item.substitutedBy
                 ? (exerciseOf(workout.exercises.find((e) => e.id === item.substitutedBy)!)?.name ??

@@ -30,7 +30,7 @@ export function PageHeader({ title, eyebrow, back, actions }: PageHeaderProps) {
         {eyebrow && (
           <p className="text-xs font-semibold tracking-widest text-muted uppercase">{eyebrow}</p>
         )}
-        <h1 className="truncate font-display text-4xl leading-tight font-black uppercase">
+        <h1 className="line-clamp-2 font-display text-4xl leading-tight font-black text-balance uppercase">
           {title}
         </h1>
       </div>

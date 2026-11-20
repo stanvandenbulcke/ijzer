@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import type { TrainingData } from '../../../data/useTrainingData'
 import { localDay } from '../../../domain/time'
@@ -35,7 +35,7 @@ export function WrappedEntry({ data, today }: { data: TrainingData; today: strin
             onClick={() => navigate(`/wrapped/${period}`)}
             className="press flex min-h-16 items-center gap-3 rounded-md border border-accent-edge bg-surface px-4 text-left"
           >
-            <Sparkles aria-hidden className="shrink-0 text-accent-text" />
+            <Trophy aria-hidden className="shrink-0 text-accent-text" />
             <span className="flex flex-1 flex-col">
               <span className="font-display text-2xl leading-tight font-bold uppercase">
                 {period.length === 4 ? w.entryYear(label) : w.entryMonth(label)}
