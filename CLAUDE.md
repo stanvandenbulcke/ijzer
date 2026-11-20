@@ -57,12 +57,15 @@ docs/            SPEC, PLAN, PROGRESS, DECISIONS, ARCHITECTURE, DATA_MODEL, DESI
 src/app/         router, providers, shell, error pages, config.ts (APP_NAME)
 src/features/    one folder per tab/feature, each with a README and an index.ts (its public pages):
                  landing, onboarding, today, training/{library,routines,active-workout,summary,
-                 history}, nutrition, progress/{overview,exercises,muscles,body,steps,analysis}, me
+                 history}, nutrition/{diary,search,foods,targets}, progress/{overview,exercises,
+                 muscles,body,steps,analysis}, me, auth, science, wrapped
 src/domain/      PURE TypeScript logic, no React, tested: strength/ (e1RM, plates, warm-ups,
                  progression), training/ (types, workout ops, performances, PRs, proposals,
-                 summary, streak), volume/, analysis/ (rules R1–R10, thresholds), energy/ (trend),
-                 exercises/ (search), muscles/ (taxonomy), profile/, time.ts
-src/data/        Dexie db (+ outbox), repositories (*Repo.ts), catalog loader, useTrainingData
+                 summary, streak, ghost, wrapped), volume/, analysis/ (rules R1–R10), energy/
+                 (trend), nutrition/ (macros, targets, week), levels/, insights/ (check-ins),
+                 exercises/ (search + Dutch terms), muscles/ (taxonomy), profile/, time.ts
+src/data/        Dexie db (+ outbox), repositories (*Repo.ts), sync/ (engine, controller), catalog
+                 loader, useTrainingData, useTargets
 src/ui/          design system: tokens.css + shared components
 src/i18n/        nl.ts (typed messages)
 supabase/        migrations, functions, seed, tests (RLS)

@@ -1,7 +1,9 @@
 # Progress / handoff
 
-**Status (2026-11-19):** the gym side of the app works end to end in local mode (no accounts
-yet). Live: https://ijzer.stanvandenbulck.workers.dev — auto-deploys on push to `main`.
+**Status (2026-11-20):** IRON works end to end with accounts and cloud sync on ijzer-prod:
+gym (library, routines, workout, progress), food diary, body weight, progress photos, muscle
+levels, Wrapped, check-in insights. Live: https://ijzer.stanvandenbulck.workers.dev
+(auto-deploys on push to `main`).
 
 ## Done
 
@@ -59,22 +61,46 @@ yet). Live: https://ijzer.stanvandenbulck.workers.dev — auto-deploys on push t
       set stamp, animated duotone exercise icons, career stats + record wall.
 - [ ] Name: Stan chooses (APP_NAME in `src/app/config.ts`).
 
+## Round 3 (2026-11-20)
+
+- [x] Name IRON (ADR-021); accounts live on ijzer-prod; several accounts on several phones.
+- [x] Data-loss review fixed (ADR-022): safe sign-out, account switch asks first, claim screen
+      comes back if the app was closed, compound pull cursor, server trigger hardening, row
+      size limit, workout save retry + banner, persistent storage on every start, parallel and
+      per-table sync, unit tests for push/pull.
+- [x] New-user walkthrough fixed: ✓ on an empty set ticks after the keypad, finish sheet names
+      open exercises and ticks typed sets, "Vandaag getraind", Dutch search (billen, buik,
+      bulgaarse), simpler routine editor, map opens on the trained side, record plates in kg,
+      theme can follow the iPhone, exercise info during a workout.
+- [x] Race against yourself, own sounds, native feel (splash screens, no zoom, no bounce,
+      swipe back, tab transitions).
+- [x] Muscle levels, IRON Wrapped (/wrapped/:period), energy/sleep check-in + insights.
+- [x] Food diary (ADR-023): targets, own products, portion sheet, quick add, copy yesterday,
+      day complete, week overview, Today card.
+- [x] Progress photos + timelapse, local only (ADR-024).
+
 ## Next (in order)
 
-1. Supabase (needs project URL from Stan): auth, migrations, RLS tests, sync of the outbox.
-2. Phase 5 nutrition (NEVO file from Stan, Open Food Facts, barcode, label scan).
-3. Phase 6 rest: measurements, progress photos, adaptive TDEE, weekly check-in.
-4. Phase 7 steps (Shortcuts), phase 8 buddies/import, phase 9 polish; Wetenschap articles.
+1. **Prod migration for nutrition** (`20261120000500_nutrition.sql`) — needs Stan's go; then
+   remove `notMigrated` for prod in `src/data/supabase/config.ts`.
+2. Samen trainen + buddies (Realtime) — needs Stan's choices on what the other person sees.
+3. Barcode (Open Food Facts edge function; needs a contact address for the User-Agent), NEVO
+   (Stan downloads the file), label/plate photo (free Google AI Studio key from Stan).
+4. Adaptive TDEE + weekly check-in, measurements, steps (Shortcuts), recipes, supplements.
 5. After Stan approves the style: gate /design to dev (ADR-009).
 
 ## Waiting for Stan
 
-- [ ] Supabase **Project URL** of `ijzer-dev` (the publishable key was received)
-- [ ] Style approval on /design (or feedback)
-- [ ] Test the app on the iPhone (steps in GIDS_VOOR_STAN.md)
+- [ ] Go for the nutrition tables on ijzer-prod
+- [ ] Samen trainen: what may the other person see (live sets? weights? only "training")
+- [ ] For barcodes: which e-mail address may go in the Open Food Facts User-Agent
+- [ ] Optional: free Google AI Studio key (label and plate photos), NEVO download
+- [ ] After both accounts exist: switch off open sign-ups in Supabase (fewer spam accounts)
 
 ## Known issues / notes
 
+- Password reset mails only reach Stan until a free SMTP sender is set up (ADR-017).
+- Progress photos are not in the JSON export (size); they stay on the device.
 - `npm audit` reports moderate advisories in dev-only tooling; none ship to the browser.
 - Routine reorder uses up/down buttons, not drag (ADR-014).
-- Light theme: green as a chart colour on paper is just under 3:1 (text uses green-text).
+- Node scripts that call the Management API need `NODE_USE_ENV_PROXY=1` in the cloud sandbox.

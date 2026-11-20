@@ -169,3 +169,32 @@ ijzer-prod on 2026-11-20.
 **Decision:** `APP_NAME = 'IRON'` (manifest, title, texts). The repository, Supabase projects
 and internal identifiers keep the codename `ijzer`. The production build talks to ijzer-prod
 (same migrations and RLS tests as dev); a GitHub Action calls `keep_alive()` every 3 days.
+
+## ADR-022 — Lossless sync and sign-out (data-loss review)
+
+**Context:** A review found ways to lose unsynced training data (sign-out wiped the outbox,
+signing in with another account removed its changes, page boundaries could skip rows).
+**Decision:** Nothing that is not in the cloud is removed without a second explicit
+confirmation (sign-out sheet with "download a copy"; account switch screen). Sign-out is
+`scope: 'local'`. Pull pages on `(server_updated_at, id)` with a 5-minute overlap; the trigger
+uses `clock_timestamp()` and keeps the newer edit; rows are limited to 256 KB. Push/pull run
+per table in parallel; one failing table never blocks the others and keeps its outbox. A
+`syncNow()` during a round gets the next round. Unit tests run push/pull on a fake client.
+
+## ADR-023 — Food diary first, external food data later
+
+**Context:** Open Food Facts needs a contact address in the User-Agent (Stan's choice), NEVO
+must be downloaded by Stan, label reading needs a Gemini key.
+**Decision:** Ship the diary now with own products (values from the label, typed once), quick
+add, portion sheet, targets (Mifflin-St Jeor, never below BMR, max 1 %/week loss) and week
+overview. Logs store a per-100 g snapshot. Tables `foods`, `food_logs`, `nutrition_days` follow
+the same document + RLS pattern. A project can list `notMigrated` tables: they are not synced
+and their outbox waits, and the status says "voeding staat voorlopig alleen op dit toestel".
+
+## ADR-024 — Progress photos stay on the device
+
+**Context:** Stan asked for a timelapse "op het toestel"; body photos are the most sensitive
+data in the app.
+**Decision:** Photos are downscaled JPEGs in IndexedDB (`photos`), never synced or exported.
+Sign-out does not remove them; "Alles wissen" does. The e2e test asserts no request leaves the
+device while adding photos.

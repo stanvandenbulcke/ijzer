@@ -1,10 +1,25 @@
 # Data model
 
-Outline from SPEC §7.1. Locally (Dexie, `src/data/db.ts`) the tables are: `profile` (one row
-`me`), `customExercises`, `routines` and `workouts` (documents with nested exercises and sets,
-ADR-012), `bodyWeights` (one per day) and `outbox` (changed rows waiting for sync). Types live
-in `src/domain/**/types.ts`. Exact Postgres columns and RLS policies are written here when the
-first migration lands.
+**As built (2026-11-20).** Every synced table is a document table: `id`, `user_id`, `data jsonb`,
+`created_at`, `updated_at`, `deleted_at`, `server_updated_at` (server clock, pull cursor), RLS
+forced with "own rows" policies, trigger `ijzer_touch` (newest edit wins), 256 KB row limit.
+
+| Local (Dexie)     | Postgres           | What                                    |
+| ----------------- | ------------------ | --------------------------------------- |
+| `profile` (`me`)  | `profiles`         | profile + settings (row id = user id)   |
+| `customExercises` | `custom_exercises` | own exercises                           |
+| `routines`        | `routines`         | routines with nested exercises and sets |
+| `workouts`        | `workouts`         | workouts with nested exercises and sets |
+| `bodyWeights`     | `body_weights`     | one weigh-in per day                    |
+| `checkIns`        | `check_ins`        | energy + sleep, one per day             |
+| `foods`           | `foods`            | own products (per 100 g/ml)             |
+| `foodLogs`        | `food_logs`        | logged items with per-100 g snapshot    |
+| `nutritionDays`   | `nutrition_days`   | "dag volledig gelogd"                   |
+| `photos`          | —                  | progress photos, LOCAL ONLY (ADR-024)   |
+| `outbox`, `meta`  | —                  | sync queue, owner + cursors             |
+
+Migrations: `supabase/migrations/`; RLS tests: `supabase/tests/rls.sql`. The outline below is
+the original target from SPEC §7.1.
 
 **Every table:** `id uuid` (client-generated), `created_at`, `updated_at`, `deleted_at`
 (soft delete for sync), `user_id` where applicable. **RLS on every table.**
