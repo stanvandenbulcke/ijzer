@@ -58,6 +58,19 @@ export type SyncedTable =
   | 'foodLogs'
   | 'nutritionDays'
 
+/**
+ * Progress photo. LOCAL ONLY on purpose (Stan: "op het toestel"): never synced, never in the
+ * cloud. Stored downscaled as JPEG.
+ */
+export interface PhotoRow {
+  id: string
+  day: string
+  blob: Blob
+  width: number
+  height: number
+  createdAt: string
+}
+
 /** Small key-value store for sync bookkeeping: owner of the local data, pull cursors. */
 export interface MetaRow {
   key: string
@@ -80,6 +93,7 @@ export class IjzerDb extends Dexie {
   nutritionDays!: Table<NutritionDayRow, string>
   outbox!: Table<OutboxEntry, number>
   meta!: Table<MetaRow, string>
+  photos!: Table<PhotoRow, string>
 
   constructor(name = 'ijzer') {
     super(name)
@@ -101,6 +115,8 @@ export class IjzerDb extends Dexie {
       foodLogs: 'id, day, updatedAt',
       nutritionDays: 'id, &day, updatedAt',
     })
+    // v5: progress photos (local only, see PhotoRow).
+    this.version(5).stores({ photos: 'id, day' })
   }
 }
 

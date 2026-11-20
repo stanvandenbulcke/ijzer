@@ -16,6 +16,7 @@ import { LoadingState } from '../../../ui/LoadingState'
 import { useToast } from '../../../ui/toast/toastContext'
 import { ValueEntrySheet } from '../../../ui/ValueEntrySheet'
 import { Section } from '../Section'
+import { ProgressPhotos } from './ProgressPhotos'
 
 const b = t.progress.body
 
@@ -101,6 +102,7 @@ export function BodyTab({ fallbackKg }: { fallbackKg: number | null }) {
           </ul>
         </Section>
       )}
+      <ProgressPhotos />
       <p className="mt-6 text-sm text-muted">{b.measurementsSoon}</p>
 
       <ValueEntrySheet
