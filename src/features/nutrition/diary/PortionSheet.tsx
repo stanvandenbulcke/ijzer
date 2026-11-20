@@ -75,7 +75,10 @@ function Portion({
         ...(remembered && remembered.unit === unit
           ? [{ label: p.last, value: remembered.amount }]
           : []),
-        ...[50, 100, 150, 200].map((v) => ({ label: `${v} ${p.unitShort[unit]}`, value: v })),
+        ...(unit === 'ml' ? [100, 200, 250, 330, 500] : [50, 100, 150, 200]).map((v) => ({
+          label: `${v} ${p.unitShort[unit]}`,
+          value: v,
+        })),
       ]
 
   return (

@@ -32,6 +32,7 @@ import { QuickAddSheet } from './diary/QuickAddSheet'
 import { WeekOverview } from './diary/WeekOverview'
 import { AddFoodSheet } from './search/AddFoodSheet'
 import { TargetsCard } from './targets/TargetsCard'
+import { TargetsSheet } from './targets/TargetsSheet'
 import { useTargets } from '../../data/useTargets'
 
 const n = t.nutrition
@@ -49,6 +50,7 @@ export function NutritionPage() {
   const completeDays = useCompleteDays()
   const targets = useTargets(today)
   const [addingTo, setAddingTo] = useState<MealId | null>(null)
+  const [editingTargets, setEditingTargets] = useState(false)
   const [quickFor, setQuickFor] = useState<MealId | null>(null)
   const [portion, setPortion] = useState<
     (PortionTarget & { log?: FoodLogRow; foodRef?: Food }) | null
@@ -114,7 +116,7 @@ export function NutritionPage() {
         />
       </div>
       <div className="flex flex-col gap-3">
-        <TargetsCard totals={totals} targets={targets} />
+        <TargetsCard totals={totals} targets={targets} onEdit={() => setEditingTargets(true)} />
         {MEALS.map((meal) => (
           <MealSection
             key={meal}
@@ -193,6 +195,7 @@ export function NutritionPage() {
           setQuickFor(null)
         }}
       />
+      <TargetsSheet open={editingTargets} onOpenChange={setEditingTargets} today={today} />
       <PortionSheet
         target={portion}
         onClose={() => setPortion(null)}

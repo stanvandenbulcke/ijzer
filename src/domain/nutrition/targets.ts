@@ -1,4 +1,4 @@
-import type { Activity, Goal, Sex } from '../profile/types'
+import type { Activity, CustomTargets, Goal, Sex } from '../profile/types'
 
 /** Activity factors for the start TDEE (SPEC §5.5). */
 export const ACTIVITY_FACTOR: Record<Activity, number> = {
@@ -38,6 +38,8 @@ export interface Targets {
   tdee: number
   /** True when the goal was raised to the BMR floor (safety, SPEC §5.5). */
   flooredAtBmr: boolean
+  /** True when the user set (some of) the targets themselves. */
+  custom: boolean
 }
 
 /**
@@ -63,5 +65,37 @@ export function dailyTargets(p: {
   const protein = Math.round(p.weightKg * (p.proteinPerKg ?? 2))
   const fat = Math.round(Math.max(p.weightKg * 0.8, (kcal * 0.2) / 9))
   const carbs = Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4))
-  return { kcal, protein, fat, carbs, bmr: base, tdee, flooredAtBmr: wanted < base }
+  return { kcal, protein, fat, carbs, bmr: base, tdee, flooredAtBmr: wanted < base, custom: false }
+}
+
+/** kcal that a set of macros adds up to: 4 per g protein and carbs, 9 per g fat. */
+export const macroKcal = (protein: number, carbs: number, fat: number) =>
+  Math.round(protein * 4 + carbs * 4 + fat * 9)
+
+/**
+ * Own targets over the calculated ones (Stan: "eigen kcal en macro's instellen"). Every value
+ * the user left empty stays calculated; empty carbs fill the rest of the kcal. Without body data
+ * there is nothing to calculate: then only what the user typed counts (0 = no target).
+ * The user decides: nothing is raised to the BMR here, the UI only warns.
+ */
+export function withCustomTargets(
+  auto: Targets | null,
+  custom: CustomTargets | null,
+): Targets | null {
+  if (!custom || Object.values(custom).every((v) => v === null)) return auto
+  const kcal = custom.kcal ?? auto?.kcal
+  if (kcal === undefined) return null
+  const protein = custom.protein ?? auto?.protein ?? 0
+  const fat = custom.fat ?? auto?.fat ?? 0
+  const carbs = custom.carbs ?? Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4))
+  return {
+    kcal,
+    protein,
+    fat,
+    carbs,
+    bmr: auto?.bmr ?? 0,
+    tdee: auto?.tdee ?? 0,
+    flooredAtBmr: false,
+    custom: true,
+  }
 }

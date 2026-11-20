@@ -76,3 +76,41 @@ test('log a product, quick add, remove with undo, mark the day complete', async 
   await page.goto('/vandaag')
   await expect(page.getByText(/473 van/)).toBeVisible()
 })
+
+test('set your own kcal and macros, and log a drink per 100 ml', async ({ page }, testInfo) => {
+  await onboard(page)
+  await page.goto('/voeding')
+
+  // Own targets: kcal, protein and fat; carbs fill the rest.
+  await page.getByRole('button', { name: 'Doelen aanpassen' }).click()
+  const sheet = page.getByRole('dialog')
+  await sheet.getByRole('button', { name: 'Zelf instellen' }).click()
+  await sheet.getByLabel('Kilocalorieën').fill('2000')
+  await sheet.getByLabel('Eiwit (g)').fill('150')
+  await sheet.getByLabel('Vet (g)').fill('60')
+  await expect(sheet.getByText(/Je macro's samen: 2\.000 kcal/)).toBeVisible()
+  await page.screenshot({
+    path: `test-results/screens/nutrition-goals-${testInfo.project.name}.png`,
+  })
+  await sheet.getByRole('button', { name: 'Doelen opslaan' }).click()
+  await expect(page.getByText('/ 2.000 kcal')).toBeVisible()
+  await expect(page.getByText('0 / 150 g')).toBeVisible()
+  await expect(page.getByText('Je eigen doelen.', { exact: false })).toBeVisible()
+
+  // A drink: values per 100 ml, logged in ml.
+  await page.getByRole('button', { name: 'Toevoegen aan ontbijt' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Nieuw product' }).click()
+  const form = page.getByRole('dialog')
+  await form.getByLabel('Naam').fill('Halfvolle melk')
+  await form.getByRole('button', { name: '100 ml' }).click()
+  await expect(form.getByText('Voedingswaarden per 100 ml')).toBeVisible()
+  await form.getByLabel('Energie (kcal)').fill('46')
+  await form.getByLabel('Eiwitten (g)').fill('3,4')
+  await form.getByLabel('Koolhydraten (g)').fill('4,8')
+  await form.getByLabel('Vetten (g)').fill('1,5')
+  await form.getByRole('button', { name: 'Opslaan en kiezen' }).click()
+  await form.getByRole('button', { name: '250 ml' }).click()
+  await expect(form.getByText('115 kcal')).toBeVisible()
+  await form.getByRole('button', { name: 'Klaar' }).click()
+  await expect(page.getByRole('button', { name: /^Halfvolle melk/ })).toContainText('250 ml')
+})

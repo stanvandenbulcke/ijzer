@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { dayTotals, gramsFor, kcalDeviation, scale, sum } from './macros'
-import { ageOn, bmr, dailyTargets } from './targets'
+import { ageOn, bmr, dailyTargets, macroKcal, withCustomTargets } from './targets'
 import type { FoodLog, Nutrients } from './types'
 import { weekSummary } from './week'
 
@@ -100,5 +100,46 @@ describe('weekSummary', () => {
     expect(w.proteinGoalDays).toBe(1)
     expect(w.days.at(-1)).toMatchObject({ day: '2026-11-20', complete: true })
     expect(weekSummary([], new Set(), '2026-11-20', 140).average).toBeNull()
+  })
+})
+
+describe('withCustomTargets', () => {
+  const auto = dailyTargets({
+    weightKg: 80,
+    heightCm: 180,
+    age: 19,
+    sex: 'male',
+    activity: 'moderate',
+    goal: 'maintain',
+    ratePctPerWeek: 0,
+  })
+  const none = { kcal: null, protein: null, carbs: null, fat: null }
+
+  it('keeps the calculated targets when nothing is set', () => {
+    expect(withCustomTargets(auto, null)).toBe(auto)
+    expect(withCustomTargets(auto, none)).toBe(auto)
+  })
+
+  it('uses what you set and fills carbs with the rest of the kcal', () => {
+    const t = withCustomTargets(auto, { ...none, kcal: 2500, protein: 180, fat: 70 })!
+    expect(t).toMatchObject({ kcal: 2500, protein: 180, fat: 70, custom: true })
+    expect(t.carbs).toBe(Math.round((2500 - 180 * 4 - 70 * 9) / 4))
+    expect(macroKcal(t.protein, t.carbs, t.fat)).toBeCloseTo(2500, -1)
+  })
+
+  it('keeps carbs you set, even when the macros do not add up', () => {
+    const t = withCustomTargets(auto, { kcal: 2000, protein: 150, carbs: 300, fat: 60 })!
+    expect(t.carbs).toBe(300)
+    expect(macroKcal(t.protein, t.carbs, t.fat)).toBe(2340)
+  })
+
+  it('works without body data when you set kcal yourself, and not without', () => {
+    expect(withCustomTargets(null, { ...none, kcal: 2200 })).toMatchObject({
+      kcal: 2200,
+      protein: 0,
+      fat: 0,
+      carbs: 550,
+    })
+    expect(withCustomTargets(null, { ...none, protein: 150 })).toBeNull()
   })
 })

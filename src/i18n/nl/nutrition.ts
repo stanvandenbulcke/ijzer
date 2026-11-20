@@ -26,6 +26,32 @@ export const nutrition = {
   targetsNote: (bmr: string, tdee: string) =>
     `Schatting: rustverbruik ${bmr} kcal, totaal verbruik ${tdee} kcal per dag. Geen medisch advies; bij twijfel: arts of diëtist.`,
   flooredAtBmr: 'Je doel staat op je rustverbruik: lager raden we nooit aan.',
+  customNote: 'Je eigen doelen. Pas ze aan of zet ze terug op berekend.',
+  editTargets: 'Doelen aanpassen',
+  goals: {
+    title: 'Je doelen',
+    auto: 'Berekend',
+    own: 'Zelf instellen',
+    autoNote: (kcal: string, p: string, c: string, f: string) =>
+      `Berekend uit je gewicht, lengte, leeftijd, activiteit en doel: ${kcal} kcal, eiwit ${p} g, koolhydraten ${c} g, vet ${f} g.`,
+    ownNote:
+      'Vul in wat je zelf wil, bv. van je coach of diëtist. Leeg = berekend. Laat je koolhydraten leeg, dan vult de app de rest van je kcal aan.',
+    fields: {
+      kcal: 'Kilocalorieën',
+      protein: 'Eiwit (g)',
+      carbs: 'Koolhydraten (g)',
+      fat: 'Vet (g)',
+    },
+    rest: 'rest',
+    required: 'nodig',
+    sum: (kcal: string, p: string, c: string, f: string) =>
+      `Je macro's samen: ${kcal} kcal (eiwit ${p} g · koolhydraten ${c} g · vet ${f} g).`,
+    mismatch: (sum: string, kcal: string) =>
+      `Je macro's komen op ${sum} kcal, je kcal-doel is ${kcal}. Dat mag, maar ze sluiten niet goed aan.`,
+    belowBmr: (bmr: string) =>
+      `Dit is minder dan je geschatte rustverbruik (${bmr} kcal). Zo laag raden we niet aan; geen medisch advies, bij twijfel: arts of diëtist.`,
+    save: 'Doelen opslaan',
+  },
   add: 'Toevoegen',
   addTo: (meal: string) => `Toevoegen aan ${meal.toLowerCase()}`,
   emptyMeal: 'Nog niets.',
@@ -111,15 +137,18 @@ export const nutrition = {
     name: 'Naam',
     brand: 'Merk (optioneel)',
     per100: (liquid: boolean) => `Voedingswaarden per 100 ${liquid ? 'ml' : 'g'}`,
-    fromLabel: 'Neem de kolom „per 100 g” van het etiket over.',
+    basis: 'Waarden per',
+    per100g: '100 g',
+    per100ml: '100 ml',
+    fromLabel: (liquid: boolean) =>
+      `Neem de kolom „per 100 ${liquid ? 'ml' : 'g'}” van het etiket over. Je eet of drinkt het daarna in ${liquid ? 'ml' : 'gram'}, stuks of porties.`,
     kcal: 'Energie (kcal)',
     protein: 'Eiwitten (g)',
     carbs: 'Koolhydraten (g)',
     fat: 'Vetten (g)',
     fiber: 'Vezels (g, optioneel)',
-    liquid: 'Het is een drank (ml)',
-    gramsPerPiece: 'Gram per stuk (optioneel)',
-    servingGrams: 'Gram per portie (optioneel)',
+    gramsPerPiece: (liquid: boolean) => `${liquid ? 'ml' : 'Gram'} per stuk (optioneel)`,
+    servingGrams: (liquid: boolean) => `${liquid ? 'ml' : 'Gram'} per portie (optioneel)`,
     barcode: 'Barcode (optioneel)',
     favorite: 'Favoriet',
     save: 'Product opslaan',

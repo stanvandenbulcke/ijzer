@@ -94,9 +94,6 @@ export function FoodForm({
       <TextField label={f.name} value={name} onChange={(e) => setName(e.target.value)} />
       <TextField label={f.brand} value={brand} onChange={(e) => setBrand(e.target.value)} />
       <div className="flex flex-wrap gap-2">
-        <Chip selected={liquid} onClick={() => setLiquid((v) => !v)}>
-          {f.liquid}
-        </Chip>
         <Chip selected={favorite} onClick={() => setFavorite((v) => !v)}>
           <Star aria-hidden size={16} />
           {f.favorite}
@@ -104,7 +101,17 @@ export function FoodForm({
       </div>
       <fieldset className="flex flex-col gap-3">
         <legend className="mb-1 font-semibold">{f.per100(liquid)}</legend>
-        <p className="text-sm text-muted">{f.fromLabel}</p>
+        {/* Most labels list per 100 g; drinks (and some yoghurts, sauces) per 100 ml. */}
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label={f.basis}>
+          <span className="text-sm font-semibold text-muted">{f.basis}</span>
+          <Chip selected={!liquid} onClick={() => setLiquid(false)}>
+            {f.per100g}
+          </Chip>
+          <Chip selected={liquid} onClick={() => setLiquid(true)}>
+            {f.per100ml}
+          </Chip>
+        </div>
+        <p className="text-sm text-muted">{f.fromLabel(liquid)}</p>
         <div className="grid grid-cols-2 gap-3">
           {field('kcal', f.kcal)}
           {field('protein', f.protein)}
@@ -119,8 +126,8 @@ export function FoodForm({
         )}
       </fieldset>
       <div className="grid grid-cols-2 gap-3">
-        {field('gramsPerPiece', f.gramsPerPiece)}
-        {field('servingGrams', f.servingGrams)}
+        {field('gramsPerPiece', f.gramsPerPiece(liquid))}
+        {field('servingGrams', f.servingGrams(liquid))}
       </div>
       <TextField
         label={f.barcode}

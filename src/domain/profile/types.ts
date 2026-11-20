@@ -24,6 +24,17 @@ export interface Settings {
   liveShare: boolean
 }
 
+/**
+ * Own daily targets (Voeding). Each value can be set or left to the app: null = calculated.
+ * Carbs left empty fill up the rest of the kcal.
+ */
+export interface CustomTargets {
+  kcal: number | null
+  protein: number | null
+  carbs: number | null
+  fat: number | null
+}
+
 export interface Profile {
   name: string
   /** "YYYY-MM-DD" */
@@ -41,4 +52,6 @@ export interface Profile {
   equipment: GymEquipment
   settings: Settings
   onboardedAt: string | null
+  /** null = targets calculated from body data and goal (SPEC §5.4–5.5). */
+  customTargets: CustomTargets | null
 }

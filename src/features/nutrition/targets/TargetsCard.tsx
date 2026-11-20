@@ -1,3 +1,4 @@
+import { SlidersHorizontal } from 'lucide-react'
 import { useNavigate } from 'react-router'
 import type { Targets } from '../../../domain/nutrition/targets'
 import type { Nutrients } from '../../../domain/nutrition/types'
@@ -40,7 +41,15 @@ function MacroBar({
 }
 
 /** Kcal ring (eaten / target / over) and bars for protein, carbs and fat (SPEC §4.5). */
-export function TargetsCard({ totals, targets }: { totals: Nutrients; targets: Targets | null }) {
+export function TargetsCard({
+  totals,
+  targets,
+  onEdit,
+}: {
+  totals: Nutrients
+  targets: Targets | null
+  onEdit: () => void
+}) {
   const navigate = useNavigate()
   const left = targets ? targets.kcal - totals.kcal : null
   return (
@@ -93,15 +102,24 @@ export function TargetsCard({ totals, targets }: { totals: Nutrients; targets: T
         </div>
       </div>
       {targets ? (
-        <p className="mt-3 text-xs text-muted">
-          {targets.flooredAtBmr && `${n.flooredAtBmr} `}
-          {n.targetsNote(formatNumber(targets.bmr, 0), formatNumber(targets.tdee, 0))}
-        </p>
+        <div className="mt-3 flex items-end gap-2">
+          <p className="flex-1 text-xs text-muted">
+            {targets.custom
+              ? n.customNote
+              : `${targets.flooredAtBmr ? `${n.flooredAtBmr} ` : ''}${n.targetsNote(formatNumber(targets.bmr, 0), formatNumber(targets.tdee, 0))}`}
+          </p>
+          <Button variant="ghost" icon={SlidersHorizontal} onClick={onEdit}>
+            {n.editTargets}
+          </Button>
+        </div>
       ) : (
         <div className="mt-3 flex flex-col gap-2">
           <p className="text-sm text-muted">{n.targetsMissing}</p>
           <Button variant="secondary" onClick={() => navigate('/welkom?terug=/voeding')}>
             {n.targetsMissingAction}
+          </Button>
+          <Button variant="ghost" icon={SlidersHorizontal} onClick={onEdit}>
+            {n.editTargets}
           </Button>
         </div>
       )}

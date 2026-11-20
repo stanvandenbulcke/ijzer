@@ -31,6 +31,7 @@ export const DEFAULT_PROFILE: Profile = {
     liveShare: true,
   },
   onboardedAt: null,
+  customTargets: null,
 }
 
 /** Safety limit for the weight-loss pace (SPEC §5.5): never faster than 1 % per week. */
